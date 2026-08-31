@@ -25,7 +25,7 @@ aqui.
 
 1. **Leia `notion-pages.json`** para saber o mapeamento `arquivo/pasta → página do
    Notion`. Em seguida, busque a página `hub` (`notion-fetch`) e leia o SHA no marcador
-   "🔄 Última sincronização automática" no rodapé — esse é o `last_synced_commit`. Se o
+   "🔄 ... Última sincronização" no rodapé — esse é o `last_synced_commit`. Se o
    marcador ainda não existir (primeiro run), trate como se todo `docs/` e o `README.md`
    precisassem ser conferidos desde o início do histórico.
 
