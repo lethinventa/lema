@@ -58,7 +58,16 @@ Algo que precisa ser realizado. Pode possuir:
 
 ### Event
 
-Compromisso associado a uma data ou período.
+Compromisso associado a uma data ou período. Pode possuir:
+
+- descrição;
+- local;
+- participantes;
+- recorrência;
+- contexto;
+- visibilidade.
+
+Diferentemente de `Task`, um `Event` não possui estado de conclusão — ele simplesmente ocorre (ou não) na data definida.
 
 ### Goal
 
