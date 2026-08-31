@@ -1,7 +1,11 @@
-## Summary
+## O que foi alterado?
 
-<!-- What does this PR change, and why? -->
+## Por quê?
 
-## Test plan
+## Como validar?
 
-<!-- How was this verified? -->
+## Checklist
+
+- [ ] Mudança testada
+- [ ] Documentação atualizada quando necessário
+- [ ] Não introduz quebra conhecida
