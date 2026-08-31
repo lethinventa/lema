@@ -27,12 +27,14 @@ Ator decide alterar dados de uma transação.
 
 - Alterar a visibilidade da transação: tratado por `UC-PERM-004`, não por este caso de uso.
 - Alterar a conta associada: válido, desde que a nova conta seja acessível ao ator.
+- Alterar pagador, responsável econômico ou `SplitRule`: válido; recalcula o saldo corrente entre as pessoas envolvidas (ver `domain-model.md`).
 
 ## Regras de negócio
 
 - Atualizar uma transação não altera seu `owner` nem `createdBy`.
 - Para transações `SHARED`, tanto o proprietário quanto as pessoas em `sharedWith` podem editar, conforme `permissions.md`.
 - Para transações `GROUP`, qualquer membro do grupo pode editar, independentemente de seu papel, conforme `PD-004-group-resource-governance.md`.
+- Alterar a `SplitRule` de uma transação já registrada não é retroativo para outras transações — afeta apenas a transação editada, recalculando o saldo entre as pessoas envolvidas a partir dela.
 
 ## Visibilidade
 

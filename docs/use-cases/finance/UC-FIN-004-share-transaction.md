@@ -32,7 +32,8 @@ Proprietário decide compartilhar a transação com pessoas específicas — por
 
 - Aplicam-se as mesmas regras de `UC-PERM-002`: o `owner` permanece o mesmo usuário; `sharedWith` passa a existir.
 - Pessoas em `sharedWith` podem visualizar e editar a transação, conforme `permissions.md`.
-- Compartilhar a transação não altera seu `createdBy` nem a conta associada a ela.
+- Compartilhar a transação não altera seu `createdBy`, a conta associada a ela, nem sua `SplitRule` (se já definida).
+- Uma transação `SHARED` pode ter `SplitRule` entre o proprietário e as pessoas em `sharedWith`, mas como não existe `GroupFinancialArrangement` fora do contexto de um grupo, a divisão precisa ser sempre definida diretamente na transação (ver `docs/product/decisions/PD-006-financial-organization-model.md`).
 
 ## Visibilidade
 

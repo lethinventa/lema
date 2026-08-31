@@ -30,6 +30,8 @@ Usuário acessa a área de Finanças e escolhe um contexto de visualização.
 ## Regras de negócio
 
 - A visão consolidada nunca expõe transações `PRIVATE` de outras pessoas, mesmo que estejam no mesmo grupo — apenas as `PRIVATE` do próprio usuário, além das `SHARED` e `GROUP` às quais ele tem acesso.
+- Dentro de uma visão de grupo, os detalhes de divisão financeira (quem deve quanto a quem) só aparecem para quem tem acesso a eles, conforme o nível de transparência do `GroupFinancialArrangement` — a despesa em si pode ser visível a todos, mesmo quando a divisão não é (ver `permissions.md`).
+- Dados pessoais sensíveis (renda, saldo, limite, extrato) só aparecem na visão consolidada conforme a exposição configurada no `FinancialProfile` de cada pessoa, independente da visibilidade das transações.
 - Este caso de uso é apenas uma forma de visualização; não altera a visibilidade nem a propriedade de nenhuma transação ou conta.
 
 ## Visibilidade

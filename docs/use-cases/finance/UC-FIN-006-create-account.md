@@ -32,10 +32,11 @@ Usuário decide registrar uma nova origem ou destino financeiro.
 - Toda conta financeira possui um `owner` e um `createdBy`, conforme `permissions.md` e `docs/product/decisions/PD-002-resource-ownership.md`.
 - Uma conta pode ser associada a múltiplas transações (ver `UC-FIN-001`).
 - Criar uma conta `GROUP` exige que o usuário seja membro ativo do grupo — este é o mecanismo por trás de uma "conta da casa" compartilhada pela família.
+- Dados sensíveis de uma conta pessoal (saldo, limite, extrato) não são expostos a um grupo só porque a conta paga uma transação `GROUP`; essa exposição segue a configuração de `FinancialProfile` do proprietário, independente de `PRIVATE`/`SHARED`/`GROUP` (ver `docs/product/decisions/PD-006-financial-organization-model.md`).
 
 ## Visibilidade
 
-Uma conta pode ser `PRIVATE`, `SHARED` ou `GROUP`, seguindo exatamente as regras já definidas em `permissions.md`.
+Uma conta pode ser `PRIVATE`, `SHARED` ou `GROUP`, seguindo exatamente as regras já definidas em `permissions.md`. Essa visibilidade decide quem sabe que a conta existe e vê seus lançamentos — é distinta da exposição de dados sensíveis específicos (saldo, limite, extrato), controlada separadamente pelo `FinancialProfile`.
 
 ## Relações com outros módulos
 

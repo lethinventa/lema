@@ -27,6 +27,7 @@ Proprietário decide compartilhar o objetivo com pessoas específicas.
 ## Variações
 
 - Objetivo já possuía relações com outros recursos antes de ser compartilhado: as relações permanecem as mesmas (ver `UC-GOAL-007`).
+- Objetivo possui submetas: compartilhar o objetivo pai não altera a visibilidade das submetas, que são objetivos independentes com sua própria visibilidade (ver `UC-GOAL-007`).
 
 ## Regras de negócio
 

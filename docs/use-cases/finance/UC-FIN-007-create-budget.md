@@ -34,6 +34,7 @@ Usuário decide planejar um limite de gastos para um período, categoria ou obje
 - Todo orçamento possui um `owner` e um `createdBy`, conforme `permissions.md` e `docs/product/decisions/PD-002-resource-ownership.md`.
 - Criar um orçamento `GROUP` exige que o usuário seja membro ativo do grupo.
 - Este caso de uso cobre apenas o registro do planejamento (valor-limite, período, categoria ou objetivo relacionado). Comparar transações ao orçamento e alertar sobre estouro são funcionalidades futuras, não cobertas aqui.
+- Um `Budget` é um conceito distinto do `GroupFinancialArrangement`: o orçamento é um teto de gasto por período/categoria/objetivo, enquanto o acordo financeiro do grupo trata de como as despesas são divididas entre pessoas (ver `docs/product/decisions/PD-006-financial-organization-model.md`). Um grupo pode ter um `GroupFinancialArrangement` sem nenhum `Budget`, e vice-versa.
 
 ## Visibilidade
 
