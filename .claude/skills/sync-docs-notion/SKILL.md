@@ -11,19 +11,34 @@ a documentação no repositório muda.
 
 O mapeamento entre arquivos do repo e páginas do Notion vive em
 [`notion-pages.json`](notion-pages.json), neste mesmo diretório. Sempre leia esse arquivo
-primeiro — ele tem os IDs/URLs reais das páginas e o hash do último commit sincronizado
-(`last_synced_commit`). Não adivinhe URLs nem crie páginas novas para conteúdo que já tem
-uma página mapeada.
+primeiro — ele tem os IDs/URLs reais das páginas. Não adivinhe URLs nem crie páginas novas
+para conteúdo que já tem uma página mapeada.
+
+O SHA do último commit sincronizado **não** fica em `notion-pages.json` — fica em um
+marcador de texto no rodapé da própria página hub no Notion (procure por "🔄 Última
+sincronização automática" no final do conteúdo da página `hub`). Isso é proposital: assim
+a sincronização funciona só com acesso de **leitura** ao repositório, sem precisar de
+permissão de escrita/push no GitHub — só de escrita no Notion, que é o que de fato importa
+aqui.
 
 ## Passo a passo
 
-1. **Leia `notion-pages.json`** para saber `last_synced_commit` e o mapeamento
-   `arquivo/pasta → página do Notion`.
+1. **Leia `notion-pages.json`** para saber o mapeamento `arquivo/pasta → página do
+   Notion`. Em seguida, busque a página `hub` (`notion-fetch`) e leia o SHA no marcador
+   "🔄 Última sincronização automática" no rodapé — esse é o `last_synced_commit`. Se o
+   marcador ainda não existir (primeiro run), trate como se todo `docs/` e o `README.md`
+   precisassem ser conferidos desde o início do histórico.
 
-2. **Descubra o que mudou** desde o último sync:
+2. **Descubra o que mudou** desde `last_synced_commit`. Se você tem o repositório clonado
+   localmente com git:
    ```
    git diff --name-status <last_synced_commit>..HEAD -- docs README.md apps/README.md packages/README.md
    ```
+   Se você só tem acesso de leitura via API do GitHub (sem clone), use as ferramentas
+   `mcp__github__list_commits` (filtrando por caminho) e `mcp__github__get_file_contents`
+   para o mesmo efeito: liste commits em `main` desde `last_synced_commit` que tocam
+   `docs/`, `README.md`, `apps/README.md` ou `packages/README.md`, e leia o conteúdo atual
+   dos arquivos afetados.
    Se a skill for chamada no meio de uma sessão que já editou arquivos ainda não
    commitados, inclua também `git status --porcelain -- docs README.md` nas mudanças a
    considerar.
@@ -73,15 +88,15 @@ uma página mapeada.
    "Painel de progresso" abaixo — ele não é um espelho de um arquivo específico, é
    recalculado a partir de várias fontes toda vez que qualquer uma delas muda.
 
-8. **Atualize `notion-pages.json`**: defina `last_synced_commit` para o SHA atual
-   (`git rev-parse HEAD`, ou o commit que está prestes a ser criado/pushado) e, se
-   páginas novas foram criadas no passo 3, adicione as entradas com `id`/`url`/`sources`.
+8. **Atualize o marcador na página hub do Notion** para o SHA atual (o commit em `main`
+   que você acabou de sincronizar) e a data, substituindo o callout "🔄 Última
+   sincronização automática..." existente. Isso é uma escrita no Notion, não no
+   repositório — não precisa de acesso de push ao GitHub.
 
-9. **Commit** a atualização de `notion-pages.json` junto com — ou logo depois de — o
-   commit que alterou a documentação, com uma mensagem curta explicando que o Notion foi
-   sincronizado (ex.: `Sincronizar Notion após mudanças em docs/use-cases/tasks`). Isso é
-   parte de cumprir o pedido de manter o Notion atualizado, não um commit "extra" fora de
-   escopo.
+9. Se você tiver o repositório clonado e páginas novas foram criadas no passo 3 (ou seja,
+   `notion-pages.json` precisou de novas entradas), commite e informe essa mudança normal
+   de código como qualquer outra alteração no repositório (fora do fluxo de tracking do
+   sync, que agora vive só no Notion).
 
 ## Painel de progresso ("📍 Onde estamos", na página hub)
 
@@ -136,14 +151,12 @@ tabela que muda de tamanho.
 ## Automação além desta skill
 
 Por padrão, esta skill só roda quando alguém (ou uma tarefa) a invoca dentro de uma
-sessão do Claude Code. Ela **não** observa o repositório sozinha em segundo plano. Para
-sincronização sem intervenção manual a cada mudança, é preciso um gatilho externo, por
-exemplo:
+sessão do Claude Code. Ela **não** observa o repositório sozinha em segundo plano.
 
-- uma Routine agendada (cron) que, periodicamente, verifica se `docs/` mudou desde
-  `last_synced_commit` e, se sim, roda esta skill;
-- uma GitHub Action que dispara em push para a branch principal tocando `docs/**` e
-  aciona uma sessão do Claude Code para rodar esta skill.
-
-Nenhuma dessas automações está configurada por padrão — são um passo separado, a
-combinar com quem mantém o repositório.
+Há uma Routine (trigger agendado) chamada **"Sync docs → Notion (Lema)"** configurada
+para rodar a cada hora: ela dispara uma sessão nova, que lê o marcador de última
+sincronização na página hub do Notion, verifica (via API de leitura do GitHub) se houve
+commits em `main` tocando documentação desde então e, se sim, segue este mesmo passo a
+passo para atualizar as páginas afetadas e o marcador. Se nada mudou, ela termina em
+silêncio sem tocar em nada. Por design, essa Routine só precisa de acesso de leitura ao
+repositório e de escrita no Notion — nunca escreve nem faz push no GitHub.

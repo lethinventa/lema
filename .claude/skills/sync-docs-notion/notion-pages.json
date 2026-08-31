@@ -66,5 +66,5 @@
     "apps/README.md",
     "packages/README.md"
   ],
-  "last_synced_commit": "8ea2502036b62e4a6454a4dff26b0cadd04de686"
+  "sync_state_note": "O SHA do último commit sincronizado NÃO fica neste arquivo — fica em um marcador de texto no rodapé da própria página hub no Notion ('🔄 Última sincronização automática...'). Isso deixa a sincronização funcionar só com acesso de leitura ao repositório (sem precisar de git push). Leia o marcador via notion-fetch na URL de hub.url antes de comparar com o git log; veja SKILL.md."
 }
