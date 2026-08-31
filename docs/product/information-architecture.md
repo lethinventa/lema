@@ -13,7 +13,7 @@ O MVP tem seis áreas de navegação principal, mais uma área de conta que não
 3. **Calendário** — `UC-CAL-*`.
 4. **Objetivos** — `UC-GOAL-*`.
 5. **Finanças** — `UC-FIN-*`.
-6. **Grupos / Família** — `UC-GROUP-*`, `UC-PERM-*`.
+6. **Grupos / Família** — `UC-GROUP-*`, `UC-PERM-*`. Área secundária: não é um item fixo da navegação primária, é alcançada pelo seletor de contexto (ao escolher/gerenciar um grupo) e por Configurações → Grupo.
 7. **Perfil e Configurações** — `UC-USER-*`, `UC-AUTH-*` (pós-login).
 
 Não existe uma área "Alimentação" no MVP — está listada em `roadmap.md` como V2. Não existe uma área separada de "Permissões": compartilhamento e visibilidade (`UC-PERM-*`) não são uma seção própria da navegação, e sim um comportamento presente dentro de cada recurso (tarefa, compromisso, objetivo, transação, conta), conforme o princípio 1 ("privacidade deve ser estrutural, não uma feature adicionada depois").
@@ -45,26 +45,25 @@ Objetivos
 └── Lixeira de objetivos
 
 Finanças
-├── Visão geral (Tudo / Pessoal / um grupo — resumo e saldo entre pessoas)
+├── Visão geral (Tudo / Pessoal / um grupo — resumo, saldo entre pessoas, e orçamentos do contexto ativo)
 ├── Transações
 │   ├── Lista de transações (filtrável por contexto)
 │   ├── Detalhe/registro de transação (despesa pessoal, compartilhada ou de grupo)
 │   └── Lixeira de transações
 ├── Contas
 │   ├── Lista de contas
-│   └── Detalhe/criação de conta
-├── Orçamentos
-│   ├── Lista de orçamentos
-│   └── Detalhe/criação de orçamento
+│   └── Detalhe/criação de conta (inclui arquivar — ver seção 7)
 ├── Configuração financeira pessoal (contas, cartões, rendas, categorias, exposição de dados por grupo)
 └── Configuração financeira do grupo (regra de divisão, dinheiro comum, transparência, exceções, histórico de alterações)
 
-Grupos / Família
+Orçamentos não é uma subárea própria no MVP: criar/ver um orçamento acontece a partir da Visão geral, sem navegação dedicada — ver seção 7.
+
+Grupos / Família (área secundária — ver seção 5 sobre pontos de entrada)
 ├── Lista de grupos (usuário pode pertencer a mais de um)
 ├── Criar grupo (inclui, como etapa obrigatória, a configuração financeira mínima do grupo)
 ├── Aceitar convite (entrada via link — pode acontecer fora da navegação principal, inclusive durante o cadastro)
 └── Detalhe do grupo
-    ├── Membros (ver membros e papéis, convidar, remover, promover/rebaixar OWNER)
+    ├── Membros (ver membros e papéis, convidar, remover, promover/rebaixar OWNER — convites pendentes visíveis apenas a quem pode gerenciar membros/convites)
     └── Dados do grupo (nome e demais dados estruturais)
 
 Perfil e Configurações
@@ -84,8 +83,10 @@ Os contextos, conforme `vision.md` e `UC-TODAY-002`/`UC-FIN-008`:
 
 - **Tudo** — visão consolidada: itens `PRIVATE` do usuário + `SHARED` que o envolvem + `GROUP` de todos os grupos aos quais ele pertence, respeitando a visibilidade de cada item.
 - **Pessoal** — apenas recursos `PRIVATE` do próprio usuário.
-- **Um grupo específico** — recursos `GROUP` daquele grupo. Um usuário em mais de um grupo escolhe qual grupo visualizar (ver seção 7, ainda em aberto se pode agregar vários de uma vez).
+- **Um grupo específico** — recursos `GROUP` daquele grupo. O contexto ativo de grupo é sempre um grupo por vez — um usuário em mais de um grupo escolhe qual visualizar através do seletor de contexto; não existe visualização simultânea de "Família" + "Trabalho", por exemplo.
 - **Compartilhado** — recursos `SHARED` que envolvem o usuário e outra(s) pessoa(s) específica(s), fora do contexto de um grupo.
+
+**Regra especial para "Tudo" em Finanças:** a visão consolidada pode agregar a existência das despesas de vários grupos (ex.: listar transações de "Família" e de "República" juntas), mas nunca mistura as regras financeiras desses grupos entre si — `SplitRule` padrão, exceções, nível de transparência e saldo corrente entre pessoas são sempre calculados e exibidos por grupo, nunca combinados em uma regra ou saldo único entre grupos diferentes. Ver `GroupFinancialArrangement` em `domain-model.md`.
 
 Regras que valem em qualquer área que ofereça esse filtro:
 
@@ -111,8 +112,10 @@ Não existe app separado por contexto — a mesma tela de Tarefas, Calendário, 
 Proposta de estrutura de navegação para o MVP (estrutura, não layout/UI):
 
 - **Navegação primária** (sempre acessível, ex.: barra inferior ou lateral): Home, Tarefas, Calendário, Objetivos, Finanças. Cinco itens é o núcleo do uso diário, alinhado ao princípio 12 ("o sistema deve reduzir a quantidade de aplicativos necessários").
-- **Grupos / Família** é acessível a partir da navegação primária ou de um ponto de entrada secundário (ex.: ícone de conta) — não é necessariamente um sexto item fixo, já que seu uso é menos frequente que os cinco domínios de conteúdo do dia a dia; ver questão em aberto na seção 7.
-- **Perfil e Configurações** fica atrás de um ponto de acesso secundário (ex.: avatar/menu), não na navegação primária — é o padrão da maioria dos apps e não faz parte do uso diário do produto.
+- **Grupos / Família** não é item fixo da navegação primária. Tem dois pontos de entrada:
+  - o **seletor de contexto**, ao escolher um grupo como contexto ativo (e, a partir dali, um link para gerenciar aquele grupo — membros, dados, convite);
+  - **Configurações → Grupo**, para criar um novo grupo, ver a lista de grupos do usuário, ou gerenciar um grupo sem antes trocar o contexto ativo.
+- **Perfil e Configurações** fica atrás de um ponto de acesso secundário (ex.: avatar/menu), não na navegação primária — é o padrão da maioria dos apps e não faz parte do uso diário do produto. É também o ponto de entrada secundário para Grupos / Família (acima).
 - **Filtro de contexto** (Tudo / Pessoal / Grupo / Compartilhado) é um controle dentro de cada área (Home, Tarefas, Calendário, Objetivos, Finanças), não uma navegação própria — evita duplicar a estrutura por contexto, conforme a seção 3.
 - **Lixeiras** (Tarefas, Compromissos, Objetivos, Transações) são acessadas a partir da respectiva área, não da navegação primária.
 
@@ -144,52 +147,56 @@ Lista consolidada, sem detalhamento de componentes ou layout:
 13. Lixeira de objetivos
 
 **Finanças**
-14. Visão geral de finanças
+14. Visão geral de finanças (inclui orçamentos do contexto ativo — sem tela própria de lista, ver seção 7)
 15. Lista de transações
 16. Detalhe/formulário de transação
 17. Lixeira de transações
 18. Lista de contas
-19. Detalhe/formulário de conta
-20. Lista de orçamentos
-21. Detalhe/formulário de orçamento
-22. Configuração financeira pessoal
-23. Configuração financeira do grupo (onboarding e edição)
+19. Detalhe/formulário de conta (inclui ação de arquivar — não excluir; ver seção 7)
+20. Formulário de orçamento (criar/editar — acessado a partir da Visão geral, sem tela de lista própria)
+21. Configuração financeira pessoal
+22. Configuração financeira do grupo (onboarding e edição)
 
-**Grupos / Família**
-24. Lista de grupos
-25. Criar grupo (com etapa embutida de configuração financeira mínima)
-26. Aceitar convite
-27. Detalhe do grupo (dados do grupo)
-28. Membros do grupo
+**Grupos / Família** (acessadas via seletor de contexto ou Configurações → Grupo, não pela navegação primária — ver seção 5)
+23. Lista de grupos
+24. Criar grupo (com etapa embutida de configuração financeira mínima)
+25. Aceitar convite
+26. Detalhe do grupo (dados do grupo)
+27. Membros do grupo (convites pendentes visíveis apenas a quem gerencia membros)
 
 **Perfil e Configurações**
-29. Meu perfil
-30. Perfil de outra pessoa (somente leitura)
-31. Segurança / credenciais / MFA
-32. Excluir conta
+28. Meu perfil
+29. Perfil de outra pessoa (somente leitura, acesso contextual — sem busca de pessoas no MVP)
+30. Segurança / credenciais / MFA
+31. Excluir conta (de usuário)
 
-Total: 32 telas para o MVP completo (3 pré-login + 29 pós-login).
+Total: 31 telas para o MVP completo (3 pré-login + 28 pós-login).
 
 ## 7. Questões em aberto
 
-- **Onde "Grupos / Família" vive na navegação primária.** Não há decisão de produto sobre se é um item fixo da navegação principal ou um destino secundário. Impacta diretamente a estrutura da seção 5.
-- **Múltiplos grupos ao mesmo tempo.** `UC-TODAY-002` e `UC-FIN-008` deixam em aberto se, ao filtrar por contexto de grupo, o usuário escolhe um grupo por vez ou pode ver vários agregados — isso muda se o seletor de contexto precisa de uma tela própria de escolha ou é um simples dropdown.
-- **Onboarding didático de conceitos.** `JRN-001` levanta a dúvida se existe uma introdução guiada aos conceitos `PRIVATE`/`SHARED`/`GROUP` no primeiro acesso, ou se a pessoa aprende isso organicamente usando o produto. Se existir, é uma tela adicional fora da lista acima.
-- **O que a Home sugere ativamente no estado vazio** (ex.: "criar seu primeiro grupo", "criar sua primeira tarefa") — `JRN-001` registra isso como aberto; afeta o conteúdo da Home, não sua posição na estrutura.
-- **Critérios de "exige atenção" por domínio na Home.** `UC-TODAY-001` ainda não define o que torna um item relevante o suficiente para aparecer — não muda a estrutura de navegação, mas é pré-requisito para desenhar a tela de Home.
-- **Convites pendentes de grupo.** `UC-GROUP-006` deixa em aberto se convites pendentes aparecem para todos os membros ou só para quem pode convidar/remover — decide se "Membros" precisa de uma sub-seção separada de convites.
-- **Se Orçamentos merece navegação própria dentro de Finanças ou pode viver dentro da Visão geral.** O escopo do MVP é propositalmente básico (`UC-FIN-007`: sem comparação automática com gastos nem alertas), o que torna a subárea bem mais simples que Transações ou Contas.
-- **Perfil de outra pessoa como destino de navegação.** Hoje só é alcançado contextualmente (a partir de Membros ou de um recurso `SHARED`), nunca por busca direta — não há caso de uso de busca de pessoas no MVP; vale confirmar que isso é intencional.
-- **Exclusão de conta financeira com transações associadas.** `UC-FIN-006` deixa em aberto se uma conta pode ser excluída depois de já ter transações — não muda a estrutura de telas, mas afeta o comportamento da tela de Detalhe de conta.
+Decisões de navegação e estrutura tomadas após a primeira versão deste documento:
+
+- **Grupos / Família na navegação** — área secundária, não item fixo da navegação primária; acessada pelo seletor de contexto e por Configurações → Grupo (seção 5).
+- **Múltiplos grupos** — contexto ativo de grupo é sempre um por vez; a visão "Tudo" pode agregar a existência de itens de vários grupos, mas nunca mistura as regras financeiras entre grupos diferentes (seção 3).
+- **Onboarding didático de `PRIVATE`/`SHARED`/`GROUP`** — não haverá uma tela/fluxo de introdução guiada separado; os conceitos são ensinados organicamente nos primeiros usos, via microcopy contextual dentro das próprias telas (ex.: ao criar uma tarefa, ao compartilhar um recurso). Isso não adiciona telas à lista da seção 6 — o conteúdo de microcopy é responsabilidade do design de cada tela, não da arquitetura de informação.
+- **O que a Home sugere no estado vazio** — sugestões de ação conforme o estágio do usuário: criar a primeira tarefa, criar um grupo, configurar finanças, criar um objetivo. Não é uma tela própria, é conteúdo condicional da tela de Home.
+- **Convites pendentes de grupo** — visíveis apenas a quem tem permissão para gerenciar membros/convites, não a todos os membros (seção 2, Membros do grupo).
+- **Orçamentos em Finanças** — no MVP, vivem dentro da Visão geral, sem navegação/lista própria (seção 2 e 6).
+- **Perfil de outra pessoa** — confirmado como acesso puramente contextual (a partir de Membros ou de um recurso `SHARED`); não há busca de pessoas no MVP.
+- **Exclusão de conta financeira com transações associadas** — uma conta com transações não é excluída/apagada. Ela é **arquivada**: fica indisponível para novos lançamentos, mas o histórico de transações já registradas é preservado e continua acessível. Isso é uma exceção deliberada à política padrão de lixeira (`PD-005-deletion-policy.md`), específica para `Account`, já que o objetivo aqui não é permitir restauração de algo removido, e sim impedir uso futuro sem apagar histórico financeiro. Vale registrar essa exceção em uma decisão de produto (`PD-00X`) e atualizar `UC-FIN-006`, já que isso resolve uma questão em aberto documentada naquele caso de uso.
+
+Ainda em aberto, deliberadamente adiada para uma etapa própria antes do wireframe da Home:
+
+- **Critérios de "exige atenção" por domínio na Home.** `UC-TODAY-001` ainda não define o que torna uma tarefa, um compromisso, um objetivo ou uma finança relevante o suficiente para aparecer na Home. Isso não muda a estrutura de navegação deste documento, mas precisa ser resolvido antes de desenhar o conteúdo da tela de Home.
 
 ---
 
 ## Resumo
 
-**1. Áreas principais:** Home/Hoje, Tarefas, Calendário, Objetivos, Finanças, Grupos/Família, Perfil e Configurações.
+**1. Áreas principais:** Home/Hoje, Tarefas, Calendário, Objetivos, Finanças (navegação primária) e Grupos/Família (área secundária, acessada pelo seletor de contexto e por Configurações); Perfil e Configurações fora do fluxo diário.
 
-**2. Árvore de navegação:** ver seção 2 — seis áreas de conteúdo (mais lixeiras próprias em Tarefas, Calendário, Objetivos e Transações) e uma área de conta fora do fluxo diário.
+**2. Árvore de navegação:** ver seção 2 — cinco áreas de conteúdo na navegação primária, mais lixeiras próprias em Tarefas, Calendário, Objetivos e Transações; Orçamentos sem navegação própria (fica dentro da Visão geral de Finanças).
 
-**3. Lista de telas do MVP:** 32 telas (ver seção 6), sem nenhuma tela dedicada a alimentação, Central do Lar, WhatsApp ou lançamentos automáticos — todos V2.
+**3. Lista de telas do MVP:** 31 telas (ver seção 6), sem nenhuma tela dedicada a alimentação, Central do Lar, WhatsApp ou lançamentos automáticos — todos V2.
 
-**4. Gaps/ambiguidades encontrados:** posição de "Grupos/Família" na navegação primária; comportamento com múltiplos grupos simultâneos; existência (ou não) de onboarding didático de conceitos de privacidade; critérios de "exige atenção" na Home; visibilidade de convites pendentes; peso de Orçamentos como subárea própria de Finanças; ausência de busca de pessoas/perfis no MVP.
+**4. Gaps/ambiguidades encontrados:** apenas um permanece deliberadamente em aberto — os critérios de "exige atenção" por domínio na Home (`UC-TODAY-001`), a ser definidos em uma etapa própria antes do wireframe da Home. As demais questões da primeira versão deste documento (posição de Grupos/Família na navegação, múltiplos grupos, onboarding de privacidade, sugestões da Home vazia, convites pendentes, Orçamentos, busca de perfis, exclusão de conta financeira) foram resolvidas — ver seção 7. A exclusão de conta financeira com transações (agora "arquivar", não excluir) é uma exceção à política padrão de lixeira que ainda precisa ser formalizada em uma decisão de produto e refletida em `UC-FIN-006`.
