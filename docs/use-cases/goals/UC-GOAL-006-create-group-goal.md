@@ -28,7 +28,7 @@ Membro decide criar um objetivo pertencente ao grupo, em vez de pessoal.
 ## Regras de negócio
 
 - Seguem-se as mesmas regras de `UC-PERM-003`: qualquer `MEMBER` pode criar; `owner = Group`; `createdBy = User`.
-- Qualquer membro do grupo pode editar, concluir ou excluir um objetivo `GROUP`, independentemente de seu papel, conforme `docs/product/decisions/PD-004-group-resource-governance.md` — exceto quanto à conclusão, cuja autoria ainda está em aberto (ver `UC-GOAL-003`).
+- Qualquer membro do grupo pode editar, concluir ou excluir um objetivo `GROUP`, independentemente de seu papel, conforme `docs/product/decisions/PD-004-group-resource-governance.md`.
 - O objetivo continua pertencendo ao grupo mesmo que o criador (`createdBy`) deixe de ser membro (ver `docs/product/decisions/PD-002-resource-ownership.md`, `UC-GROUP-004` e `UC-GROUP-005`).
 
 ## Visibilidade
@@ -46,4 +46,4 @@ Aplica `UC-PERM-003`. Relaciona-se com `UC-GROUP-004` (Remover membro), `UC-GROU
 
 ## Questões em aberto
 
-Nenhuma questão em aberto identificada neste momento, além da já registrada em `UC-GOAL-003` quanto a quem pode concluir um objetivo `GROUP`.
+Nenhuma questão em aberto identificada neste momento.

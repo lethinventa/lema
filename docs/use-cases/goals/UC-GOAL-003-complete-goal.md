@@ -6,7 +6,8 @@ Permitir marcar um objetivo como alcançado.
 
 ## Ator
 
-- Ator principal: proprietário do objetivo (`PRIVATE`/`SHARED`); em objetivos `GROUP`, ver Questões em aberto.
+- Ator principal: qualquer pessoa com acesso ao objetivo — proprietário, pessoa em `sharedWith`, ou, em objetivos `GROUP`, qualquer membro do grupo, independentemente do papel (`docs/product/decisions/PD-004-group-resource-governance.md`).
+- Ator não-humano: o próprio sistema, quando o progresso do objetivo atinge 100% (ver Regras de negócio).
 
 ## Pré-condições
 
@@ -14,21 +15,23 @@ Permitir marcar um objetivo como alcançado.
 
 ## Gatilho
 
-Ator marca o objetivo como alcançado.
+Ator marca o objetivo como alcançado, ou o progresso do objetivo atinge 100%.
 
 ## Fluxo principal
 
 1. Ator seleciona o objetivo e o marca como concluído.
 2. Sistema registra a conclusão, incluindo quem concluiu e quando.
-3. Objetivo passa a ser exibido como concluído.
+3. Objetivo passa a ser exibido como concluído, de forma permanente.
 
 ## Variações
 
-- Ator tenta reabrir um objetivo já concluído (ver Questões em aberto).
+- Progresso do objetivo atinge 100% (manualmente ou por proporção de recursos relacionados concluídos): sistema marca o objetivo como concluído automaticamente, sem exigir a ação manual do fluxo principal.
 
 ## Regras de negócio
 
-- A conclusão de um objetivo é sempre uma ação manual e explícita — não é inferida automaticamente a partir da conclusão de recursos relacionados (ver `UC-GOAL-007` e Questões em aberto).
+- Qualquer pessoa com acesso ao objetivo pode marcá-lo como concluído — não é uma ação exclusiva do proprietário.
+- A conclusão pode ser inferida automaticamente: quando o progresso do objetivo atinge 100%, o sistema o marca como concluído.
+- A conclusão de um objetivo é permanente — não é possível reabrir um objetivo concluído.
 - Concluir um objetivo não exclui nem altera os recursos relacionados a ele (Tasks, Events, Documents etc.).
 - Concluir um objetivo não altera seu `owner` nem `createdBy`.
 
@@ -38,15 +41,14 @@ Concluir um objetivo não altera sua visibilidade nem sua propriedade.
 
 ## Relações com outros módulos
 
-Relaciona-se com `UC-GOAL-007`, quanto à pergunta em aberto sobre inferência automática de conclusão a partir de recursos relacionados.
+Relaciona-se com `UC-GOAL-007`: quando o progresso é calculado a partir de recursos relacionados, a conclusão desses recursos pode levar o progresso do objetivo a 100% e acionar sua conclusão automática.
 
 ## Critérios de aceite
 
-- Objetivo concluído registra quem o concluiu e a data/hora da conclusão.
+- Objetivo concluído registra quem (ou o próprio sistema, se inferida) concluiu e a data/hora da conclusão.
+- Objetivo concluído automaticamente ao atingir 100% de progresso.
+- Objetivo concluído não pode ser reaberto.
 
 ## Questões em aberto
 
-- Quem pode marcar um objetivo `SHARED` ou `GROUP` como concluído — qualquer pessoa com acesso, ou apenas o proprietário (ou, em `GROUP`, qualquer membro, conforme `PD-004-group-resource-governance.md`)? Declarar um objetivo como "alcançado" é um julgamento mais subjetivo do que concluir uma tarefa, então essa extensão não foi assumida automaticamente.
-- É possível reabrir um objetivo concluído?
-- A conclusão de um objetivo deveria poder ser sugerida ou inferida a partir da conclusão dos recursos relacionados a ele (ex.: todas as tarefas vinculadas concluídas), ou é sempre uma ação manual e independente?
-- Um objetivo possui progresso intermediário antes da conclusão (ver `UC-GOAL-001`)?
+Nenhuma questão em aberto identificada neste momento.

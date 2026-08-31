@@ -32,13 +32,16 @@ Ator decide conectar um objetivo a outro recurso existente.
 
 ## Regras de negócio
 
+- Um objetivo pode se relacionar a recursos com visibilidade diferente da sua própria (ex.: objetivo `PRIVATE` relacionado a uma tarefa `GROUP`). Não é exigida compatibilidade de visibilidade entre os dois lados da relação.
 - Relacionar um objetivo a outro recurso não altera a visibilidade, `owner` ou `createdBy` de nenhum dos dois.
 - Excluir um recurso relacionado (ex.: uma `Task`) não exclui o objetivo, apenas encerra a relação.
 - Excluir o objetivo não exclui os recursos relacionados a ele (ver `UC-GOAL-004`).
+- Quando o progresso do objetivo é calculado a partir de recursos relacionados (ver `UC-GOAL-001`), ele reflete a proporção desses recursos já concluídos (ex.: tarefas relacionadas concluídas). Concluir todos os recursos relacionados desse tipo leva o progresso a 100% e aciona a conclusão automática do objetivo (ver `UC-GOAL-003`).
+- Não há limite para a quantidade de recursos que podem ser relacionados a um único objetivo.
 
 ## Visibilidade
 
-A relação em si não possui visibilidade própria; cada recurso relacionado mantém sua própria visibilidade, que pode ser diferente da visibilidade do objetivo (ver Questões em aberto).
+A relação em si não possui visibilidade própria; cada recurso relacionado mantém sua própria visibilidade, independentemente da visibilidade do objetivo. Um objetivo `PRIVATE` pode se relacionar a um recurso `GROUP` (ou vice-versa): a relação é permitida mesmo quando as visibilidades divergem. Cada pessoa só vê o lado da relação ao qual já tem acesso — quem não tem acesso ao objetivo não vê que ele existe, mesmo enxergando o recurso relacionado.
 
 ## Relações com outros módulos
 
@@ -51,6 +54,4 @@ Relaciona-se com `UC-TASK-*` e `UC-CAL-*` como possíveis recursos conectados a 
 
 ## Questões em aberto
 
-- O que acontece quando um objetivo e um recurso relacionado têm visibilidades diferentes (ex.: objetivo `PRIVATE` relacionado a uma tarefa `GROUP`)? A relação é permitida mesmo assim, com cada lado mantendo sua própria visibilidade, ou o sistema deve exigir visibilidades compatíveis?
 - Como essa relação deve se comportar quando os recursos de Finanças (`Transaction`, `Budget`) forem detalhados em casos de uso próprios?
-- Existe um limite de quantos recursos podem ser relacionados a um único objetivo?
