@@ -108,6 +108,17 @@ Domínio detalhado — casos de uso documentados individualmente em [`docs/use-c
 - [`UC-FIN-009`](finance/UC-FIN-009-configure-group-financial-arrangement.md) — Configurar acordo financeiro do grupo
 - [`UC-FIN-010`](finance/UC-FIN-010-update-group-financial-arrangement.md) — Atualizar acordo financeiro do grupo
 
+### Alimentação
+
+Domínio detalhado (V2 do roadmap) — casos de uso documentados individualmente em [`docs/use-cases/food/`](food/):
+
+- [`UC-FOOD-001`](food/UC-FOOD-001-plan-meal.md) — Planejar refeição
+- [`UC-FOOD-002`](food/UC-FOOD-002-update-meal.md) — Atualizar refeição planejada
+- [`UC-FOOD-003`](food/UC-FOOD-003-delete-meal.md) — Excluir refeição planejada
+- [`UC-FOOD-004`](food/UC-FOOD-004-share-meal.md) — Compartilhar refeição planejada
+- [`UC-FOOD-005`](food/UC-FOOD-005-create-group-meal.md) — Planejar refeição de grupo
+- [`UC-FOOD-006`](food/UC-FOOD-006-generate-shopping-list.md) — Gerar lista de compras a partir de uma refeição
+
 ## Futuros
 
 - `UC-INT-001` — Registrar despesa via WhatsApp

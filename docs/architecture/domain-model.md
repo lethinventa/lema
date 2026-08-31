@@ -169,13 +169,31 @@ Estrutura genérica para listas. Exemplos:
 - materiais;
 - pendências.
 
+O detalhamento completo de `List` (título, tipo, itens genéricos, contexto, visibilidade) fica para quando o domínio de listas de compras for tratado especificamente; por ora, `List` existe conceitualmente como o contêiner que uma `Meal` pode gerar (ver abaixo).
+
 ### Meal
 
-Refeição planejada.
+Refeição planejada. Pode possuir:
+
+- tipo (ex.: café da manhã, almoço, jantar, lanche);
+- data;
+- descrição ou receita;
+- ingredientes, relacionados a `ShoppingItem`;
+- contexto;
+- visibilidade.
+
+Uma `Meal` pode gerar uma `List` de compras a partir de seus ingredientes (ver `domain-model.md`, seção "Relações", e `UC-FOOD-006`). Ainda não está definido se uma `Meal` possui estado de conclusão (ex.: "preparada"), diferentemente de `Task`, ou se, como `Event`, ela apenas ocorre ou não na data planejada — ver `UC-FOOD-001`.
 
 ### ShoppingItem
 
-Item de compra.
+Item de compra. Pode possuir:
+
+- nome;
+- quantidade;
+- estado (ex.: pendente, comprado);
+- lista associada (`List`);
+- contexto;
+- visibilidade.
 
 ### Document
 
