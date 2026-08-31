@@ -81,15 +81,19 @@ Objetivo pessoal ou compartilhado. Pode se relacionar com:
 
 ### Transaction
 
-Movimentação financeira. Pode possuir:
+Movimentação financeira. Além de `owner`, `createdBy` e visibilidade (ver "Propriedade e autoria"), uma transação distingue os seguintes conceitos, conforme `docs/product/decisions/PD-006-financial-organization-model.md`:
 
 - valor;
 - tipo (receita ou despesa);
 - data;
-- conta associada (`Account`);
 - categoria;
-- contexto;
-- visibilidade.
+- conta associada (`Account`) — de onde o dinheiro efetivamente saiu ou entrou;
+- pagador — quem efetivamente pagou ou recebeu, que pode ser diferente do `owner` em uma transação `GROUP`;
+- responsável econômico — quem deve arcar com o valor, que pode ser diferente de quem pagou;
+- regra de divisão — como o valor é dividido entre responsáveis, quando aplicável;
+- valor a compensar/reembolsar — consequência eventual da regra de divisão (conceito ainda não detalhado).
+
+A visibilidade da transação (contexto da despesa) é independente da visibilidade da conta usada para pagá-la — ver `permissions.md`.
 
 ### Account
 
@@ -99,6 +103,8 @@ Origem ou destino financeiro (ex.: conta corrente, cartão de crédito, dinheiro
 - tipo;
 - contexto;
 - visibilidade.
+
+A visibilidade de uma `Account` é independente da visibilidade de qualquer `Transaction` que a referencie (ver `permissions.md` e `PD-006-financial-organization-model.md`).
 
 ### Budget
 
@@ -111,6 +117,14 @@ Planejamento financeiro relacionado a período, categoria ou objetivo. Pode poss
 - visibilidade.
 
 Este é o escopo básico do MVP (registrar um planejamento). Acompanhamento automático de gastos, alertas de estouro e orçamentos mais avançados estão previstos apenas para V2, conforme `docs/product/roadmap.md`. Despesas recorrentes e lançamentos sugeridos a partir de notificações bancárias também são V2.
+
+### FinancialProfile
+
+Representa a configuração financeira pessoal de um `User`: como essa pessoa organiza suas próprias contas, cartões, rendas, despesas, categorias, orçamento e metas financeiras, além do nível de exposição dessas informações para os grupos dos quais participa. Participar de um grupo não torna essas informações visíveis aos demais membros automaticamente (ver `PD-006-financial-organization-model.md`).
+
+### GroupFinancialArrangement
+
+Representa como um `Group` organiza suas finanças compartilhadas: se há renda compartilhada, contas ou cartões compartilhados, como despesas são divididas por padrão, quais despesas são sempre pessoais, e se membros podem visualizar valores financeiros pessoais uns dos outros. É resultado do onboarding financeiro do grupo, mas pode ser alterado posteriormente. Não representa um modelo fechado — é uma composição de regras, conforme `PD-006-financial-organization-model.md`.
 
 ### List
 

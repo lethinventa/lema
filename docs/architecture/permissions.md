@@ -68,6 +68,14 @@ Um recurso que pertence ao grupo não pode ser simplesmente apropriado por um me
 
 Detalhes em `docs/product/decisions/PD-003-visibility-transitions.md`.
 
+## Visibilidade de recursos financeiros
+
+Recursos financeiros (`Transaction`, `Account`) seguem as mesmas regras gerais de `PRIVATE`, `SHARED` e `GROUP` já definidas acima, mas com uma ressalva importante: a visibilidade de uma transação é independente da visibilidade da conta usada para pagá-la.
+
+Uma transação `GROUP` torna visível para o grupo o registro da despesa em si (ex.: valor, categoria, quem pagou), mas não torna automaticamente visível a `Account` usada no pagamento, caso essa conta seja `PRIVATE` do pagador. O grupo pode saber "Mateus pagou R$ 300 no mercado" sem ter acesso ao saldo, extrato, limite de cartão, renda ou demais transações da conta pessoal de Mateus.
+
+Detalhes em `docs/product/decisions/PD-006-financial-organization-model.md`.
+
 ## Evolução futura
 
 Futuramente podem existir níveis mais sofisticados de permissão. Por enquanto, não há decisão sobre RBAC, ACL ou outro mecanismo técnico definitivo.
