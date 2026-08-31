@@ -1,11 +1,14 @@
+import { CheckCircle2, CheckSquare2, Wallet } from 'lucide-react'
+import type { ReactNode } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { PrimaryButton } from '../components/Buttons'
+import { Wordmark } from '../components/Wordmark'
 import { useOnboarding } from '../state/OnboardingContext'
 
-function suggestionFor(groupChoice: string | null): { icon: string; label: string } {
-  if (groupChoice === 'create') return { icon: '💸', label: 'Configurar as finanças do grupo' }
-  if (groupChoice === 'join') return { icon: '✅', label: 'Ver as tarefas da família' }
-  return { icon: '✅', label: 'Criar sua primeira tarefa' }
+function suggestionFor(groupChoice: string | null): { icon: ReactNode; label: string } {
+  if (groupChoice === 'create') return { icon: <Wallet size={16} strokeWidth={2.2} />, label: 'Configurar as finanças do grupo' }
+  if (groupChoice === 'join') return { icon: <CheckSquare2 size={16} strokeWidth={2.2} />, label: 'Ver as tarefas da família' }
+  return { icon: <CheckSquare2 size={16} strokeWidth={2.2} />, label: 'Criar sua primeira tarefa' }
 }
 
 export function DoneScreen() {
@@ -21,11 +24,14 @@ export function DoneScreen() {
 
   return (
     <div className="flex h-full flex-col">
-      <div className="flex-1 overflow-y-auto px-5 pb-4 pt-16">
-        <span className="flex h-14 w-14 items-center justify-center rounded-full bg-accent-soft text-2xl">
-          ✓
-        </span>
-        <h1 className="mt-4 text-[26px] font-bold leading-tight text-ink">Tudo pronto, {firstName}!</h1>
+      <div className="flex-1 overflow-y-auto px-5 pb-4 pt-8">
+        <Wordmark />
+
+        <div className="mt-10 flex h-20 w-20 items-center justify-center rounded-[38%_62%_63%_37%/41%_44%_56%_59%] bg-mint-bg">
+          <CheckCircle2 size={30} strokeWidth={2} className="text-mint-fg" />
+        </div>
+
+        <h1 className="mt-5 text-[26px] font-bold leading-tight text-ink">Tudo pronto, {firstName}!</h1>
         <p className="mt-2 text-[15px] leading-snug text-ink-muted">
           {data.groupChoice === 'create' &&
             `Sua conta e o grupo "${data.groupName || 'Novo grupo'}" já estão configurados.`}
@@ -43,7 +49,9 @@ export function DoneScreen() {
             dia a dia.
           </p>
           <div className="mt-4 flex items-center gap-3 rounded-md bg-surface-muted px-3 py-3">
-            <span className="text-lg">{suggestion.icon}</span>
+            <span className="flex h-7 w-7 items-center justify-center rounded-md bg-mint-bg text-mint-fg">
+              {suggestion.icon}
+            </span>
             <span className="text-[14px] font-medium text-ink">{suggestion.label}</span>
           </div>
           <p className="mt-3 text-[11px] leading-snug text-ink-faint">

@@ -1,3 +1,4 @@
+import { Link2, Smile, Users } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import { PrimaryButton } from '../components/Buttons'
 import { OnboardingScreen } from '../components/OnboardingScreen'
@@ -32,21 +33,24 @@ export function GroupChoiceScreen() {
       <SelectableCard
         title="Criar um grupo"
         description="Comece um espaço compartilhado e convide outras pessoas depois."
-        icon="👨‍👩‍👧"
+        icon={<Users size={18} strokeWidth={2.2} />}
+        tone="mint"
         selected={data.groupChoice === 'create'}
         onSelect={() => select('create')}
       />
       <SelectableCard
         title="Entrar com um convite"
         description="Já recebeu um link de convite? Entre em um grupo existente."
-        icon="🔗"
+        icon={<Link2 size={18} strokeWidth={2.2} />}
+        tone="peach"
         selected={data.groupChoice === 'join'}
         onSelect={() => select('join')}
       />
       <SelectableCard
         title="Continuar sozinho(a) por enquanto"
         description="Você pode criar ou entrar em um grupo quando quiser, em Configurações."
-        icon="🙂"
+        icon={<Smile size={18} strokeWidth={2.2} />}
+        tone="lavender"
         selected={data.groupChoice === 'skip'}
         onSelect={() => select('skip')}
       />

@@ -3,17 +3,26 @@
 @theme {
   --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
 
-  --color-bg: #f4f5f2;
+  --color-bg: #faf9f4;
   --color-surface: #ffffff;
-  --color-surface-muted: #eceeea;
-  --color-ink: #111111;
-  --color-ink-muted: #6b6b6b;
-  --color-ink-faint: #9a9a9a;
-  --color-dark: #171a1c;
-  --color-line: rgba(17, 17, 17, 0.08);
+  --color-surface-muted: #f0efe8;
+  --color-ink: #14150f;
+  --color-ink-muted: #6c6c62;
+  --color-ink-faint: #a3a297;
+  --color-dark: #16281f;
+  --color-line: rgba(20, 21, 15, 0.08);
   --color-accent: #2f6f4f;
   --color-accent-soft: #e4efe7;
   --color-danger: #c1483a;
+
+  --color-mint-bg: #dcefe1;
+  --color-mint-fg: #2f6f4f;
+  --color-peach-bg: #f4e8d7;
+  --color-peach-fg: #b17b3d;
+  --color-lavender-bg: #e7e2f5;
+  --color-lavender-fg: #6f5da8;
+  --color-sky-bg: #dde9f5;
+  --color-sky-fg: #3f6fa6;
 
   --radius-sm: 12px;
   --radius-md: 18px;

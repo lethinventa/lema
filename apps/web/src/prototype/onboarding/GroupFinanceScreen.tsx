@@ -1,6 +1,8 @@
+import { Eye, Scale, Wallet } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import { PrimaryButton } from '../components/Buttons'
 import { OnboardingScreen } from '../components/OnboardingScreen'
+import { SectionLabel } from '../components/SectionLabel'
 import { SelectableCard } from '../components/SelectableCard'
 import { useOnboarding, type SplitRule, type TransparencyLevel } from '../state/OnboardingContext'
 
@@ -51,7 +53,7 @@ export function GroupFinanceScreen() {
       }
     >
       <div>
-        <span className="mb-2 block text-[13px] font-semibold text-ink">Existe dinheiro comum no grupo?</span>
+        <SectionLabel icon={<Wallet size={15} strokeWidth={2.2} />}>Existe dinheiro comum no grupo?</SectionLabel>
         <div className="flex flex-col gap-2">
           <SelectableCard
             title="Sim, temos caixa comum"
@@ -67,7 +69,7 @@ export function GroupFinanceScreen() {
       </div>
 
       <div>
-        <span className="mb-2 block text-[13px] font-semibold text-ink">Regra padrão de divisão das despesas</span>
+        <SectionLabel icon={<Scale size={15} strokeWidth={2.2} />}>Regra padrão de divisão das despesas</SectionLabel>
         <div className="flex flex-col gap-2">
           {SPLIT_RULES.map((rule) => (
             <SelectableCard
@@ -82,7 +84,7 @@ export function GroupFinanceScreen() {
       </div>
 
       <div>
-        <span className="mb-2 block text-[13px] font-semibold text-ink">Nível de transparência financeira</span>
+        <SectionLabel icon={<Eye size={15} strokeWidth={2.2} />}>Nível de transparência financeira</SectionLabel>
         <div className="flex flex-col gap-2">
           {TRANSPARENCY_OPTIONS.map((opt) => (
             <SelectableCard
