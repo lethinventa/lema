@@ -148,15 +148,12 @@ tabela que muda de tamanho.
   descreva a divergência em vez de sobrescrever às cegas.
 - Esta skill só cobre `docs/` e os READMEs. Mudanças em código-fonte não disparam sync.
 
-## Automação além desta skill
+## Automação
 
-Por padrão, esta skill só roda quando alguém (ou uma tarefa) a invoca dentro de uma
-sessão do Claude Code. Ela **não** observa o repositório sozinha em segundo plano.
-
-Há uma Routine (trigger agendado) chamada **"Sync docs → Notion (Lema)"** configurada
-para rodar a cada hora: ela dispara uma sessão nova, que lê o marcador de última
-sincronização na página hub do Notion, verifica (via API de leitura do GitHub) se houve
-commits em `main` tocando documentação desde então e, se sim, segue este mesmo passo a
-passo para atualizar as páginas afetadas e o marcador. Se nada mudou, ela termina em
-silêncio sem tocar em nada. Por design, essa Routine só precisa de acesso de leitura ao
-repositório e de escrita no Notion — nunca escreve nem faz push no GitHub.
+Esta skill só roda quando alguém pede explicitamente, dentro de uma sessão do Claude
+Code. Ela **não** observa o repositório sozinha em segundo plano — não há nenhuma Routine
+agendada nem gatilho automático configurado. Decisão deliberada: chegamos a testar uma
+Routine agendada (rodando de hora em hora), mas ela esbarrou em uma limitação da
+organização (sessões novas disparadas por Routine não recebem os conectores MCP do
+Notion/GitHub) e a automação foi abandonada em favor de sincronizar sob demanda — é só
+pedir "atualiza o notion" quando fizer sentido.
