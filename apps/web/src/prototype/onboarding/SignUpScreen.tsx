@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { AppleIcon, GoogleIcon } from '../components/BrandIcons'
 import { PrimaryButton, SocialButton } from '../components/Buttons'
 import { OnboardingScreen } from '../components/OnboardingScreen'
 import { TextField } from '../components/TextField'
@@ -36,8 +37,14 @@ export function SignUpScreen() {
         </PrimaryButton>
       }
     >
-      <SocialButton onClick={() => handleSocial('Google')}>Continuar com Google</SocialButton>
-      <SocialButton onClick={() => handleSocial('Apple')}>Continuar com Apple</SocialButton>
+      <SocialButton onClick={() => handleSocial('Google')}>
+        <GoogleIcon />
+        Continuar com Google
+      </SocialButton>
+      <SocialButton onClick={() => handleSocial('Apple')}>
+        <AppleIcon />
+        Continuar com Apple
+      </SocialButton>
 
       <div className="my-1 flex items-center gap-3 text-[12px] text-ink-faint">
         <span className="h-px flex-1 bg-line" />
@@ -62,7 +69,7 @@ export function SignUpScreen() {
         onChange={(e) => setPassword(e.target.value)}
       />
 
-      <p className="mt-1 text-[12px] leading-snug text-ink-faint">
+      <p className="mt-1 text-[12px] leading-normal text-ink-faint">
         Ao continuar, você concorda com os Termos de Uso e a Política de Privacidade do Lema.
       </p>
     </OnboardingScreen>

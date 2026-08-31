@@ -1,3 +1,4 @@
+import { Camera } from 'lucide-react'
 import { useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { GhostButton, PrimaryButton } from '../components/Buttons'
@@ -57,12 +58,12 @@ export function ProfileScreen() {
         <button
           type="button"
           onClick={() => fileInputRef.current?.click()}
-          className="flex h-20 w-20 items-center justify-center overflow-hidden rounded-full border border-line bg-surface-muted text-2xl text-ink-faint"
+          className="flex h-20 w-20 items-center justify-center overflow-hidden rounded-full border border-dashed border-line bg-mint-bg text-mint-fg"
         >
           {data.avatarDataUrl ? (
             <img src={data.avatarDataUrl} alt="Foto de perfil" className="h-full w-full object-cover" />
           ) : (
-            '+'
+            <Camera size={22} strokeWidth={2} />
           )}
         </button>
         <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={handleAvatarPick} />
@@ -84,7 +85,7 @@ export function ProfileScreen() {
         onChange={(e) => setDateFormat(e.target.value)}
       />
 
-      <p className="text-[12px] leading-snug text-ink-faint">
+      <p className="text-[12px] leading-normal text-ink-faint">
         Fuso horário, idioma e preferências ficam privados — apenas nome e foto aparecem para quem
         compartilha algo com você.
       </p>

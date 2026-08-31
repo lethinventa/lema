@@ -2,8 +2,11 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { PrimaryButton } from '../components/Buttons'
 import { OnboardingScreen } from '../components/OnboardingScreen'
+import { SuggestionChips } from '../components/SuggestionChips'
 import { TextField } from '../components/TextField'
 import { useOnboarding } from '../state/OnboardingContext'
+
+const NAME_SUGGESTIONS = ['Família Duarte', 'Casa 204', 'Nosso Lar']
 
 export function GroupCreateScreen() {
   const navigate = useNavigate()
@@ -33,6 +36,10 @@ export function GroupCreateScreen() {
         value={groupName}
         onChange={(e) => setGroupName(e.target.value)}
       />
+      <div>
+        <span className="mb-2 block text-[12px] font-medium text-ink-faint">Exemplos</span>
+        <SuggestionChips options={NAME_SUGGESTIONS} onPick={setGroupName} />
+      </div>
       <TextField
         label="Descrição (opcional)"
         placeholder="Ex.: Nossa casa e nossas contas"
@@ -40,7 +47,7 @@ export function GroupCreateScreen() {
         onChange={(e) => setDescription(e.target.value)}
       />
 
-      <div className="mt-2 rounded-md bg-accent-soft px-4 py-3 text-[13px] leading-snug text-accent">
+      <div className="mt-2 rounded-md bg-accent-soft px-4 py-3 text-[13px] leading-normal text-accent">
         Mais adiante vamos configurar rapidamente como o grupo organiza as finanças — isso é obrigatório
         antes de o grupo poder registrar despesas compartilhadas.
       </div>
