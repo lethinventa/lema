@@ -69,11 +69,21 @@ Domínio detalhado — casos de uso documentados individualmente em [`docs/use-c
 - [`UC-TASK-007`](tasks/UC-TASK-007-share-task.md) — Compartilhar tarefa
 - [`UC-TASK-008`](tasks/UC-TASK-008-create-group-task.md) — Criar tarefa de grupo
 
+### Calendário
+
+Domínio detalhado — casos de uso documentados individualmente em [`docs/use-cases/calendar/`](calendar/):
+
+- [`UC-CAL-001`](calendar/UC-CAL-001-create-event.md) — Criar compromisso
+- [`UC-CAL-002`](calendar/UC-CAL-002-update-event.md) — Atualizar compromisso
+- [`UC-CAL-003`](calendar/UC-CAL-003-delete-event.md) — Excluir compromisso
+- [`UC-CAL-004`](calendar/UC-CAL-004-invite-participant.md) — Convidar participante para compromisso
+- [`UC-CAL-005`](calendar/UC-CAL-005-share-event.md) — Compartilhar compromisso
+- [`UC-CAL-006`](calendar/UC-CAL-006-create-group-event.md) — Criar compromisso de grupo
+
 ### Outros domínios (ainda não detalhados)
 
 - `UC-FIN-001` — Registrar despesa manual
 - `UC-GOAL-001` — Criar objetivo
-- `UC-CAL-001` — Criar compromisso
 
 ## Futuros
 
