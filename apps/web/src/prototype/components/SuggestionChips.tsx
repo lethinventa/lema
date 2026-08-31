@@ -12,7 +12,7 @@ export function SuggestionChips({
           key={option}
           type="button"
           onClick={() => onPick(option)}
-          className="rounded-pill border border-line bg-surface px-3 py-1.5 text-[13px] font-medium text-ink-muted transition active:scale-95"
+          className="rounded-sm border border-line bg-surface px-3 py-1.5 text-[13px] font-medium text-ink-muted transition active:scale-95"
         >
           {option}
         </button>

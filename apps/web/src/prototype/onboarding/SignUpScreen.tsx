@@ -69,7 +69,7 @@ export function SignUpScreen() {
         onChange={(e) => setPassword(e.target.value)}
       />
 
-      <p className="mt-1 text-[12px] leading-snug text-ink-faint">
+      <p className="mt-1 text-[12px] leading-normal text-ink-faint">
         Ao continuar, você concorda com os Termos de Uso e a Política de Privacidade do Lema.
       </p>
     </OnboardingScreen>

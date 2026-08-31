@@ -1,37 +1,30 @@
 import { Calendar, CheckSquare, Users, Wallet } from 'lucide-react'
 
 /**
- * Abstract "life organized" composition for the entry screen: a stack of soft cards
- * representing the product's domains, layered with intentional depth and offset —
- * standing in for real photography/illustration, which the prototype doesn't have.
+ * Flat "life organized" summary card for the entry screen: a single card listing the
+ * product's domains — stands in for real photography/illustration, which the prototype
+ * doesn't have. Deliberately flat (no rotation/overlap/heavy shadow) to stay calm.
  */
 export function HeroIllustration() {
   return (
-    <div className="relative flex h-56 items-center justify-center rounded-xl bg-dark">
-      <div className="absolute h-24 w-24 -translate-x-16 -translate-y-8 rotate-[-8deg] rounded-lg bg-white/10" />
-      <div className="absolute h-24 w-24 translate-x-16 translate-y-10 rotate-[10deg] rounded-lg bg-accent/25" />
-
-      <div className="relative flex h-32 w-44 -rotate-3 flex-col justify-between rounded-lg bg-surface p-3 shadow-[0_20px_40px_rgba(0,0,0,0.35)]">
-        <div className="flex items-center justify-between">
-          <span className="flex h-7 w-7 items-center justify-center rounded-md bg-accent-soft text-accent">
-            <CheckSquare size={15} strokeWidth={2.2} />
-          </span>
-          <span className="flex h-7 w-7 items-center justify-center rounded-md bg-surface-muted text-ink-muted">
-            <Calendar size={15} strokeWidth={2.2} />
-          </span>
-        </div>
-        <div className="flex flex-col gap-1.5">
-          <span className="h-2 w-full rounded-pill bg-surface-muted" />
-          <span className="h-2 w-3/5 rounded-pill bg-surface-muted" />
-        </div>
-        <div className="flex items-center justify-between">
-          <span className="flex h-7 w-7 items-center justify-center rounded-md bg-surface-muted text-ink-muted">
-            <Wallet size={15} strokeWidth={2.2} />
-          </span>
-          <span className="flex h-7 w-7 items-center justify-center rounded-md bg-surface-muted text-ink-muted">
-            <Users size={15} strokeWidth={2.2} />
-          </span>
-        </div>
+    <div className="flex h-48 flex-col justify-between rounded-md bg-dark p-5">
+      <div className="flex items-center justify-between">
+        <span className="flex h-9 w-9 items-center justify-center rounded-sm bg-white/10 text-white">
+          <CheckSquare size={16} strokeWidth={2.2} />
+        </span>
+        <span className="flex h-9 w-9 items-center justify-center rounded-sm bg-white/10 text-white">
+          <Calendar size={16} strokeWidth={2.2} />
+        </span>
+        <span className="flex h-9 w-9 items-center justify-center rounded-sm bg-white/10 text-white">
+          <Wallet size={16} strokeWidth={2.2} />
+        </span>
+        <span className="flex h-9 w-9 items-center justify-center rounded-sm bg-white/10 text-white">
+          <Users size={16} strokeWidth={2.2} />
+        </span>
+      </div>
+      <div className="flex flex-col gap-2">
+        <span className="h-2 w-3/4 rounded-sm bg-white/15" />
+        <span className="h-2 w-1/2 rounded-sm bg-white/15" />
       </div>
     </div>
   )

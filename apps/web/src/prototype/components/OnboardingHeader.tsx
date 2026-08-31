@@ -13,7 +13,7 @@ export function OnboardingHeader({ progress, onBack, onSkip, skipLabel = 'Pular'
   const navigate = useNavigate()
 
   return (
-    <div className="px-5 pt-4">
+    <div className="px-6 pt-4">
       <div className="flex items-center gap-2">
         <button
           type="button"

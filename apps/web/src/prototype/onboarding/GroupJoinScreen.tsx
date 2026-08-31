@@ -50,11 +50,11 @@ export function GroupJoinScreen() {
       >
         <div className="rounded-lg border border-line bg-surface p-4">
           <span className="block text-[13px] font-medium text-ink-muted">Grupo</span>
-          <span className="mt-0.5 block text-[17px] font-semibold text-ink">{MOCK_INVITE.groupName}</span>
+          <span className="mt-0.5 block text-[17px] font-medium text-ink">{MOCK_INVITE.groupName}</span>
           <span className="mt-3 block text-[13px] font-medium text-ink-muted">Convidado por</span>
           <span className="mt-0.5 block text-[15px] text-ink">{MOCK_INVITE.inviterName}</span>
         </div>
-        <p className="text-[12px] leading-snug text-ink-faint">
+        <p className="text-[12px] leading-normal text-ink-faint">
           Ao aceitar, você passa a ver o conteúdo compartilhado desse grupo — seu conteúdo pessoal
           continua privado.
         </p>

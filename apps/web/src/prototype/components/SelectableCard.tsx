@@ -35,7 +35,7 @@ export function SelectableCard({ title, description, icon, tone = 'mint', select
         </span>
       ) : null}
       <span className="flex-1">
-        <span className="block text-[15px] font-semibold text-ink">{title}</span>
+        <span className="block text-[15px] font-medium text-ink">{title}</span>
         {description ? <span className="mt-0.5 block text-[13px] text-ink-muted">{description}</span> : null}
       </span>
       {selected ? (

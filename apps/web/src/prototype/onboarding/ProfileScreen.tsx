@@ -85,7 +85,7 @@ export function ProfileScreen() {
         onChange={(e) => setDateFormat(e.target.value)}
       />
 
-      <p className="text-[12px] leading-snug text-ink-faint">
+      <p className="text-[12px] leading-normal text-ink-faint">
         Fuso horário, idioma e preferências ficam privados — apenas nome e foto aparecem para quem
         compartilha algo com você.
       </p>

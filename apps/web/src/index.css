@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
 @theme {
-  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-sans: "Onest", ui-sans-serif, system-ui, sans-serif;
 
   --color-bg: #faf9f4;
   --color-surface: #ffffff;
@@ -24,10 +24,13 @@
   --color-sky-bg: #dde9f5;
   --color-sky-fg: #3f6fa6;
 
-  --radius-sm: 12px;
-  --radius-md: 18px;
-  --radius-lg: 24px;
-  --radius-xl: 30px;
+  /* Single consistent control radius (14–16px) per design direction — avoid a large
+     hierarchy of radii and avoid pill shapes on buttons/cards/chips. --radius-pill is
+     kept only for genuinely circular elements (avatars) and the hairline progress track. */
+  --radius-sm: 14px;
+  --radius-md: 16px;
+  --radius-lg: 16px;
+  --radius-xl: 16px;
   --radius-pill: 999px;
 }
 

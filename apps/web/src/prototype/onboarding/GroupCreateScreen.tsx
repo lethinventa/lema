@@ -47,7 +47,7 @@ export function GroupCreateScreen() {
         onChange={(e) => setDescription(e.target.value)}
       />
 
-      <div className="mt-2 rounded-md bg-accent-soft px-4 py-3 text-[13px] leading-snug text-accent">
+      <div className="mt-2 rounded-md bg-accent-soft px-4 py-3 text-[13px] leading-normal text-accent">
         Mais adiante vamos configurar rapidamente como o grupo organiza as finanças — isso é obrigatório
         antes de o grupo poder registrar despesas compartilhadas.
       </div>
