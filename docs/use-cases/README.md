@@ -105,6 +105,8 @@ Domínio detalhado — casos de uso documentados individualmente em [`docs/use-c
 - [`UC-FIN-006`](finance/UC-FIN-006-create-account.md) — Criar conta
 - [`UC-FIN-007`](finance/UC-FIN-007-create-budget.md) — Criar orçamento
 - [`UC-FIN-008`](finance/UC-FIN-008-view-consolidated-finances.md) — Visualizar visão consolidada de finanças
+- [`UC-FIN-009`](finance/UC-FIN-009-configure-group-financial-arrangement.md) — Configurar acordo financeiro do grupo
+- [`UC-FIN-010`](finance/UC-FIN-010-update-group-financial-arrangement.md) — Atualizar acordo financeiro do grupo
 
 ## Futuros
 

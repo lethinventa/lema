@@ -11,7 +11,7 @@ Permitir que um membro registre uma transação que pertence ao grupo, e não a 
 ## Pré-condições
 
 - Usuário é membro ativo de um grupo.
-- O grupo definiu o mínimo exigido pelo onboarding financeiro antes de registrar transações compartilhadas: regra padrão de divisão, existência ou não de dinheiro comum, e nível básico de transparência (ver `docs/product/decisions/PD-006-financial-organization-model.md` e `GroupFinancialArrangement` em `domain-model.md`). Sem esse mínimo, a divisão precisa ser informada manualmente a cada transação.
+- Idealmente, o grupo já concluiu o mínimo exigido pelo onboarding financeiro (`UC-FIN-009`): regra padrão de divisão, existência ou não de dinheiro comum, e nível básico de transparência. Essa pré-condição não é bloqueante — sem ela, a divisão precisa ser informada manualmente a cada transação (ver Fluxo principal).
 
 ## Gatilho
 
@@ -44,7 +44,7 @@ Membro decide registrar uma transação pertencente ao grupo, em vez de pessoal.
 
 ## Relações com outros módulos
 
-Aplica `UC-PERM-003`. Relaciona-se com `UC-GROUP-004` (Remover membro), `UC-GROUP-005` (Sair do grupo) e `UC-FIN-006` (conta de grupo, ex.: "conta da casa"). Depende conceitualmente do `GroupFinancialArrangement` do grupo, cuja configuração (onboarding financeiro do grupo) ainda não tem caso de uso próprio documentado.
+Aplica `UC-PERM-003`. Relaciona-se com `UC-GROUP-004` (Remover membro), `UC-GROUP-005` (Sair do grupo) e `UC-FIN-006` (conta de grupo, ex.: "conta da casa"). Depende do `GroupFinancialArrangement` do grupo, configurado por `UC-FIN-009` (onboarding financeiro do grupo) e refinado por `UC-FIN-010`.
 
 ## Critérios de aceite
 
@@ -55,4 +55,4 @@ Aplica `UC-PERM-003`. Relaciona-se com `UC-GROUP-004` (Remover membro), `UC-GROU
 
 ## Questões em aberto
 
-- Este caso de uso pressupõe um `GroupFinancialArrangement` já configurado, ou uma versão mínima dele. A configuração desse acordo (onboarding financeiro do grupo) ainda não tem caso de uso próprio — precisará ser documentada antes deste domínio ser considerado completo.
+Nenhuma questão em aberto identificada neste momento (ver `UC-FIN-009` quanto à governança do `GroupFinancialArrangement`).
