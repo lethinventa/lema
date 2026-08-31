@@ -11,7 +11,7 @@ Permitir que um membro registre uma transação que pertence ao grupo, e não a 
 ## Pré-condições
 
 - Usuário é membro ativo de um grupo.
-- Idealmente, o grupo já concluiu o mínimo exigido pelo onboarding financeiro (`UC-FIN-009`): regra padrão de divisão, existência ou não de dinheiro comum, e nível básico de transparência. Essa pré-condição não é bloqueante — sem ela, a divisão precisa ser informada manualmente a cada transação (ver Fluxo principal).
+- O grupo já possui um `GroupFinancialArrangement` com o mínimo obrigatório definido, já que esse onboarding é parte da própria criação do grupo (ver `UC-FIN-009` e `UC-GROUP-001`).
 
 ## Gatilho
 
@@ -21,14 +21,14 @@ Membro decide registrar uma transação pertencente ao grupo, em vez de pessoal.
 
 1. Membro registra a transação, informando quem pagou (pagador) e, se aplicável, de qual conta o valor saiu.
 2. Membro define seu contexto como o grupo, conforme `UC-PERM-003`.
-3. Sistema resolve a `SplitRule` aplicável, na ordem: regra definida na própria transação → exceção do `GroupFinancialArrangement` para a categoria/conta/tipo de despesa → regra padrão do grupo. Se nada estiver configurado, o membro informa a divisão manualmente.
+3. Sistema resolve a `SplitRule` aplicável, na ordem: regra definida na própria transação → exceção do `GroupFinancialArrangement` para a categoria/conta/tipo de despesa → regra padrão do grupo. Como todo grupo sai da criação com uma regra padrão definida (ver `UC-FIN-009`), o fallback de informar a divisão manualmente por falta de qualquer configuração (ver `PD-006-financial-organization-model.md`) não se aplica a transações `GROUP` na prática — só a transações `SHARED` fora do contexto de um grupo (ver `UC-FIN-004`).
 4. Transação é criada com `owner = Group` e `createdBy` igual ao usuário que a registrou.
 
 ## Variações
 
 - Pagador diferente de quem registra a transação (ex.: Lethicia registra uma compra que Mateus pagou).
 - Responsável econômico diferente do pagador (ex.: Mateus paga, mas a responsabilidade é só de Lethicia — sem reembolso aplicável).
-- Grupo sem `GroupFinancialArrangement` configurado: divisão é sempre informada manualmente nessa transação.
+- Membro sobrepõe a regra padrão do grupo diretamente na transação: válido, tem prioridade máxima na resolução da `SplitRule`.
 
 ## Regras de negócio
 

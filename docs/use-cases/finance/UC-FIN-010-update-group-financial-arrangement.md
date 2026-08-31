@@ -33,6 +33,7 @@ Membro decide ajustar como o grupo organiza suas finanças compartilhadas.
 - Alterar o `GroupFinancialArrangement` não é retroativo: transações já registradas mantêm a `SplitRule` que tinham no momento do registro (ver `UC-FIN-002`).
 - A ordem de resolução de `SplitRule` (regra da transação → exceção do grupo → padrão do grupo → informar manualmente) permanece a mesma definida em `PD-006-financial-organization-model.md`, independentemente de quantas exceções existirem.
 - Este caso de uso cobre exatamente as configurações que `UC-FIN-009` deixou de fora do mínimo obrigatório, além de permitir revisar as que já foram definidas ali.
+- Toda alteração ao `GroupFinancialArrangement` fica registrada em um histórico: o que mudou, quem alterou e quando. Esse histórico existe justamente para permitir entender, mais tarde, sob qual regra uma transação passada foi resolvida.
 
 ## Visibilidade
 
@@ -46,7 +47,8 @@ Depende de `UC-FIN-009` (configuração mínima inicial já existente). Relacion
 
 - Alterações no acordo financeiro do grupo não alteram a `SplitRule` de transações já registradas.
 - Uma exceção por categoria, conta ou tipo de despesa tem prioridade sobre a regra padrão do grupo nas próximas transações.
+- Toda alteração fica registrada em um histórico, incluindo autor e momento da mudança.
 
 ## Questões em aberto
 
-- Existe histórico de mudanças no acordo financeiro do grupo (auditoria), dado que ele afeta a interpretação de transações passadas em caso de dúvida ou disputa entre membros?
+Nenhuma questão em aberto identificada neste momento.
