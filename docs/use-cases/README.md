@@ -79,6 +79,7 @@ Domínio detalhado — casos de uso documentados individualmente em [`docs/use-c
 - [`UC-CAL-004`](calendar/UC-CAL-004-invite-participant.md) — Convidar participante para compromisso
 - [`UC-CAL-005`](calendar/UC-CAL-005-share-event.md) — Compartilhar compromisso
 - [`UC-CAL-006`](calendar/UC-CAL-006-create-group-event.md) — Criar compromisso de grupo
+- [`UC-CAL-007`](calendar/UC-CAL-007-create-recurring-event.md) — Criar compromisso recorrente
 
 ### Outros domínios (ainda não detalhados)
 

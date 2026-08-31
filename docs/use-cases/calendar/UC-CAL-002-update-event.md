@@ -6,7 +6,7 @@ Permitir editar os dados de um compromisso existente (ex.: título, data, horár
 
 ## Ator
 
-- Ator principal: proprietário do compromisso (`PRIVATE`/`SHARED`) ou membro do grupo (`GROUP`) — ver Questões em aberto quanto a `GROUP`.
+- Ator principal: proprietário do compromisso (`PRIVATE`/`SHARED`) ou qualquer membro do grupo, independentemente do papel (`GROUP`).
 
 ## Pré-condições
 
@@ -27,13 +27,14 @@ Ator decide alterar dados de um compromisso.
 
 - Alterar participantes do compromisso: tratado por `UC-CAL-004`, não por este caso de uso.
 - Alterar a visibilidade do compromisso: tratado por `UC-PERM-004`, não por este caso de uso.
-- Compromisso já ocorreu (data no passado): pode ainda ser editado (ver Questões em aberto).
+- Compromisso já ocorreu (data no passado): pode ser editado normalmente, sem bloqueio.
 
 ## Regras de negócio
 
 - Atualizar um compromisso não altera seu `owner` nem `createdBy`.
 - Para compromissos `SHARED`, tanto o proprietário quanto as pessoas em `sharedWith` podem editar, conforme `permissions.md`.
-- Para compromissos `GROUP`, quem pode editar ainda não está definido (ver Questões em aberto).
+- Para compromissos `GROUP`, qualquer membro do grupo pode editar, independentemente de seu papel (`OWNER` ou `MEMBER`) — mesma regra adotada para tarefas (`UC-TASK-002`).
+- Editar um compromisso com data no passado é permitido; não há bloqueio por esse motivo.
 
 ## Visibilidade
 
@@ -49,5 +50,4 @@ Relaciona-se com `UC-PERM-004` (mudança de visibilidade) e `UC-CAL-004` (partic
 
 ## Questões em aberto
 
-- Quem pode editar um compromisso `GROUP` — qualquer membro do grupo, apenas quem o criou (`createdBy`), ou apenas um `OWNER` do grupo? (a decisão equivalente para tarefas foi que qualquer membro pode editar uma tarefa `GROUP` — ver `UC-TASK-002` — mas essa decisão não foi tomada especificamente para compromissos)
-- É possível editar um compromisso cuja data já passou?
+Nenhuma questão em aberto identificada neste momento.

@@ -29,6 +29,7 @@ Membro decide criar um compromisso pertencente ao grupo, em vez de pessoal.
 ## Regras de negócio
 
 - Seguem-se as mesmas regras de `UC-PERM-003`: qualquer `MEMBER` pode criar; `owner = Group`; `createdBy = User`.
+- Qualquer membro do grupo pode editar ou excluir um compromisso `GROUP`, independentemente de seu papel (`OWNER` ou `MEMBER`) — ver `UC-CAL-002` e `UC-CAL-003`.
 - Os participantes de um compromisso `GROUP` devem ser membros ativos do grupo no momento do convite (ver `UC-CAL-004`).
 - O compromisso continua pertencendo ao grupo mesmo que o criador (`createdBy`) deixe de ser membro (ver `docs/product/decisions/PD-002-resource-ownership.md`, `UC-GROUP-004` e `UC-GROUP-005`).
 - Se um participante deixar de ser membro do grupo, ele é removido automaticamente da lista de participantes (ver `UC-CAL-004`).
@@ -48,4 +49,4 @@ Aplica `UC-PERM-003`. Relaciona-se com `UC-CAL-004` (participantes), `UC-GROUP-0
 
 ## Questões em aberto
 
-- Quem pode editar ou excluir um compromisso `GROUP` — qualquer membro, apenas quem o criou, ou apenas um `OWNER` do grupo? (ver `UC-CAL-002` e `UC-CAL-003`)
+Nenhuma questão em aberto identificada neste momento.

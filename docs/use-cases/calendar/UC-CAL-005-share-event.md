@@ -42,7 +42,7 @@ Proprietário decide compartilhar o compromisso com pessoas específicas.
 
 ## Relações com outros módulos
 
-Aplica `UC-PERM-002`. Relaciona-se com `UC-PERM-004` (transições de visibilidade) e `UC-CAL-004` (participantes).
+Aplica `UC-PERM-002`. Relaciona-se com `UC-PERM-004` (transições de visibilidade) e `UC-CAL-004` (participantes) — este caso de uso cobre o compartilhamento explícito, sem necessariamente tornar a pessoa uma participante; `UC-CAL-004` cobre o caminho inverso, em que convidar um participante compartilha o compromisso como efeito colateral.
 
 ## Critérios de aceite
 
