@@ -56,10 +56,22 @@ Domínio detalhado — casos de uso documentados individualmente em [`docs/use-c
 - [`UC-PERM-004`](groups/UC-PERM-004-change-resource-visibility.md) — Alterar visibilidade de recurso
 - [`UC-PERM-005`](groups/UC-PERM-005-revoke-resource-access.md) — Revogar acesso a recurso
 
+### Tarefas
+
+Domínio detalhado — casos de uso documentados individualmente em [`docs/use-cases/tasks/`](tasks/):
+
+- [`UC-TASK-001`](tasks/UC-TASK-001-create-task.md) — Criar tarefa
+- [`UC-TASK-002`](tasks/UC-TASK-002-update-task.md) — Atualizar tarefa
+- [`UC-TASK-003`](tasks/UC-TASK-003-complete-task.md) — Concluir tarefa
+- [`UC-TASK-004`](tasks/UC-TASK-004-delete-task.md) — Excluir tarefa
+- [`UC-TASK-005`](tasks/UC-TASK-005-assign-task.md) — Atribuir tarefa
+- [`UC-TASK-006`](tasks/UC-TASK-006-create-recurring-task.md) — Criar tarefa recorrente
+- [`UC-TASK-007`](tasks/UC-TASK-007-share-task.md) — Compartilhar tarefa
+- [`UC-TASK-008`](tasks/UC-TASK-008-create-group-task.md) — Criar tarefa de grupo
+
 ### Outros domínios (ainda não detalhados)
 
 - `UC-FIN-001` — Registrar despesa manual
-- `UC-TASK-001` — Criar tarefa
 - `UC-GOAL-001` — Criar objetivo
 - `UC-CAL-001` — Criar compromisso
 
