@@ -81,10 +81,21 @@ Domínio detalhado — casos de uso documentados individualmente em [`docs/use-c
 - [`UC-CAL-006`](calendar/UC-CAL-006-create-group-event.md) — Criar compromisso de grupo
 - [`UC-CAL-007`](calendar/UC-CAL-007-create-recurring-event.md) — Criar compromisso recorrente
 
+### Objetivos
+
+Domínio detalhado — casos de uso documentados individualmente em [`docs/use-cases/goals/`](goals/):
+
+- [`UC-GOAL-001`](goals/UC-GOAL-001-create-goal.md) — Criar objetivo
+- [`UC-GOAL-002`](goals/UC-GOAL-002-update-goal.md) — Atualizar objetivo
+- [`UC-GOAL-003`](goals/UC-GOAL-003-complete-goal.md) — Concluir objetivo
+- [`UC-GOAL-004`](goals/UC-GOAL-004-delete-goal.md) — Excluir objetivo
+- [`UC-GOAL-005`](goals/UC-GOAL-005-share-goal.md) — Compartilhar objetivo
+- [`UC-GOAL-006`](goals/UC-GOAL-006-create-group-goal.md) — Criar objetivo de grupo
+- [`UC-GOAL-007`](goals/UC-GOAL-007-relate-goal-to-resource.md) — Relacionar objetivo a outros recursos
+
 ### Outros domínios (ainda não detalhados)
 
 - `UC-FIN-001` — Registrar despesa manual
-- `UC-GOAL-001` — Criar objetivo
 
 ## Futuros
 
