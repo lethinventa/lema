@@ -1,0 +1,57 @@
+# UC-FIN-001 — Registrar despesa manual
+
+## Objetivo
+
+Permitir que um usuário registre manualmente uma movimentação financeira, podendo ser pessoal, compartilhada com pessoas específicas ou pertencente a um grupo.
+
+## Ator
+
+- Ator principal: usuário autenticado.
+
+## Pré-condições
+
+- Usuário possui uma conta ativa no Lema.
+- Se a transação for criada como `GROUP`, o usuário é membro ativo do grupo (ver `UC-PERM-003`).
+
+## Gatilho
+
+Usuário decide registrar uma movimentação financeira que ocorreu.
+
+## Fluxo principal
+
+1. Usuário informa os dados da transação (ex.: valor, data, categoria, tipo).
+2. Usuário associa a transação a uma conta existente, se aplicável (ver `UC-FIN-006`).
+3. Usuário define a visibilidade da transação — `PRIVATE`, `SHARED` ou `GROUP` — conforme `UC-PERM-001`, `UC-PERM-002` ou `UC-PERM-003`.
+4. Sistema cria a transação com `owner` e `createdBy` definidos conforme a visibilidade escolhida.
+
+## Variações
+
+- Transação do tipo receita, em vez de despesa: mesmo fluxo, apenas com o tipo diferente (ver Questões em aberto quanto ao escopo do MVP).
+- Transação sem conta associada: válido (ver Questões em aberto).
+- Transação sem categoria definida: válido.
+
+## Regras de negócio
+
+- Toda transação possui um `owner` (`User` para `PRIVATE`/`SHARED`, `Group` para `GROUP`) e um `createdBy`, conforme `permissions.md` e `docs/product/decisions/PD-002-resource-ownership.md`.
+- Uma transação possui um valor e uma data associados.
+- Criar uma transação `GROUP` exige que o usuário seja membro ativo do grupo no momento do registro.
+- A detecção e sugestão automática de lançamentos a partir de notificações bancárias é uma visão futura registrada em `docs/product/roadmap.md`, fora do escopo deste caso de uso — aqui o registro é sempre manual.
+
+## Visibilidade
+
+Uma transação pode ser `PRIVATE`, `SHARED` ou `GROUP`, seguindo exatamente as regras já definidas em `permissions.md`, `UC-PERM-001`, `UC-PERM-002` e `UC-PERM-003`. Este caso de uso não redefine essas regras.
+
+## Relações com outros módulos
+
+Depende de `UC-PERM-001`, `UC-PERM-002` e `UC-PERM-003` para a mecânica de visibilidade. Relaciona-se com `UC-FIN-006` (conta associada), `UC-FIN-007` (orçamento) e `UC-GOAL-007` (relação com objetivos).
+
+## Critérios de aceite
+
+- Transação criada é visível para quem tem acesso, conforme sua visibilidade.
+- Transação possui valor e data associados.
+
+## Questões em aberto
+
+- Registrar receitas faz parte do escopo de "finanças básicas" do MVP, ou o MVP cobre apenas despesas?
+- Associar uma transação a uma conta (`Account`) é obrigatório ou opcional?
+- As categorias de transação seguem uma lista fixa predefinida, ou são texto livre (como decidido para categoria de objetivos em `UC-GOAL-001`)?

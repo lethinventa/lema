@@ -2,7 +2,7 @@
 
 ## Objetivo
 
-Permitir associar um objetivo a outros recursos do sistema (Tasks, Events, Documents e, futuramente, Transactions e Budgets), materializando o diferencial do Lema de conectar informações entre áreas diferentes, conforme a seção "Relações" de `domain-model.md` e o princípio 5 de `principles.md` ("Informações de áreas diferentes devem poder se relacionar").
+Permitir associar um objetivo a outros recursos do sistema (Tasks, Events, Documents, Transactions e Budgets), materializando o diferencial do Lema de conectar informações entre áreas diferentes, conforme a seção "Relações" de `domain-model.md` e o princípio 5 de `principles.md` ("Informações de áreas diferentes devem poder se relacionar").
 
 ## Ator
 
@@ -28,7 +28,7 @@ Ator decide conectar um objetivo a outro recurso existente.
 
 - Relacionar múltiplos recursos ao mesmo objetivo: permitido, conforme os exemplos de `domain-model.md` (`Goal → Tasks, Transactions, Events, Documents`).
 - Remover uma relação existente: o objetivo e o recurso continuam existindo, apenas deixam de estar conectados.
-- Relacionar a um recurso de Finanças (`Transaction`, `Budget`): esses domínios ainda não têm casos de uso próprios detalhados (ver Questões em aberto).
+- Relacionar a uma `Transaction` ou a um `Budget` (ver `UC-FIN-001` e `UC-FIN-007`): segue o mesmo mecanismo genérico deste caso de uso, sem regras adicionais. Um `Budget` relacionado a um objetivo é o mecanismo por trás do campo "objetivo relacionado" descrito em `UC-FIN-007`.
 
 ## Regras de negócio
 
@@ -45,7 +45,7 @@ A relação em si não possui visibilidade própria; cada recurso relacionado ma
 
 ## Relações com outros módulos
 
-Relaciona-se com `UC-TASK-*` e `UC-CAL-*` como possíveis recursos conectados a um objetivo. Ainda não se relaciona com casos de uso de Finanças ou Documentos, que não foram detalhados neste momento.
+Relaciona-se com `UC-TASK-*`, `UC-CAL-*` e `UC-FIN-*` como possíveis recursos conectados a um objetivo. Ainda não se relaciona com casos de uso de Documentos, que não foram detalhados neste momento.
 
 ## Critérios de aceite
 
@@ -54,4 +54,4 @@ Relaciona-se com `UC-TASK-*` e `UC-CAL-*` como possíveis recursos conectados a 
 
 ## Questões em aberto
 
-- Como essa relação deve se comportar quando os recursos de Finanças (`Transaction`, `Budget`) forem detalhados em casos de uso próprios?
+Nenhuma questão em aberto identificada neste momento.

@@ -93,9 +93,18 @@ Domínio detalhado — casos de uso documentados individualmente em [`docs/use-c
 - [`UC-GOAL-006`](goals/UC-GOAL-006-create-group-goal.md) — Criar objetivo de grupo
 - [`UC-GOAL-007`](goals/UC-GOAL-007-relate-goal-to-resource.md) — Relacionar objetivo a outros recursos
 
-### Outros domínios (ainda não detalhados)
+### Finanças
 
-- `UC-FIN-001` — Registrar despesa manual
+Domínio detalhado — casos de uso documentados individualmente em [`docs/use-cases/finance/`](finance/):
+
+- [`UC-FIN-001`](finance/UC-FIN-001-record-expense.md) — Registrar despesa manual
+- [`UC-FIN-002`](finance/UC-FIN-002-update-transaction.md) — Atualizar transação
+- [`UC-FIN-003`](finance/UC-FIN-003-delete-transaction.md) — Excluir transação
+- [`UC-FIN-004`](finance/UC-FIN-004-share-transaction.md) — Compartilhar transação
+- [`UC-FIN-005`](finance/UC-FIN-005-create-group-transaction.md) — Registrar transação de grupo
+- [`UC-FIN-006`](finance/UC-FIN-006-create-account.md) — Criar conta
+- [`UC-FIN-007`](finance/UC-FIN-007-create-budget.md) — Criar orçamento
+- [`UC-FIN-008`](finance/UC-FIN-008-view-consolidated-finances.md) — Visualizar visão consolidada de finanças
 
 ## Futuros
 

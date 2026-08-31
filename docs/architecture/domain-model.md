@@ -81,15 +81,36 @@ Objetivo pessoal ou compartilhado. Pode se relacionar com:
 
 ### Transaction
 
-Movimentação financeira.
+Movimentação financeira. Pode possuir:
+
+- valor;
+- tipo (receita ou despesa);
+- data;
+- conta associada (`Account`);
+- categoria;
+- contexto;
+- visibilidade.
 
 ### Account
 
-Origem ou destino financeiro.
+Origem ou destino financeiro (ex.: conta corrente, cartão de crédito, dinheiro). Pode possuir:
+
+- nome;
+- tipo;
+- contexto;
+- visibilidade.
 
 ### Budget
 
-Planejamento financeiro relacionado a período, categoria ou objetivo.
+Planejamento financeiro relacionado a período, categoria ou objetivo. Pode possuir:
+
+- valor-limite;
+- período;
+- categoria ou objetivo relacionado (`Goal`);
+- contexto;
+- visibilidade.
+
+Este é o escopo básico do MVP (registrar um planejamento). Acompanhamento automático de gastos, alertas de estouro e orçamentos mais avançados estão previstos apenas para V2, conforme `docs/product/roadmap.md`. Despesas recorrentes e lançamentos sugeridos a partir de notificações bancárias também são V2.
 
 ### List
 
