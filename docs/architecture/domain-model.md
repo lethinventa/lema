@@ -6,7 +6,14 @@
 
 ### User
 
-Representa uma pessoa dentro do Lema.
+Representa uma pessoa dentro do Lema. Pode possuir:
+
+- nome;
+- e-mail (usado como identidade para autenticação, ver `UC-AUTH-*`);
+- foto;
+- credencial de acesso (ex.: senha), tratada como um dado sensível, nunca exposto a outros usuários ou grupos.
+
+Um `User` existe independentemente de participar de algum `Group` — toda a organização pessoal do Lema (recursos `PRIVATE`) depende apenas do `User`, não de nenhum grupo.
 
 ### Group
 
