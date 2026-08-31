@@ -91,24 +91,65 @@ O modelo financeiro precisa estar preparado conceitualmente para suportar, no fu
 
 Não construir um motor de regras agora — apenas documentar que o modelo precisa comportar essa evolução sem exigir redesenho estrutural.
 
+### Três conceitos distintos e estruturais
+
+O modelo financeiro depende de três conceitos que não devem ser confundidos entre si:
+
+- **Configuração financeira pessoal** (`FinancialProfile`) — como um `User` organiza suas próprias finanças, e o que expõe delas para cada grupo do qual participa.
+- **Acordo financeiro do grupo** (`GroupFinancialArrangement`) — como um `Group` organiza suas finanças compartilhadas: regra padrão de divisão, exceções a ela, existência ou não de dinheiro comum, e nível de transparência.
+- **Regra de divisão da transação** (`SplitRule`) — como o valor de uma transação específica é dividido entre responsáveis. Pode vir do acordo financeiro do grupo (padrão ou exceção) ou ser definida diretamente na transação, sobrepondo o acordo do grupo.
+
+### Acordo financeiro do grupo: padrão e exceções
+
+Um `GroupFinancialArrangement` define uma `SplitRule` padrão (ex.: 50/50) e pode definir exceções a essa regra por categoria, conta ou tipo de despesa. Exemplo: padrão 50/50, mas aluguel 70/30 e internet de responsabilidade de uma única pessoa.
+
+### Resolução da regra de divisão de uma transação GROUP
+
+Quando uma transação `GROUP` é registrada, a `SplitRule` aplicada é resolvida nesta ordem:
+
+1. Regra definida diretamente na transação, se houver.
+2. Exceção configurada no `GroupFinancialArrangement` para a categoria, conta ou tipo de despesa da transação, se houver.
+3. Regra padrão do `GroupFinancialArrangement`, se houver.
+4. Se o grupo não tiver nenhuma `SplitRule` configurada (nem padrão, nem exceção), a divisão precisa ser informada manualmente no momento do lançamento — o sistema não presume uma divisão na ausência total de configuração.
+
+### Compensações e reembolsos: saldo corrente
+
+A visão principal de valores a compensar entre pessoas é um saldo corrente par a par (ex.: "Mateus tem R$ 320 a receber de Lethicia"), derivado das transações `GROUP` e de suas `SplitRules`. O usuário deve conseguir ver quais transações compõem esse saldo — ele é sempre rastreável até as transações de origem, nunca um número solto. Fechamentos periódicos (ex.: mensais) são uma possibilidade futura, fora do escopo deste modelo agora.
+
+### Visibilidade da despesa vs. visibilidade da divisão financeira
+
+A visibilidade de uma despesa (`PRIVATE`/`SHARED`/`GROUP`, já definida em `permissions.md`) e a visibilidade dos detalhes da divisão financeira (quem deve quanto a quem) são conceitos diferentes. Uma despesa `GROUP` pode ser visível para todo o grupo, enquanto os detalhes de quem deve quanto a quem ficam restritos apenas às pessoas diretamente envolvidas na divisão, conforme o nível de transparência configurado no `GroupFinancialArrangement`.
+
+### Exposição de informações pessoais é independente de PRIVATE/SHARED/GROUP
+
+Informações como renda, saldo, limite de cartão e extrato pessoal não seguem o modelo `PRIVATE`/`SHARED`/`GROUP` usado pelos demais recursos — são controladas por uma configuração de exposição própria, dentro do `FinancialProfile`, independente por grupo. O sistema pode usar um dado pessoal para calcular uma regra sem necessariamente expô-lo aos demais — por exemplo, calcular uma divisão proporcional à renda sem revelar os valores absolutos de renda de cada pessoa.
+
+### Onboarding financeiro progressivo
+
+O onboarding financeiro é progressivo: o usuário pode adiar configurações avançadas. Antes de usar finanças compartilhadas, porém, o grupo precisa definir um mínimo:
+
+- regra padrão de divisão;
+- existência ou não de dinheiro comum;
+- nível básico de transparência financeira.
+
+As demais configurações (exceções por categoria/conta/tipo, metas financeiras etc.) podem ser feitas posteriormente.
+
+### Múltiplos grupos financeiros
+
+Cada grupo possui sua própria configuração financeira (`GroupFinancialArrangement`), independente das demais. Um mesmo usuário pode participar de vários grupos com regras diferentes. Uma conta pessoal (`Account`) pode ser usada para pagar despesas de diferentes grupos sem que esses grupos tenham acesso aos dados completos dessa conta — reforça a independência já registrada entre a visibilidade de `Transaction` e a visibilidade de `Account`.
+
 ## Motivo
 
 Impor um único modelo financeiro contradiria princípios já estabelecidos em `principles.md`: privacidade deve ser estrutural (#1), pessoal e compartilhado convivem no mesmo sistema (#2), compartilhar não deve significar duplicar informação (#3), e o usuário deve sempre entender claramente quem pode visualizar determinada informação (#10). Finanças são a área mais sensível do produto em termos de privacidade e de expectativa de controle — um modelo rígido de divisão ou de visibilidade forçaria famílias a se adaptar ao Lema, em vez do contrário.
 
 ## Consequências
 
-- `domain-model.md` precisa distinguir, na entidade `Transaction`, pagador, responsável econômico e regra de divisão, além dos atributos já registrados (`owner`, `createdBy`, conta associada, categoria, visibilidade).
-- `domain-model.md` precisa registrar dois novos conceitos: a configuração financeira pessoal de um usuário e o acordo financeiro de um grupo.
-- `permissions.md` precisa registrar explicitamente que a visibilidade de uma `Transaction` não implica a visibilidade da `Account` referenciada por ela.
+- `domain-model.md` precisa distinguir, na entidade `Transaction`, pagador, responsável econômico e `SplitRule`, além dos atributos já registrados (`owner`, `createdBy`, conta associada, categoria, visibilidade).
+- `domain-model.md` precisa registrar três novos conceitos: `FinancialProfile` (configuração financeira pessoal), `GroupFinancialArrangement` (acordo financeiro do grupo) e `SplitRule` (regra de divisão da transação), além do saldo corrente entre membros como visão computada.
+- `permissions.md` precisa registrar explicitamente que a visibilidade de uma `Transaction` não implica a visibilidade da `Account` referenciada por ela, que a visibilidade da despesa é distinta da visibilidade da divisão financeira, e que a exposição de dados pessoais financeiros é independente de `PRIVATE`/`SHARED`/`GROUP`.
 - Os `UC-FIN-*` já documentados (`UC-FIN-001` a `UC-FIN-008`) foram escritos antes desta decisão e usam o modelo genérico de `owner`/`createdBy`, sem distinguir pagador, responsabilidade ou regra de divisão. Eles precisarão ser revisados à luz deste PD antes de o domínio de finanças ser considerado estável — essa revisão fica deliberadamente fora do escopo deste momento, a pedido explícito.
 - Novos casos de uso financeiros (divisão de despesa, reembolso, configuração do acordo financeiro do grupo, onboarding financeiro) só devem ser escritos depois que as questões futuras abaixo forem suficientemente resolvidas.
 
 ## Questões futuras
 
-- Como a "configuração financeira do grupo" deve ser estruturada — um único conjunto de regras por grupo, versionável ao longo do tempo, ou regras independentes por categoria/conta/tipo de despesa desde o início?
-- Quando uma transação `GROUP` não tem regra de divisão explícita, o sistema aplica um padrão definido no acordo financeiro do grupo, ou exige que a divisão seja sempre explícita?
-- Como o "valor a compensar/reembolsar" deve ser exposto ao usuário — um saldo corrente entre duas pessoas, por transação, ou por período (ex.: fechamento mensal)?
-- Quem pode ver que uma pessoa é "responsável economicamente" por uma despesa `GROUP` — todo o grupo, ou apenas as pessoas diretamente envolvidas na divisão?
-- Como o nível de exposição das informações pessoais (ex.: renda) se relaciona com `PRIVATE`/`SHARED`/`GROUP` já existentes — é uma configuração adicional dentro da configuração financeira pessoal, ou um quarto nível de visibilidade?
-- O onboarding financeiro (pessoal e de grupo) é obrigatório para começar a usar o Lema, ou pode ser adiado/pulado?
-- Como conciliar múltiplos grupos financeiros por usuário (ex.: família e uma república), cada um com configurações e níveis de exposição diferentes?
+Nenhuma questão em aberto identificada neste momento.

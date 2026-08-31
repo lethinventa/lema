@@ -34,21 +34,40 @@ Diferentes submetas do mesmo objetivo podem ter regras financeiras completamente
 
 Objetivos podem funcionar como hubs leves que conectam finanças, tarefas, eventos e outros recursos relacionados a uma mesma intenção de vida. Eles não devem virar um gerenciador de projetos detalhado — ver `docs/product/principles.md`, princípio 13.
 
+### GoalAllocation como entidade própria
+
+`RESERVED` e `COMMITTED` são representados por uma nova entidade conceitual, `GoalAllocation`: um valor associado a um `Goal` (ou submeta), com um estado (`RESERVED`, `COMMITTED` ou `PAID`) e, quando `PAID`, uma referência à `Transaction` correspondente. `RESERVED` e `COMMITTED` não têm `Transaction` associada, porque representam dinheiro que ainda não se moveu. Não são uma extensão de `Budget` (que representa um teto de gasto) nem de `Transaction` (que representa movimentação já ocorrida) — são um conceito de planejamento à parte.
+
+### Submetas têm um único nível
+
+Uma submeta não pode ter suas próprias submetas. A hierarquia de objetivos é limitada a dois níveis (objetivo → submetas), para preservar o princípio de "hub leve" e evitar que `Goal` vire uma árvore de projeto arbitrariamente profunda.
+
+### Progresso do objetivo com submetas é agregado, não manual
+
+Quando um objetivo possui submetas, seu progresso deixa de ser editado manualmente e passa a ser calculado automaticamente como a média do progresso de suas submetas. Um objetivo sem submetas continua podendo ter progresso manual ou inferido a partir de recursos relacionados, como já definido em `UC-GOAL-001`.
+
+### COMMITTED não exige documento externo
+
+Referenciar um `Document` (ex.: um contrato) em uma `GoalAllocation` no estado `COMMITTED` é opcional, não obrigatório. O valor comprometido pode ser apenas um número registrado pelo usuário.
+
+### Custo estimado é um campo direto, não calculado
+
+O custo estimado de um objetivo ou submeta é um valor definido diretamente pelo usuário, independente da soma de suas `GoalAllocations`. O "restante a organizar" continua sendo sempre calculado como custo estimado menos a soma de `RESERVED` + `COMMITTED` + `PAID`.
+
+### Exclusão de submeta com alocações
+
+Excluir uma submeta segue a mesma política padrão de exclusão do Lema (`docs/product/decisions/PD-005-deletion-policy.md`): vai para a lixeira por 30 dias, podendo ser restaurada. Suas `GoalAllocations` acompanham o mesmo ciclo de vida da submeta. `Transactions` já registradas (que sustentam alocações `PAID`) não são excluídas — elas têm ciclo de vida próprio (`UC-FIN-003`) e apenas deixam de estar relacionadas à submeta enquanto ela estiver na lixeira.
+
 ## Motivo
 
 Sem esse conceito, um objetivo complexo como "Casamento" forçaria o usuário a manter o planejamento financeiro e organizacional fora do Lema (em uma planilha, por exemplo), contradizendo o problema central que o produto busca resolver. Ao mesmo tempo, transformar `Goal` em um gerenciador de projetos completo (com dependências entre tarefas, alocação de orçamento automática, relatórios etc.) contradiria o princípio 8 ("o produto não deve parecer um ERP doméstico") e a proposta de manter funcionalidades simples isoladamente (princípio 9). Reaproveitar a própria entidade `Goal` como submeta, e reaproveitar o modelo financeiro de `PD-006` para as regras por submeta, evita inventar uma segunda hierarquia de conceitos só para objetivos complexos.
 
 ## Consequências
 
-- `domain-model.md` precisa registrar `Goal → Goal` como relação válida (submeta) e os três estados financeiros conceituais.
+- `domain-model.md` precisa registrar `Goal → Goal` como relação válida (submeta, limitada a um nível), os três estados financeiros conceituais e a nova entidade `GoalAllocation`.
 - Os `UC-GOAL-*` já documentados (`UC-GOAL-001` a `UC-GOAL-007`) foram escritos antes desta decisão e não cobrem submetas nem estados financeiros. Eles precisarão de revisão — em especial `UC-GOAL-001` (criação, para admitir uma submeta), `UC-GOAL-003` (conclusão, quanto a como o progresso de um objetivo com submetas é calculado) e `UC-GOAL-007` (relações, para cobrir `Goal → Goal` e os três estados financeiros) — mas essa revisão fica deliberadamente fora do escopo deste momento, a pedido explícito.
 - Novos casos de uso (criar submeta, registrar valor reservado/comprometido, mover valor de `RESERVED` para `COMMITTED`/`PAID`) só devem ser escritos depois que as questões futuras abaixo forem suficientemente resolvidas.
 
 ## Questões futuras
 
-- `RESERVED` e `COMMITTED` precisam de uma nova entidade própria (ex.: uma "alocação financeira" do objetivo), ou podem ser representados como uma extensão de `Budget` ou de `Transaction` com um campo de estado? Isso ainda não foi decidido.
-- Existe limite de profundidade para submetas (uma submeta pode ter suas próprias submetas), ou a hierarquia é sempre de um nível só, para preservar o princípio de "hub leve" e evitar virar um gerenciador de projetos?
-- Como o progresso do objetivo "pai" se relaciona com o progresso de suas submetas — é sempre manual, é uma média/agregação automática das submetas, ou o objetivo pai simplesmente não tem progresso próprio quando possui submetas?
-- Um valor `COMMITTED` exige algum tipo de referência a um compromisso externo (ex.: um documento de contrato relacionado via `Document`), ou é apenas um número registrado pelo usuário?
-- O custo estimado de um objetivo/submeta é um campo único, ou pode ser recalculado a partir da soma de valores relacionados (ex.: orçamentos de submetas)?
-- Quando uma submeta é excluída, o que acontece com seus valores `RESERVED`/`COMMITTED`/`PAID` — são apenas descartados, ou precisam de alguma confirmação adicional, dado que representam dinheiro real?
+Nenhuma questão em aberto identificada neste momento.
