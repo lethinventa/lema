@@ -133,6 +133,7 @@ Domínio detalhado — casos de uso documentados individualmente em [`docs/use-c
 - [`UC-AUTH-003`](auth/UC-AUTH-003-sign-out.md) — Encerrar sessão
 - [`UC-AUTH-004`](auth/UC-AUTH-004-recover-access.md) — Recuperar acesso
 - [`UC-AUTH-005`](auth/UC-AUTH-005-update-credentials.md) — Alterar credenciais
+- [`UC-AUTH-006`](auth/UC-AUTH-006-configure-mfa.md) — Configurar autenticação multifator (MFA)
 
 ### Usuários
 

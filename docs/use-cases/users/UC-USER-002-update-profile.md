@@ -14,7 +14,7 @@ Permitir que um usuário altere seus próprios dados de perfil já registrados.
 
 ## Gatilho
 
-Usuário decide alterar seu nome de exibição ou foto.
+Usuário decide alterar nome, foto, fuso horário ou preferências básicas.
 
 ## Fluxo principal
 
@@ -33,7 +33,7 @@ Usuário decide alterar seu nome de exibição ou foto.
 
 ## Visibilidade
 
-Mesma lógica de `UC-USER-001`: dados de perfil ficam visíveis a quem compartilha algum recurso ou grupo com o usuário.
+Mesma lógica de `UC-USER-001`: nome e foto ficam visíveis a quem compartilha algum recurso ou grupo com o usuário; e-mail, fuso horário e preferências permanecem privados.
 
 ## Relações com outros módulos
 

@@ -24,11 +24,12 @@ Usuário decide sair da sua conta.
 
 ## Variações
 
-- Usuário autenticado em múltiplos dispositivos: encerrar a sessão em um dispositivo não necessariamente encerra as demais (ver Questões em aberto).
+- Usuário autenticado em múltiplos dispositivos: encerrar a sessão em um dispositivo é independente das demais — cada sessão é encerrada por si só, consistente com o suporte a múltiplos dispositivos simultâneos (ver `UC-AUTH-002`).
 
 ## Regras de negócio
 
 - Encerrar a sessão não apaga nem altera nenhum dado do usuário.
+- Encerrar uma sessão afeta apenas aquele dispositivo/sessão específico, não as demais sessões ativas do mesmo usuário.
 
 ## Visibilidade
 
@@ -44,4 +45,4 @@ Inverso de `UC-AUTH-002`.
 
 ## Questões em aberto
 
-- Encerrar a sessão em um dispositivo encerra também as demais sessões ativas do mesmo usuário, ou cada uma é independente?
+Nenhuma questão em aberto identificada neste momento.

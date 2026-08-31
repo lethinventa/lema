@@ -19,7 +19,7 @@ Usuário não consegue se autenticar e solicita recuperação de acesso.
 ## Fluxo principal
 
 1. Usuário informa o e-mail associado à sua conta.
-2. Sistema envia uma forma de verificação para esse e-mail (ver Questões em aberto quanto ao mecanismo exato).
+2. Sistema envia, para esse e-mail, um link ou código de verificação.
 3. Usuário confirma a verificação e define uma nova credencial de acesso.
 4. Usuário passa a conseguir se autenticar com a nova credencial.
 
@@ -29,6 +29,7 @@ Usuário não consegue se autenticar e solicita recuperação de acesso.
 
 ## Regras de negócio
 
+- O canal de recuperação é o e-mail associado à conta — não há recuperação por outro meio neste momento (ver Questões em aberto quanto a contas criadas via provedor social).
 - Recuperar acesso não expõe a credencial antiga a ninguém, incluindo o próprio usuário — o fluxo sempre define uma nova credencial, nunca revela a existente.
 - Concluir a recuperação de acesso invalida a credencial antiga.
 
@@ -47,5 +48,5 @@ Relaciona-se com `UC-AUTH-002` (autenticar com a nova credencial) e `UC-AUTH-005
 
 ## Questões em aberto
 
-- Qual o mecanismo de verificação (link por e-mail, código, outro)? Este caso de uso é independente do canal específico.
 - Existe prazo de expiração para o link/código de recuperação?
+- Uma conta criada via Google ou Apple (`UC-AUTH-001`) passa por este fluxo, ou a recuperação de acesso nesses casos é sempre feita diretamente pelo provedor social, sem envolver o Lema?

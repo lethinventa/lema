@@ -11,7 +11,12 @@ Representa uma pessoa dentro do Lema. Pode possuir:
 - nome;
 - e-mail (usado como identidade para autenticação, ver `UC-AUTH-*`);
 - foto;
-- credencial de acesso (ex.: senha), tratada como um dado sensível, nunca exposto a outros usuários ou grupos.
+- fuso horário;
+- preferências básicas (ex.: idioma, formato de data);
+- credencial de acesso (ex.: senha) ou vínculo com provedor social (Google, Apple), tratados como dados sensíveis, nunca expostos a outros usuários ou grupos;
+- configuração de MFA (opcional, ver `UC-AUTH-006`).
+
+Nem todo atributo de `User` é visível a outras pessoas com quem ele compartilha grupos ou recursos: nome e foto são visíveis nesse contexto (ver `UC-USER-003`); e-mail, fuso horário, preferências e credenciais permanecem privados ao próprio usuário, salvo decisão futura em contrário.
 
 Um `User` existe independentemente de participar de algum `Group` — toda a organização pessoal do Lema (recursos `PRIVATE`) depende apenas do `User`, não de nenhum grupo.
 
