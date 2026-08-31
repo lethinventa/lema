@@ -77,7 +77,30 @@ Objetivo pessoal ou compartilhado. Pode se relacionar com:
 - Transactions;
 - Events;
 - Documents;
-- Budgets.
+- Budgets;
+- outros Goals, como submetas.
+
+#### Objetivos como hubs leves
+
+Alguns objetivos funcionam como pequenos projetos de vida — não apenas uma meta com título, prazo e progresso. Exemplo: um objetivo "Casamento" pode ter submetas como Espaço, Buffet, Fotografia, Decoração e Lua de mel.
+
+Uma submeta é, ela própria, um `Goal` completo, relacionado ao objetivo "pai" (autorrelação `Goal → Goal`), e não uma entidade separada. Cada submeta pode ter suas próprias relações com `Tasks`, `Events`, `Documents` e `Transactions`, seu próprio progresso e seu próprio estado financeiro, independentes das demais submetas do mesmo objetivo. Uma submeta pode até ter visibilidade diferente da do objetivo pai, seguindo a mesma lógica de independência de visibilidade já aplicada a qualquer relação de `Goal` com outro recurso (ver `UC-GOAL-007`).
+
+Objetivos não devem virar um gerenciador de projetos detalhado — ver `docs/product/principles.md` (princípio 13) e `docs/product/decisions/PD-007-goal-lightweight-hub.md`.
+
+#### Estados financeiros dentro de um objetivo
+
+Um objetivo (ou submeta) pode acompanhar valores em três estados financeiros conceituais, além de um custo estimado:
+
+- `RESERVED` — dinheiro separado/guardado para aquele objetivo, ainda não comprometido com um pagamento específico;
+- `COMMITTED` — valor já assumido/contratado, mas ainda não totalmente pago;
+- `PAID` — dinheiro que efetivamente já saiu, correspondendo a `Transactions` relacionadas ao objetivo.
+
+Exemplo (submeta Buffet): custo estimado R$ 12.000; `PAID` R$ 2.000; `RESERVED` R$ 4.000; R$ 6.000 ainda não organizados em nenhum dos três estados.
+
+Diferentes submetas do mesmo objetivo podem seguir regras financeiras completamente diferentes (quem paga, se e como se divide), pois cada submeta tem suas próprias `Transactions` relacionadas, cada uma com seu próprio pagador, responsável econômico e regra de divisão — isso decorre diretamente do modelo já definido em `docs/product/decisions/PD-006-financial-organization-model.md`, sem exigir um mecanismo novo.
+
+Ainda não está definido como `RESERVED` e `COMMITTED` são representados conceitualmente (ex.: como extensão de `Transaction`, de `Budget`, ou como uma nova entidade) — ver `docs/product/decisions/PD-007-goal-lightweight-hub.md`.
 
 ### Transaction
 
