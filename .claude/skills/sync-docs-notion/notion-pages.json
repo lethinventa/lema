@@ -60,11 +60,20 @@
       "sources": [
         "docs/team/**"
       ]
+    },
+    "jornadas-ia": {
+      "title": "🧭 Jornadas & Arquitetura da Informação",
+      "id": "3cd71c6f-61fa-81c6-995d-c09e2d870c93",
+      "url": "https://app.notion.com/p/3cd71c6f61fa81c6995dc09e2d870c93",
+      "sources": [
+        "docs/product/journeys/**",
+        "docs/product/information-architecture.md"
+      ]
     }
   },
   "unmapped_sources": [
     "apps/README.md",
     "packages/README.md"
   ],
-  "sync_state_note": "O SHA do último commit sincronizado NÃO fica neste arquivo — fica em um marcador de texto no rodapé da própria página hub no Notion ('🔄 Última sincronização automática...'). Isso deixa a sincronização funcionar só com acesso de leitura ao repositório (sem precisar de git push). Leia o marcador via notion-fetch na URL de hub.url antes de comparar com o git log; veja SKILL.md."
+  "sync_state_note": "O SHA do último commit sincronizado NÃO fica neste arquivo — fica em um marcador de texto no rodapé da própria página hub no Notion ('🔄 ... Última sincronização: commit ...'). Isso deixa a sincronização funcionar só com acesso de leitura ao repositório (sem precisar de git push). Leia o marcador via notion-fetch na URL de hub.url antes de comparar com o git log; veja SKILL.md."
 }
