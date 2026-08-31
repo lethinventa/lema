@@ -37,6 +37,7 @@ O Lema centraliza essas necessidades mantendo controle claro sobre o que é:
 - [Modelo de domínio](docs/architecture/domain-model.md)
 - [Permissões](docs/architecture/permissions.md)
 - [Decisões de arquitetura (ADRs)](docs/architecture/decisions/README.md)
+- [Workflow do time](docs/team/workflow.md)
 - [Apps](apps/README.md)
 - [Packages](packages/README.md)
 
