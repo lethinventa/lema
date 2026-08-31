@@ -26,14 +26,14 @@ Pessoa decide começar a usar o Lema.
 ## Variações
 
 - Cadastro via provedor social (Google ou Apple): a identidade e o e-mail vêm do provedor, já verificados por ele — a etapa de verificação de e-mail própria do Lema não se aplica nesse caso.
-- Pessoa é convidada para um grupo antes de ter conta no Lema (ver `UC-GROUP-002`): o cadastro pode acontecer como parte do fluxo de aceitar o convite, associando a conta recém-criada ao convite pendente (ver Questões em aberto).
+- Pessoa é convidada para um grupo antes de ter conta no Lema (ver `UC-GROUP-002`): o cadastro acontece a partir do link de convite, associando a conta recém-criada ao convite `PENDING`. Ao concluir o cadastro por esse caminho, o convite é aceito automaticamente — não existe uma etapa de confirmação separada, já que abrir o link e concluir o cadastro já expressa a intenção de ingressar no grupo (ver `UC-GROUP-003`).
 
 ## Regras de negócio
 
 - Um `User` é identificado por um e-mail único no sistema — não é possível criar duas contas com o mesmo e-mail, seja o cadastro feito por e-mail/senha ou por provedor social.
 - A senha (ou outra credencial de acesso) nunca é exposta a outros usuários, grupos, ou em qualquer contexto compartilhado, independentemente de `PRIVATE`/`SHARED`/`GROUP`.
 - Uma conta criada por e-mail/senha só é considerada ativa após a verificação do e-mail. Uma conta criada via Google ou Apple já nasce ativa, já que o e-mail é verificado pelo provedor.
-- Criar uma conta não associa a pessoa a nenhum grupo automaticamente.
+- Criar uma conta não associa a pessoa a nenhum grupo automaticamente, exceto quando o cadastro é concluído a partir de um convite `PENDING` (ver Variações) — nesse caso, o convite é aceito automaticamente ao final do cadastro.
 
 ## Visibilidade
 
@@ -52,4 +52,4 @@ Relaciona-se com `UC-AUTH-002` (autenticar, consequência natural do cadastro) e
 
 ## Questões em aberto
 
-- Quando o cadastro ocorre a partir de um convite pendente (`UC-GROUP-002`), a aceitação do convite é automática após o cadastro, ou é uma etapa separada?
+Nenhuma questão em aberto identificada neste momento.

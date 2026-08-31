@@ -135,6 +135,8 @@ Movimentação financeira. Além de `owner`, `createdBy` e visibilidade (ver "Pr
 
 A visibilidade da transação (contexto da despesa) é independente da visibilidade da conta usada para pagá-la, e também é independente da visibilidade dos detalhes de divisão financeira (ver `permissions.md`).
 
+O MVP cobre apenas o tipo despesa; registrar receitas é conceitualmente parte do modelo, mas fica fora do escopo do MVP (ver `UC-FIN-001`).
+
 ### SplitRule
 
 Representa como o valor de uma transação é dividido entre responsáveis (ex.: 50/50, proporcional, valor fixo, sem divisão). Uma `SplitRule` pode ser definida diretamente em uma `Transaction`, ou vir do `GroupFinancialArrangement` do grupo — como regra padrão ou como exceção por categoria, conta ou tipo de despesa. A ordem de resolução, da mais para a menos específica, é: regra da própria transação → exceção do grupo para aquela categoria/conta/tipo → regra padrão do grupo. Se o grupo não tiver nenhuma `SplitRule` configurada, a divisão precisa ser informada manualmente no lançamento da transação (ver `docs/product/decisions/PD-006-financial-organization-model.md`).

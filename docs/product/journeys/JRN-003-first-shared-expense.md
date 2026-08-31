@@ -37,5 +37,6 @@ Grupo tem sua primeira despesa `GROUP` registrada e visível na visão consolida
 
 ## Questões em aberto
 
-- `UC-FIN-001` ainda tem em aberto se registrar receita faz parte do escopo do MVP, e se associar a uma conta é obrigatório — relevante para o passo 3.
-- `UC-FIN-006` ainda tem em aberto a taxonomia de tipos de conta e se o saldo é armazenado ou calculado — relevante para o passo 2, quando o grupo decide ter uma conta compartilhada.
+- `UC-FIN-006` ainda tem em aberto se uma conta pode ser excluída quando já possui transações associadas — relevante caso o grupo decida desfazer uma conta compartilhada (passo 2) mais adiante.
+
+Resolvido desde a criação desta jornada: o MVP registra apenas despesas (receita fica para fase futura); associar uma transação a uma conta é sempre opcional (relevante para o passo 3); tipos de conta seguem uma lista fixa curta e o saldo é sempre calculado a partir das transações, nunca armazenado (relevante para o passo 2).

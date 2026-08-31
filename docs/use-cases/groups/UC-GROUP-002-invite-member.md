@@ -6,7 +6,7 @@ Permitir que um membro autorizado convide uma nova pessoa para participar de um 
 
 ## Ator
 
-- Ator principal: membro do grupo com permissão para convidar.
+- Ator principal: qualquer `MEMBER` ou `OWNER` do grupo (ver `docs/product/decisions/PD-001-group-roles.md`).
 - Ator secundário: pessoa convidada.
 
 ## Pré-condições
@@ -22,7 +22,8 @@ Membro solicita o convite de uma pessoa para o grupo.
 
 1. Membro informa a pessoa a ser convidada.
 2. Sistema registra um convite (`Invitation`) com estado `PENDING`, associado ao grupo e à pessoa convidada.
-3. Pessoa convidada é notificada (canal não definido neste momento).
+3. Sistema gera um link de convite compartilhável, que o membro pode enviar por qualquer canal de sua escolha (WhatsApp, e-mail, SMS, etc.) — o Lema não depende de um canal de envio próprio para o convite funcionar.
+4. Se a pessoa convidada já possui conta ativa no Lema, também recebe uma notificação in-app do convite pendente.
 
 ## Variações
 
@@ -33,9 +34,9 @@ Membro solicita o convite de uma pessoa para o grupo.
 
 - Um convite em estado `PENDING` não concede acesso ao grupo até ser aceito.
 - Uma pessoa não pode ter dois convites `PENDING` simultâneos para o mesmo grupo.
-- O convite é conceitualmente independente de canal (e-mail, WhatsApp, link, notificação ou qualquer interface específica).
+- O convite é feito através de um link compartilhável; o envio em si acontece por qualquer canal externo ao Lema (e-mail, WhatsApp, SMS, etc.), a critério de quem convida.
 - Os estados possíveis de um convite são: `PENDING`, `ACCEPTED`, `DECLINED`, `EXPIRED`, `CANCELLED`.
-- Apenas membros com permissão para convidar podem iniciar este caso de uso (ver Questões em aberto).
+- Qualquer `MEMBER` (não apenas `OWNER`) pode convidar novos membros, conforme `docs/product/decisions/PD-001-group-roles.md`.
 
 ## Visibilidade
 
@@ -52,8 +53,6 @@ Relaciona-se com `UC-GROUP-003` (Aceitar convite) e `UC-GROUP-006` (Visualizar m
 
 ## Questões em aberto
 
-- Quais papéis podem convidar novos membros — apenas `OWNER`, ou qualquer `MEMBER`?
-- Qual é o canal de convite (e-mail, link, WhatsApp)?
 - Qual o prazo padrão até um convite `PENDING` se tornar `EXPIRED`?
 - Qual a estratégia de reenvio de um convite?
 - Qual o comportamento de notificações associado a cada estado do convite?

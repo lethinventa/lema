@@ -31,6 +31,7 @@ Ator decide conectar um objetivo a outro recurso existente.
 - Relacionar a uma `Transaction` ou a um `Budget` (ver `UC-FIN-001` e `UC-FIN-007`): segue o mesmo mecanismo genérico deste caso de uso, sem regras adicionais. Um `Budget` relacionado a um objetivo é o mecanismo por trás do campo "objetivo relacionado" descrito em `UC-FIN-007`.
 - **Relacionar a outro `Goal` como submeta**: cria uma relação `Goal → Goal`, limitada a um único nível — uma submeta não pode, por sua vez, ter suas próprias submetas (ver `PD-007-goal-lightweight-hub.md`). A submeta é um `Goal` completo, com seu próprio título, visibilidade, progresso, `GoalAllocations` e relações.
 - **Criar uma `GoalAllocation`**: ator registra um valor associado ao objetivo (ou submeta) em um dos três estados — `RESERVED`, `COMMITTED` ou `PAID`. Uma alocação `PAID` referencia uma `Transaction` existente (ver `UC-FIN-001`); `RESERVED` e `COMMITTED` não referenciam nenhuma `Transaction`, pois representam dinheiro que ainda não se moveu. Uma alocação `COMMITTED` pode, opcionalmente, referenciar um `Document`.
+- **Atualizar o estado de uma `GoalAllocation`**: ator move uma alocação de `RESERVED` para `COMMITTED`, ou de `COMMITTED`/`RESERVED` para `PAID`. A transição para `PAID` exige vincular a alocação a uma `Transaction` (existente ou registrada nesse momento, ver `UC-FIN-001`); ao ocorrer, o valor deixa de contar como `RESERVED`/`COMMITTED` e passa a contar como `PAID`. Não é possível voltar uma alocação `PAID` para `RESERVED` ou `COMMITTED` — nesse caso, o caminho é remover a alocação (mesmo mecanismo de "Remover uma relação existente", acima) e criar uma nova, se necessário.
 
 ## Regras de negócio
 
@@ -58,6 +59,7 @@ Relaciona-se com `UC-TASK-*`, `UC-CAL-*` e `UC-FIN-*` como possíveis recursos c
 - Remover uma relação não afeta os recursos relacionados nem o objetivo.
 - Uma submeta não pode ser relacionada como submeta de si mesma, nem ter suas próprias submetas.
 - Uma `GoalAllocation` em `PAID` sempre referencia uma `Transaction`; `RESERVED` e `COMMITTED` nunca referenciam uma.
+- Uma `GoalAllocation` pode transitar de `RESERVED` para `COMMITTED`, e de qualquer um desses dois estados para `PAID`; não existe transição de volta a partir de `PAID`.
 
 ## Questões em aberto
 

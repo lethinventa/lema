@@ -30,7 +30,7 @@ Grupo criado, com acordo financeiro mínimo já configurado, e ao menos dois mem
 
 - Quantas pessoas convidar de uma vez, e em que ordem.
 - Respostas do onboarding financeiro mínimo do grupo (`UC-FIN-009`): existe dinheiro comum? qual a regra padrão de divisão? qual o nível de transparência?
-- Pessoa convidada aceita ou recusa o convite (`UC-GROUP-003`).
+- Pessoa convidada aceita ou recusa o convite (`UC-GROUP-003`) — automático quando o convite é aceito via cadastro (`UC-AUTH-001`), manual quando a pessoa já tinha conta.
 
 ## Dependências
 
@@ -38,6 +38,6 @@ Grupo criado, com acordo financeiro mínimo já configurado, e ao menos dois mem
 
 ## Questões em aberto
 
-- Quem pode convidar novos membros — apenas `OWNER` ou qualquer `MEMBER`? Ainda em aberto em `UC-GROUP-002`, e afeta diretamente quem pode repetir esta jornada a partir do segundo membro em diante.
-- Qual o canal de convite (e-mail, link, WhatsApp)? Ainda não definido em `UC-GROUP-002`.
-- Quando o cadastro (passo 3) ocorre a partir de um convite pendente, a aceitação é automática após o cadastro, ou é uma etapa separada que a pessoa ainda precisa confirmar? Ainda em aberto em `UC-AUTH-001`.
+- Qual o prazo padrão até um convite `PENDING` se tornar `EXPIRED`? Ainda em aberto em `UC-GROUP-002`.
+
+Resolvido desde a criação desta jornada: qualquer `MEMBER` pode convidar (não apenas `OWNER`, ver `docs/product/decisions/PD-001-group-roles.md`); o convite é feito por link compartilhável, enviado por qualquer canal externo; e a aceitação do convite é automática quando o cadastro (passo 3) acontece a partir do link de convite (`UC-AUTH-001`).

@@ -27,8 +27,7 @@ Usuário decide registrar uma movimentação financeira que ocorreu.
 
 ## Variações
 
-- Transação do tipo receita, em vez de despesa: mesmo fluxo, apenas com o tipo diferente (ver Questões em aberto quanto ao escopo do MVP).
-- Transação sem conta associada: válido (ver Questões em aberto).
+- Transação sem conta associada: válido — associar uma conta é opcional, não obrigatório. Uma despesa em dinheiro, ou que o usuário não quer detalhar a origem, pode ser registrada sem `Account`.
 - Transação sem categoria definida: válido.
 - Transação `PRIVATE`: pagador e responsável econômico coincidem com o `owner`; não há `SplitRule` a resolver.
 - Transação `SHARED`: pode ter `SplitRule` entre o proprietário e as pessoas em `sharedWith`, mas como não há `GroupFinancialArrangement` associado, a divisão precisa ser sempre definida diretamente na transação.
@@ -39,6 +38,8 @@ Usuário decide registrar uma movimentação financeira que ocorreu.
 - Uma transação possui um valor e uma data associados, além de pagador, responsável econômico e `SplitRule` (ver `domain-model.md` e `PD-006-financial-organization-model.md`).
 - Criar uma transação `GROUP` exige que o usuário seja membro ativo do grupo no momento do registro.
 - A detecção e sugestão automática de lançamentos a partir de notificações bancárias é uma visão futura registrada em `docs/product/roadmap.md`, fora do escopo deste caso de uso — aqui o registro é sempre manual.
+- O MVP cobre apenas o registro de despesas. Registrar receitas fica fora do escopo do MVP — junto de "despesas recorrentes" e "orçamentos mais avançados" no roadmap (`docs/product/roadmap.md`), por exigir um tratamento próprio (ex.: recorrência de salário, visão de fluxo de caixa) que não é essencial para validar a proposta central do produto.
+- Associar uma transação a uma `Account` é sempre opcional, nunca obrigatório.
 
 ## Visibilidade
 
@@ -55,6 +56,4 @@ Depende de `UC-PERM-001`, `UC-PERM-002` e `UC-PERM-003` para a mecânica de visi
 
 ## Questões em aberto
 
-- Registrar receitas faz parte do escopo de "finanças básicas" do MVP, ou o MVP cobre apenas despesas?
-- Associar uma transação a uma conta (`Account`) é obrigatório ou opcional?
 - As categorias de transação seguem uma lista fixa predefinida, ou são texto livre (como decidido para categoria de objetivos em `UC-GOAL-001`)?
