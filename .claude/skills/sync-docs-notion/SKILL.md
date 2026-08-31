@@ -68,6 +68,11 @@ uma página mapeada.
 7. **Cheque se a navegação do hub precisa mudar** (novo card, título de página mudou,
    nova subpágina criada no passo 3) e atualize a página hub se necessário.
 
+7.1. **Recalcule o painel de progresso do hub** se algum arquivo em
+   `hub.progress_dashboard.sources` (em `notion-pages.json`) mudou. Veja a seção
+   "Painel de progresso" abaixo — ele não é um espelho de um arquivo específico, é
+   recalculado a partir de várias fontes toda vez que qualquer uma delas muda.
+
 8. **Atualize `notion-pages.json`**: defina `last_synced_commit` para o SHA atual
    (`git rev-parse HEAD`, ou o commit que está prestes a ser criado/pushado) e, se
    páginas novas foram criadas no passo 3, adicione as entradas com `id`/`url`/`sources`.
@@ -77,6 +82,43 @@ uma página mapeada.
    sincronizado (ex.: `Sincronizar Notion após mudanças em docs/use-cases/tasks`). Isso é
    parte de cumprir o pedido de manter o Notion atualizado, não um commit "extra" fora de
    escopo.
+
+## Painel de progresso ("📍 Onde estamos", na página hub)
+
+A página hub tem uma seção simplificada de status do projeto, pensada para responder
+"onde estou e o que falta fazer" em segundos, sem entrar nas páginas detalhadas. Ela fica
+logo após os dois callouts de introdução e antes de "# Navegue pela documentação". Ao
+contrário das outras páginas, ela **não espelha um arquivo específico** — é recalculada a
+partir de várias fontes (`hub.progress_dashboard.sources` em `notion-pages.json`) sempre
+que qualquer uma delas muda. Estrutura a manter:
+
+1. Um callout com a fase atual do projeto, em uma frase (ex.: "definição de produto" vs.
+   "em implementação" — mude quando `apps/README.md`/`packages/README.md` deixarem de
+   dizer que nada foi criado, ou quando um ADR técnico de stack for aceito).
+2. Uma tabela "Domínios do MVP" com uma linha por domínio funcional listado no MVP em
+   `docs/product/roadmap.md`. Para cada domínio, derive o status assim:
+   - **⬜ Não iniciado**: não existe pasta em `docs/use-cases/<domínio>/` (só o item de
+     backlog em `docs/use-cases/README.md`, se houver).
+   - **🟡 Modelado, com pendências**: a pasta existe e tem casos de uso, mas pelo menos um
+     deles ainda tem uma seção "Questões em aberto" não vazia (diferente de "Nenhuma
+     questão em aberto identificada neste momento").
+   - **✅ Praticamente fechado**: a pasta existe e a grande maioria (ou todos) os casos de
+     uso têm "Nenhuma questão em aberto identificada neste momento".
+   Na coluna de detalhe, conte quantos casos de uso existem no domínio e quantos ainda têm
+   pergunta em aberto (ex.: "8 casos de uso — 7 fechados, 1 com pergunta em aberto").
+3. Um `<details>` recolhido para os domínios fora do MVP (V2/futuro, conforme
+   `docs/product/roadmap.md`) — só precisa dizer que ainda são só visão de roadmap, sem
+   caso de uso escrito.
+4. Uma checklist "O que falta fazer agora" com 4-8 itens curtos e acionáveis, priorizando:
+   domínios do MVP ainda não modelados, perguntas em aberto mais estruturais (não listar
+   as 20 perguntas individuais — resumir por tema/domínio e linkar para a página de Casos
+   de Uso), decisões técnicas pendentes (stack, primeiro ADR) e o fato de a implementação
+   real ainda não ter começado, enquanto isso for verdade.
+
+Ao atualizar, prefira reescrever a seção inteira (do `# 📍 Onde estamos` até o callout
+final antes de `# Navegue pela documentação`) com `update_content`, em vez de tentar
+editar célula por célula — é mais confiável do que tentar casar diffs parciais numa
+tabela que muda de tamanho.
 
 ## Regras
 

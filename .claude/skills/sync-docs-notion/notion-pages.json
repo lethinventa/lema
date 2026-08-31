@@ -3,7 +3,18 @@
     "title": "🏠 Lema — Documentação",
     "id": "3cd71c6f-61fa-8156-a2ed-c839371e7614",
     "url": "https://app.notion.com/p/3cd71c6f61fa8156a2edc839371e7614",
-    "sources": ["README.md"]
+    "sources": ["README.md"],
+    "progress_dashboard": {
+      "section_heading": "# 📍 Onde estamos",
+      "description": "Painel simplificado de status do projeto (fase atual, tabela de domínios do MVP, checklist do que falta). Fica logo após os callouts de intro e antes de '# Navegue pela documentação'. Precisa ser recalculado (não só copiado) a partir das fontes abaixo — ver SKILL.md, seção 'Painel de progresso'.",
+      "sources": [
+        "docs/product/roadmap.md",
+        "docs/use-cases/**",
+        "docs/product/decisions/**",
+        "apps/README.md",
+        "packages/README.md"
+      ]
+    }
   },
   "pages": {
     "visao-produto": {
@@ -55,5 +66,5 @@
     "apps/README.md",
     "packages/README.md"
   ],
-  "last_synced_commit": "304e2ed3b1bb1b36716257c92edfa66d0a1ca2ec"
+  "last_synced_commit": "8ea2502036b62e4a6454a4dff26b0cadd04de686"
 }
