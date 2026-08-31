@@ -23,6 +23,7 @@ Proprietário decide compartilhar a tarefa com pessoas específicas.
 1. Proprietário seleciona a tarefa.
 2. Proprietário seleciona uma ou mais pessoas para compartilhar, conforme `UC-PERM-002`.
 3. Tarefa passa a ter visibilidade `SHARED`.
+4. Pessoas adicionadas são notificadas de que passaram a ter acesso à tarefa (canal de notificação não definido neste momento).
 
 ## Variações
 
@@ -34,6 +35,7 @@ Proprietário decide compartilhar a tarefa com pessoas específicas.
 - Pessoas em `sharedWith` podem visualizar e editar a tarefa, conforme `permissions.md`.
 - Compartilhar a tarefa não altera seu `createdBy`, seu histórico de conclusão nem seus responsáveis.
 - Caso um responsável venha a perder o acesso à tarefa por algum outro motivo, ele é removido automaticamente da lista de responsáveis (ver `UC-TASK-005`).
+- Pessoas adicionadas ao compartilhamento devem ser notificadas. O canal dessa notificação não está definido neste momento.
 
 ## Visibilidade
 
@@ -47,7 +49,8 @@ Aplica `UC-PERM-002`. Relaciona-se com `UC-PERM-004` (transições de visibilida
 
 - Tarefa compartilhada torna-se visível e editável para as pessoas listadas em `sharedWith`.
 - Responsável e histórico de conclusão da tarefa não são alterados pelo compartilhamento.
+- Cada pessoa adicionada ao compartilhamento é notificada.
 
 ## Questões em aberto
 
-- Compartilhar uma tarefa notifica as pessoas adicionadas ao compartilhamento?
+- Qual será o canal de notificação usado para avisar as pessoas adicionadas ao compartilhamento (ex.: notificação no app, e-mail, WhatsApp)?

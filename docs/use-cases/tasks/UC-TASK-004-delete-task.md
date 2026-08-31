@@ -28,12 +28,14 @@ Ator decide excluir uma tarefa.
 
 - Tarefa é recorrente: ao excluir, o sistema pergunta se a exclusão deve afetar apenas a ocorrência atual ou toda a série (ver `UC-TASK-006`).
 - Tarefa já concluída: pode ser excluída normalmente, seguindo o mesmo fluxo de lixeira.
+- Ator restaura uma tarefa que está na lixeira, dentro do período de 30 dias: tarefa volta a ser uma tarefa ativa normal, com seus dados preservados.
 
 ## Regras de negócio
 
 - Excluir uma tarefa `GROUP` não afeta a existência do grupo nem de outras tarefas.
 - Excluir uma tarefa move-a para uma lixeira; ela não é apagada definitivamente de imediato.
-- Após 30 dias na lixeira, a tarefa é apagada de forma definitiva e automática.
+- Uma tarefa na lixeira pode ser restaurada a qualquer momento dentro do período de 30 dias.
+- Após 30 dias na lixeira, a exclusão passa a ser definitiva e automática; a tarefa deixa de poder ser restaurada.
 - Qualquer membro do grupo pode excluir uma tarefa `GROUP`, independentemente de seu papel.
 - Excluir uma tarefa recorrente exige que o ator escolha entre excluir apenas a ocorrência atual ou toda a série (ver `UC-TASK-006`).
 
@@ -48,9 +50,10 @@ Relaciona-se com `UC-TASK-006` (tarefas recorrentes) quanto ao escopo da exclus�
 ## Critérios de aceite
 
 - Tarefa excluída deixa de aparecer na lista de tarefas ativas para qualquer pessoa que tinha acesso a ela.
-- Tarefa excluída permanece na lixeira por 30 dias antes de ser apagada definitivamente.
+- Tarefa excluída permanece na lixeira por 30 dias, podendo ser restaurada nesse período.
+- Após 30 dias, a tarefa é apagada definitivamente e não pode mais ser restaurada.
 - Excluir uma tarefa recorrente pergunta ao ator se a ação deve afetar apenas a ocorrência atual ou toda a série.
 
 ## Questões em aberto
 
-- É possível restaurar uma tarefa da lixeira antes dos 30 dias, ou a lixeira serve apenas como período de tolerância antes da exclusão definitiva, sem opção de restauração pelo usuário?
+Nenhuma questão em aberto identificada neste momento.

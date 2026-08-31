@@ -31,6 +31,8 @@ Usuário cria uma tarefa e define um padrão de recorrência.
 
 - Uma tarefa recorrente mantém a mesma visibilidade, `owner` e `createdBy` entre suas ocorrências.
 - Concluir uma ocorrência não deve exigir que o usuário recrie manualmente a tarefa para o próximo período.
+- Cada nova ocorrência herda automaticamente o(s) responsável(is) definido(s) na série (ver `UC-TASK-005`).
+- Alterações feitas na configuração da série (ex.: título, descrição, padrão de recorrência) passam a valer para as próximas ocorrências, sem afetar ocorrências já geradas ou já concluídas.
 - Cada ocorrência pode ser editada, concluída ou excluída individualmente, sem afetar as demais ocorrências da série (ver `UC-TASK-002`, `UC-TASK-003` e `UC-TASK-004`).
 - Excluir uma tarefa recorrente pergunta ao ator se a exclusão deve afetar apenas a ocorrência atual ou toda a série (ver `UC-TASK-004`).
 - Não existe prazo final de recorrência por padrão; a recorrência é indefinida, a menos que uma data final seja explicitamente definida.
@@ -49,7 +51,9 @@ Relaciona-se diretamente com `UC-TASK-001` (criação) e `UC-TASK-003` (conclus�
 - É possível identificar que uma tarefa é recorrente e qual é o seu padrão.
 - É possível editar, concluir ou excluir uma ocorrência específica sem afetar as demais ocorrências da série.
 - Ao excluir, o sistema pergunta se a ação deve afetar apenas a ocorrência atual ou toda a série.
+- Uma nova ocorrência é gerada já com o(s) mesmo(s) responsável(is) da série, sem exigir reatribuição manual.
+- Uma alteração na configuração da série reflete nas próximas ocorrências, não nas já geradas.
 
 ## Questões em aberto
 
-- O(s) responsável(is) atribuído(s) a uma tarefa recorrente permanece(m) automaticamente em cada nova ocorrência, ou precisa(m) ser reatribuído(s) a cada vez?
+Nenhuma questão em aberto identificada neste momento.
