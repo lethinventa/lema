@@ -1,0 +1,70 @@
+{
+  "hub": {
+    "title": "🏠 Lema — Documentação",
+    "id": "3cd71c6f-61fa-8156-a2ed-c839371e7614",
+    "url": "https://app.notion.com/p/3cd71c6f61fa8156a2edc839371e7614",
+    "sources": ["README.md"],
+    "progress_dashboard": {
+      "section_heading": "# 📍 Onde estamos",
+      "description": "Painel simplificado de status do projeto (fase atual, tabela de domínios do MVP, checklist do que falta). Fica logo após os callouts de intro e antes de '# Navegue pela documentação'. Precisa ser recalculado (não só copiado) a partir das fontes abaixo — ver SKILL.md, seção 'Painel de progresso'.",
+      "sources": [
+        "docs/product/roadmap.md",
+        "docs/use-cases/**",
+        "docs/product/decisions/**",
+        "apps/README.md",
+        "packages/README.md"
+      ]
+    }
+  },
+  "pages": {
+    "visao-produto": {
+      "title": "📐 Visão & Produto",
+      "id": "3cd71c6f-61fa-8164-a7d3-f69286e6f79c",
+      "url": "https://app.notion.com/p/3cd71c6f61fa8164a7d3f69286e6f79c",
+      "sources": [
+        "docs/product/vision.md",
+        "docs/product/principles.md",
+        "docs/product/roadmap.md"
+      ]
+    },
+    "arquitetura": {
+      "title": "🏗️ Arquitetura",
+      "id": "3cd71c6f-61fa-81ad-b28b-d065cb9a87ce",
+      "url": "https://app.notion.com/p/3cd71c6f61fa81adb28bd065cb9a87ce",
+      "sources": [
+        "docs/architecture/domain-model.md",
+        "docs/architecture/permissions.md",
+        "docs/architecture/decisions/**"
+      ]
+    },
+    "casos-de-uso": {
+      "title": "📋 Casos de Uso",
+      "id": "3cd71c6f-61fa-816a-b445-d7d0dcfbeac5",
+      "url": "https://app.notion.com/p/3cd71c6f61fa816ab445d7d0dcfbeac5",
+      "sources": [
+        "docs/use-cases/**"
+      ]
+    },
+    "decisoes-produto": {
+      "title": "🧩 Decisões de Produto",
+      "id": "3cd71c6f-61fa-81ff-9223-cafceae4527c",
+      "url": "https://app.notion.com/p/3cd71c6f61fa81ff9223cafceae4527c",
+      "sources": [
+        "docs/product/decisions/**"
+      ]
+    },
+    "time-workflow": {
+      "title": "👥 Time & Workflow",
+      "id": "3cd71c6f-61fa-81b9-b03d-f8d8a2b5b76e",
+      "url": "https://app.notion.com/p/3cd71c6f61fa81b9b03df8d8a2b5b76e",
+      "sources": [
+        "docs/team/**"
+      ]
+    }
+  },
+  "unmapped_sources": [
+    "apps/README.md",
+    "packages/README.md"
+  ],
+  "sync_state_note": "O SHA do último commit sincronizado NÃO fica neste arquivo — fica em um marcador de texto no rodapé da própria página hub no Notion ('🔄 Última sincronização automática...'). Isso deixa a sincronização funcionar só com acesso de leitura ao repositório (sem precisar de git push). Leia o marcador via notion-fetch na URL de hub.url antes de comparar com o git log; veja SKILL.md."
+}
