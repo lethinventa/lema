@@ -6,7 +6,7 @@ Permitir que um grupo refine progressivamente seu acordo financeiro depois da co
 
 ## Ator
 
-- Ator principal: membro do grupo — mesma questão de governança registrada em `UC-FIN-009`.
+- Ator principal: membro do grupo (qualquer papel — `OWNER` ou `MEMBER`), conforme a regra geral de `docs/product/decisions/PD-004-group-resource-governance.md`.
 
 ## Pré-condições
 
@@ -49,5 +49,4 @@ Depende de `UC-FIN-009` (configuração mínima inicial já existente). Relacion
 
 ## Questões em aberto
 
-- Mesma questão de governança registrada em `UC-FIN-009`: quem pode alterar o `GroupFinancialArrangement`.
 - Existe histórico de mudanças no acordo financeiro do grupo (auditoria), dado que ele afeta a interpretação de transações passadas em caso de dúvida ou disputa entre membros?

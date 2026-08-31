@@ -6,7 +6,7 @@ Permitir que um grupo defina, pela primeira vez, como organiza suas finanças co
 
 ## Ator
 
-- Ator principal: membro do grupo — ver Questões em aberto quanto a restringir esta ação a `OWNER`.
+- Ator principal: membro do grupo (qualquer papel — `OWNER` ou `MEMBER`), conforme a regra geral de `docs/product/decisions/PD-004-group-resource-governance.md`.
 
 ## Pré-condições
 
@@ -53,5 +53,4 @@ O `GroupFinancialArrangement` é uma configuração do grupo, visível a todos o
 
 ## Questões em aberto
 
-- Quem pode configurar (ou reconfigurar) o `GroupFinancialArrangement` — qualquer membro, conforme a regra geral de `docs/product/decisions/PD-004-group-resource-governance.md`, ou apenas `OWNER`, dado que essa configuração tem impacto financeiro sobre todo o grupo? `PD-004` prevê explicitamente que exceções à sua regra geral sejam registradas quando necessário.
 - Este onboarding é obrigatório logo na criação do grupo, ou fica disponível como configuração opcional, acionada quando o grupo decidir (ou tentar registrar a primeira transação compartilhada)?
