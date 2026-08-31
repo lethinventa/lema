@@ -26,13 +26,15 @@ Ator decide alterar dados de uma refeição planejada.
 ## Variações
 
 - Alterar a visibilidade da refeição: tratado por `UC-PERM-004`, não por este caso de uso.
-- Alterar ingredientes depois de já ter gerado uma lista de compras (`UC-FOOD-006`): a lista já gerada não é atualizada automaticamente (ver Questões em aberto).
+- Alterar ingredientes depois de já ter gerado uma lista de compras (`UC-FOOD-006`): a lista é sincronizada automaticamente, mas apenas os `ShoppingItem`s vinculados àquela refeição — itens de outras origens na mesma lista não são afetados.
+- Alterar o estado da refeição (`PLANNED`/`DONE`/`CANCELLED`): tratado por `UC-FOOD-007`, não por este caso de uso.
 
 ## Regras de negócio
 
 - Atualizar uma refeição não altera seu `owner` nem `createdBy`.
 - Para refeições `SHARED`, tanto o proprietário quanto as pessoas em `sharedWith` podem editar, conforme `permissions.md`.
 - Para refeições `GROUP`, qualquer membro do grupo pode editar, independentemente de seu papel, conforme `PD-004-group-resource-governance.md`.
+- Editar os ingredientes de uma refeição sincroniza automaticamente os `ShoppingItem`s que foram gerados a partir dela (ver `UC-FOOD-006`), sem tocar em itens de outras origens presentes na mesma lista.
 
 ## Visibilidade
 
@@ -45,7 +47,8 @@ Relaciona-se com `UC-PERM-004` (mudança de visibilidade) e `UC-FOOD-006` (lista
 ## Critérios de aceite
 
 - Alterações ficam visíveis para todas as pessoas com acesso à refeição.
+- Alterar ingredientes sincroniza os `ShoppingItem`s vinculados àquela refeição, sem afetar itens de outras origens.
 
 ## Questões em aberto
 
-- Editar os ingredientes de uma refeição depois de já ter gerado uma lista de compras deveria atualizar essa lista automaticamente, ou as duas passam a ser independentes uma vez geradas?
+Nenhuma questão em aberto identificada neste momento.

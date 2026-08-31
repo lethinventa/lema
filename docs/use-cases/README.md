@@ -118,6 +118,8 @@ Domínio detalhado (V2 do roadmap) — casos de uso documentados individualmente
 - [`UC-FOOD-004`](food/UC-FOOD-004-share-meal.md) — Compartilhar refeição planejada
 - [`UC-FOOD-005`](food/UC-FOOD-005-create-group-meal.md) — Planejar refeição de grupo
 - [`UC-FOOD-006`](food/UC-FOOD-006-generate-shopping-list.md) — Gerar lista de compras a partir de uma refeição
+- [`UC-FOOD-007`](food/UC-FOOD-007-update-meal-status.md) — Marcar refeição como realizada ou cancelada
+- [`UC-FOOD-008`](food/UC-FOOD-008-plan-recurring-meal.md) — Planejar refeição recorrente
 
 ## Futuros
 

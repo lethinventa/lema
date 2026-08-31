@@ -175,14 +175,16 @@ O detalhamento completo de `List` (título, tipo, itens genéricos, contexto, vi
 
 Refeição planejada. Pode possuir:
 
-- tipo (ex.: café da manhã, almoço, jantar, lanche);
+- tipo — lista base (café da manhã, almoço, jantar, lanche) mais opção personalizada ("Outro");
 - data;
+- estado: `PLANNED`, `DONE` ou `CANCELLED` (ver `UC-FOOD-007`) — mais simples que o estado de conclusão de `Task`, já que uma refeição não é "concluída" no mesmo sentido, apenas acontece, é cancelada, ou ainda está planejada;
+- recorrência (ver `UC-FOOD-008`);
 - descrição ou receita;
 - ingredientes, relacionados a `ShoppingItem`;
 - contexto;
 - visibilidade.
 
-Uma `Meal` pode gerar uma `List` de compras a partir de seus ingredientes (ver `domain-model.md`, seção "Relações", e `UC-FOOD-006`). Ainda não está definido se uma `Meal` possui estado de conclusão (ex.: "preparada"), diferentemente de `Task`, ou se, como `Event`, ela apenas ocorre ou não na data planejada — ver `UC-FOOD-001`.
+Uma `Meal` pode gerar uma `List` de compras a partir de seus ingredientes (ver seção "Relações" e `UC-FOOD-006`). A regra central dessa relação: **a refeição gera necessidade de compra, mas a compra não controla a refeição** — marcar um `ShoppingItem` como comprado nunca altera o estado da `Meal` que o originou.
 
 ### ShoppingItem
 
@@ -190,6 +192,7 @@ Item de compra. Pode possuir:
 
 - nome;
 - quantidade;
+- refeição de origem (`Meal`), quando o item foi gerado a partir de uma refeição (ver `UC-FOOD-006`) — usada para consolidar e sincronizar itens ao regenerar a lista, sem duplicar;
 - estado (ex.: pendente, comprado);
 - lista associada (`List`);
 - contexto;

@@ -20,20 +20,23 @@ Ator decide gerar uma lista de compras a partir dos ingredientes de uma refeiç�
 
 1. Ator seleciona a refeição.
 2. Ator confirma quais ingredientes devem virar itens de compra (pode ser todos, por padrão).
-3. Sistema cria uma `List` (ou adiciona a uma já existente, ver Variações) com um `ShoppingItem` para cada ingrediente confirmado.
-4. Lista criada herda a visibilidade da refeição que a originou.
+3. Ator escolhe o destino: criar uma nova `List`, ou adicionar os itens a uma lista de compras já existente.
+4. Sistema cria (ou atualiza) a lista, adicionando um `ShoppingItem` para cada ingrediente confirmado, cada um vinculado a esta refeição como origem. Ao adicionar a uma lista existente, o sistema tenta consolidar itens com o mesmo nome já presentes nela — somando quantidades — em vez de criar duplicados.
+5. Se for uma lista nova, ela herda a visibilidade da refeição que a originou.
 
 ## Variações
 
-- Ator escolhe adicionar os itens a uma lista de compras já existente, em vez de criar uma nova (ver Questões em aberto quanto a essa mecânica).
-- Refeição relacionada a mais de uma lista de compras ao longo do tempo (ex.: gerar de novo depois de editar os ingredientes): cada geração cria itens novos, não substitui os anteriores (ver `UC-FOOD-002`).
-- Ingrediente já existe como item em uma lista de compras ativa: sistema não consolida automaticamente as quantidades (ver Questões em aberto).
+- Ator escolhe adicionar os itens a uma lista de compras já existente: sistema consolida por nome em vez de duplicar (ver Regras de negócio quanto a limites dessa consolidação).
+- Ator gera a lista novamente depois de editar os ingredientes da refeição (ver `UC-FOOD-002`): sistema sincroniza os `ShoppingItem`s já vinculados a esta refeição — atualiza os que mudaram, adiciona os novos, remove os que saíram dos ingredientes — em vez de duplicar ou criar uma lista paralela.
+- Ingrediente já existe como item de outra origem na mesma lista (não gerado por esta refeição): sistema também tenta consolidar por nome, mas o item consolidado passa a ter mais de uma origem (ver Questões em aberto quanto ao que acontece se uma das origens for removida depois).
 
 ## Regras de negócio
 
 - Gerar uma lista de compras não altera a refeição de origem.
-- A lista gerada é um recurso independente (`List`) — excluir a refeição de origem não afeta a lista já gerada (ver `UC-FOOD-003`).
-- A lista gerada herda a visibilidade da refeição no momento da geração; alterações posteriores na visibilidade de uma não afetam a outra (mesma independência já aplicada entre `Goal` e seus recursos relacionados, ver `UC-GOAL-007`).
+- A lista gerada (ou usada como destino) é um recurso independente (`List`) — excluir a refeição de origem não afeta a lista já gerada (ver `UC-FOOD-003`).
+- Uma nova lista herda a visibilidade da refeição no momento da geração; alterações posteriores na visibilidade de uma não afetam a outra (mesma independência já aplicada entre `Goal` e seus recursos relacionados, ver `UC-GOAL-007`).
+- Regenerar a lista a partir da mesma refeição nunca duplica itens: sincroniza os `ShoppingItem`s já vinculados a essa refeição como origem.
+- Marcar um `ShoppingItem` como comprado nunca altera a refeição de origem — refeição gera necessidade de compra, mas compra não controla a refeição (ver `domain-model.md`).
 
 ## Visibilidade
 
@@ -45,12 +48,15 @@ Relaciona-se com `UC-FOOD-001` (refeição e seus ingredientes) e materializa a 
 
 ## Critérios de aceite
 
-- Cada ingrediente confirmado vira um `ShoppingItem` na lista gerada.
-- A lista gerada é visível a quem tem acesso, conforme a visibilidade herdada da refeição.
+- Cada ingrediente confirmado vira um `ShoppingItem` na lista de destino (nova ou existente), vinculado a esta refeição como origem.
+- Itens com o mesmo nome já presentes na lista de destino são consolidados (quantidade somada), em vez de duplicados.
+- Regenerar a lista a partir da mesma refeição sincroniza os itens já vinculados a ela, sem criar duplicados.
+- A lista gerada é visível a quem tem acesso, conforme a visibilidade herdada (quando nova).
 - Excluir a refeição de origem não exclui a lista já gerada.
+- Marcar um `ShoppingItem` como comprado não altera o estado nem qualquer outro dado da refeição de origem.
 
 ## Questões em aberto
 
-- É possível adicionar os itens gerados a uma lista de compras já existente, em vez de sempre criar uma nova? Como o sistema evita duplicar itens já presentes nela?
-- Gerar a lista uma segunda vez, depois de editar os ingredientes da refeição, cria itens duplicados, substitui os anteriores, ou pergunta ao usuário o que fazer?
-- Um `ShoppingItem` marcado como comprado deveria refletir, de alguma forma, na refeição de origem, ou as duas permanecem sempre independentes depois da geração?
+- Quando um ingrediente é removido da refeição e o `ShoppingItem` vinculado a ele já foi marcado como comprado, a sincronização remove esse item mesmo assim, ou o preserva por já ter sido comprado?
+- Um item consolidado entre duas origens diferentes (ex.: ingrediente de duas refeições distintas) — o que acontece com ele quando uma das refeições de origem deixa de precisar desse ingrediente? A quantidade é recalculada, ou o item permanece com o valor consolidado?
+- Como o sistema decide que dois itens são "o mesmo" para fins de consolidação — nome exato, ou alguma normalização (maiúsculas/minúsculas, singular/plural, unidade)?
