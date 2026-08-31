@@ -29,6 +29,7 @@ Usuário cria um novo recurso sem compartilhá-lo com ninguém.
 ## Regras de negócio
 
 - Todo recurso criado deve ter um proprietário definido.
+- Em um recurso `PRIVATE`, o proprietário é sempre um `User` (`owner = User`), nunca um `Group`.
 - Participar de um grupo não torna recursos pessoais visíveis automaticamente para esse grupo.
 - Um recurso `PRIVATE` só pode ser visualizado, editado ou removido pelo próprio proprietário.
 

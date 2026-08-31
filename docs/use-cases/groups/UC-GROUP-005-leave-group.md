@@ -24,12 +24,14 @@ Usuário solicita sair do grupo.
 
 ## Variações
 
-- Não identificadas variações relevantes além do fluxo principal.
+- Usuário é `MEMBER`, ou é `OWNER` e existe ao menos outro `OWNER` no grupo: fluxo principal se aplica normalmente.
+- Usuário é o único `OWNER` do grupo: ação é bloqueada. Ele deve primeiro promover outro membro a `OWNER` (ver `UC-GROUP-008`) antes de conseguir sair.
 
 ## Regras de negócio
 
+- O único `OWNER` de um grupo não pode sair sem antes promover outro membro a `OWNER`.
 - Sair do grupo não apaga recursos `PRIVATE` do usuário.
-- Sair do grupo não apaga automaticamente recursos `GROUP` relacionados a ele (mesma questão de `UC-GROUP-004`).
+- Sair do grupo não apaga recursos `GROUP` criados por ele: esses recursos pertencem ao grupo (`owner = Group`) e continuam existindo, mantendo `createdBy` apontando para quem saiu (ver `docs/product/decisions/PD-002-resource-ownership.md`).
 
 ## Visibilidade
 
@@ -43,8 +45,9 @@ Semelhante a `UC-GROUP-004`, mas iniciado pelo próprio membro em vez de por out
 
 - Usuário deixa de constar como membro ativo do grupo.
 - Usuário não consegue mais visualizar conteúdo `GROUP` do grupo após sair.
+- Sistema impede que o único `OWNER` do grupo saia sem antes promover outro membro a `OWNER`.
+- Recursos `GROUP` criados pelo usuário continuam existindo no grupo após ele sair.
 
 ## Questões em aberto
 
-- Um `OWNER` pode sair de um grupo se for o único `OWNER`? O que acontece com o grupo nesse caso?
 - Sair do grupo exige alguma confirmação adicional quando há recursos `GROUP` vinculados ao usuário?

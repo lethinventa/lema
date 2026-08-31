@@ -19,17 +19,18 @@ Proprietário decide remover o acesso de uma pessoa específica ao recurso.
 ## Fluxo principal
 
 1. Proprietário seleciona o recurso e a pessoa cujo acesso será revogado.
-2. Sistema remove essa pessoa da lista de acesso do recurso.
+2. Sistema remove essa pessoa da lista de acesso (`sharedWith`) do recurso.
 3. Recurso permanece `SHARED` para as demais pessoas ainda listadas, se houver.
 
 ## Variações
 
-- Se a pessoa revogada era a única com acesso, o recurso pode passar a se comportar como `PRIVATE` (ver Questões em aberto).
+- Se a pessoa revogada era a única em `sharedWith`, o recurso muda automaticamente para `PRIVATE`. Não existe um estado `SHARED` com lista de acesso vazia.
 
 ## Regras de negócio
 
 - Revogar acesso não apaga o recurso nem afeta o proprietário.
 - Apenas o proprietário pode revogar acesso de um recurso `SHARED` (hipótese mínima).
+- Quando `sharedWith` fica vazio, a visibilidade do recurso muda automaticamente para `PRIVATE` (ver `docs/product/decisions/PD-003-visibility-transitions.md`).
 
 ## Visibilidade
 
@@ -43,8 +44,8 @@ Relaciona-se diretamente com `UC-PERM-002` e `UC-PERM-004`.
 
 - Pessoa cujo acesso foi revogado deixa de visualizar o recurso.
 - Demais pessoas com acesso ao recurso `SHARED` não são afetadas.
+- Quando a última pessoa é revogada, o recurso passa a ter visibilidade `PRIVATE`.
 
 ## Questões em aberto
 
-- Quando a última pessoa de um recurso `SHARED` é revogada, a visibilidade deve mudar automaticamente para `PRIVATE`, ou o recurso permanece `SHARED` com lista vazia?
 - A pessoa que teve o acesso revogado é notificada dessa mudança?

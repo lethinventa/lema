@@ -30,13 +30,15 @@ Proprietário decide dar acesso ao recurso a pessoas específicas.
 
 ## Regras de negócio
 
-- O recurso continua pertencendo ao proprietário original.
-- Apenas as pessoas explicitamente listadas, além do proprietário, podem visualizar o recurso.
+- O recurso continua pertencendo ao proprietário original (`owner = User`), que passa a ter uma lista explícita de pessoas com acesso (`sharedWith = User[]`).
+- Apenas as pessoas explicitamente listadas em `sharedWith`, além do proprietário, podem visualizar o recurso.
+- Para o MVP, uma pessoa listada em `sharedWith` pode visualizar e editar o recurso (colaborar). Uma granularidade de acesso mais fina (`VIEW` / `EDIT` por pessoa) é uma evolução futura possível, não modelada agora.
+- Apenas o proprietário pode alterar a visibilidade do recurso, adicionar ou remover pessoas do compartilhamento, ou mover o recurso para um grupo — mesmo que outras pessoas tenham acesso de edição ao conteúdo.
 - Compartilhar um recurso dessa forma não o torna visível para todo um grupo.
 
 ## Visibilidade
 
-`SHARED` — o recurso mantém um proprietário, mas pessoas específicas recebem acesso, conforme `permissions.md`. Esta ação é distinta de tornar um recurso `GROUP` (ver `UC-PERM-003`).
+`SHARED` — o recurso mantém um proprietário (`User`), mas pessoas específicas recebem acesso, conforme `permissions.md`. Esta ação é distinta de tornar um recurso `GROUP` (ver `UC-PERM-003`), onde a propriedade passa a ser do grupo.
 
 ## Relações com outros módulos
 
@@ -49,5 +51,5 @@ Aplica-se a qualquer entidade compartilhável do domínio. Relaciona-se com `UC-
 
 ## Questões em aberto
 
-- As pessoas com quem o recurso é compartilhado podem editá-lo, ou apenas visualizá-lo?
 - É necessário que as pessoas compartilhadas pertençam a um grupo em comum com o proprietário, ou o compartilhamento é sempre independente de grupo?
+- Como e quando a granularidade `VIEW` / `EDIT` por pessoa poderá ser introduzida.

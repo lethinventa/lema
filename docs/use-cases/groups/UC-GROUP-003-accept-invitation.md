@@ -10,7 +10,7 @@ Permitir que uma pessoa convidada decida ingressar ou não em um grupo.
 
 ## Pré-condições
 
-- Existe um convite pendente para essa pessoa nesse grupo.
+- Existe um convite (`Invitation`) em estado `PENDING` para essa pessoa nesse grupo.
 
 ## Gatilho
 
@@ -18,20 +18,22 @@ Pessoa convidada responde ao convite.
 
 ## Fluxo principal
 
-1. Pessoa convidada visualiza o convite pendente.
+1. Pessoa convidada visualiza o convite `PENDING`.
 2. Pessoa aceita o convite.
-3. Sistema associa a pessoa ao grupo com papel `MEMBER`.
-4. Convite deixa de ser pendente.
+3. Sistema associa a pessoa ao grupo com papel `MEMBER` (cria a `Membership`).
+4. Convite passa para o estado `ACCEPTED`.
 
 ## Variações
 
-- Pessoa convidada recusa o convite. Nesse caso, ela não é associada ao grupo e o convite é encerrado.
+- Pessoa convidada recusa o convite: convite passa para o estado `DECLINED`, e ela não é associada ao grupo.
+- Convite já está em estado `EXPIRED` ou `CANCELLED`: não pode mais ser aceito nem recusado.
 
 ## Regras de negócio
 
 - Apenas a pessoa convidada pode aceitar ou recusar o próprio convite.
 - Aceitar um convite não concede automaticamente acesso a conteúdo `PRIVATE` de outros membros.
 - Ao aceitar, a pessoa passa a visualizar conteúdo `GROUP` daquele grupo, conforme as regras de visibilidade.
+- Um convite só pode transitar para `ACCEPTED` ou `DECLINED` a partir do estado `PENDING`.
 
 ## Visibilidade
 
@@ -43,8 +45,9 @@ Após aceitar, a pessoa passa a integrar o conjunto de membros que podem visuali
 
 ## Critérios de aceite
 
-- Convite aceito resulta em associação ativa da pessoa ao grupo, com papel `MEMBER`.
-- Convite recusado não gera associação da pessoa ao grupo.
+- Convite aceito (`ACCEPTED`) resulta em associação ativa da pessoa ao grupo, com papel `MEMBER`.
+- Convite recusado (`DECLINED`) não gera associação da pessoa ao grupo.
+- Convite `EXPIRED` ou `CANCELLED` não pode ser aceito nem recusado.
 
 ## Questões em aberto
 

@@ -2,7 +2,7 @@
 
 ## Objetivo
 
-Permitir que o proprietário de um recurso altere sua visibilidade entre `PRIVATE`, `SHARED` e `GROUP`.
+Permitir que o proprietário de um recurso altere sua visibilidade entre `PRIVATE`, `SHARED` e `GROUP`, dentro das transições permitidas.
 
 ## Ator
 
@@ -24,21 +24,25 @@ Proprietário decide alterar quem pode ver o recurso.
 
 ## Variações
 
-Transições consideradas:
+Transições **permitidas**:
 
-- **`PRIVATE` → `SHARED`**: proprietário passa a listar pessoas específicas com acesso. Nenhuma contradição conceitual identificada.
-- **`PRIVATE` → `GROUP`**: proprietário decide que o recurso passa a fazer parte do contexto do grupo. Nenhuma contradição conceitual identificada, desde que o proprietário seja membro do grupo em questão.
+- **`PRIVATE` → `SHARED`**: proprietário passa a listar pessoas específicas com acesso.
 - **`SHARED` → `PRIVATE`**: acesso das pessoas listadas é removido; recurso volta a ser visível apenas para o proprietário.
-- **`SHARED` → `GROUP`**: recurso deixa de ter uma lista específica de pessoas e passa a ser visível a todo o grupo (ver Questões em aberto).
-- **`GROUP` → `PRIVATE`**: recurso deixa de ser visível para o grupo e passa a ser visível apenas para o proprietário (ver Questões em aberto).
-- **`GROUP` → `SHARED`**: recurso deixa de ser visível para todo o grupo e passa a ser visível apenas para pessoas específicas (ver Questões em aberto).
+- **`PRIVATE` → `GROUP`**: proprietário move o recurso para um grupo do qual faça parte. A partir desse momento, o recurso deixa de ser pessoal e passa a pertencer ao grupo (`owner` muda de `User` para `Group`).
+- **`SHARED` → `GROUP`**: proprietário move o recurso para um grupo do qual faça parte. A partir desse momento, o recurso deixa de pertencer ao usuário e passa a pertencer ao grupo (`owner` muda de `User` para `Group`).
 
-Não é afirmado aqui que todas as transições listadas são permitidas em todos os casos — apenas que nenhuma delas apresenta contradição conceitual óbvia com a documentação existente.
+Transições **não permitidas diretamente**:
+
+- **`GROUP` → `PRIVATE`**
+- **`GROUP` → `SHARED`**
+
+Um recurso que pertence ao grupo não pode ser simplesmente apropriado por um membro e transformado em recurso pessoal. No futuro poderá existir uma ação diferente, como "criar uma cópia pessoal", que geraria um novo recurso sem alterar o original do grupo — essa ação não é criada como caso de uso agora, apenas registrada como possibilidade (ver `docs/product/decisions/PD-003-visibility-transitions.md`).
 
 ## Regras de negócio
 
-- Apenas o proprietário do recurso pode alterar sua visibilidade (hipótese mínima; ver Questões em aberto quanto a recursos `GROUP`).
-- A mudança de visibilidade não duplica o recurso: é o mesmo recurso passando a ter regras diferentes de acesso.
+- Apenas o proprietário do recurso pode iniciar as transições permitidas (`PRIVATE` ↔ `SHARED`, `PRIVATE`/`SHARED` → `GROUP`), e deve ser membro do grupo de destino ao mover um recurso para `GROUP`.
+- `GROUP` → `PRIVATE` e `GROUP` → `SHARED` não são permitidas por este caso de uso.
+- A mudança de visibilidade não duplica o recurso: é o mesmo recurso passando a ter regras diferentes de acesso e, quando aplicável, de propriedade.
 
 ## Visibilidade
 
@@ -52,9 +56,9 @@ Aplica-se a qualquer entidade compartilhável do domínio. Relaciona-se com `UC-
 
 - Após a alteração, o conjunto de pessoas com acesso ao recurso reflete exatamente a nova visibilidade escolhida.
 - Pessoas que tinham acesso antes da mudança e não se enquadram na nova visibilidade deixam de ter acesso.
+- Ao mover um recurso para `GROUP`, o registro passa a ter `owner = Group` e preserva `createdBy = User`.
+- Sistema rejeita tentativas de transição direta `GROUP` → `PRIVATE` ou `GROUP` → `SHARED`.
 
 ## Questões em aberto
 
-- Quando um recurso `GROUP` é alterado para `PRIVATE` ou `SHARED`, quem tem autoridade para fazer essa mudança — apenas quem o criou, ou também um `OWNER` do grupo?
-- Nas transições envolvendo `GROUP` (`SHARED` → `GROUP`, `GROUP` → `PRIVATE`, `GROUP` → `SHARED`), o proprietário original do recurso continua sendo o mesmo?
-- Existem transições que devem ser proibidas por regra de produto, além das questões de autorização listadas acima?
+- Como funcionará, na prática, a futura ação "criar uma cópia pessoal" a partir de um recurso `GROUP`.

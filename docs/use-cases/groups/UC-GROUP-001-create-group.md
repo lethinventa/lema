@@ -30,6 +30,7 @@ Usuário solicita a criação de um novo grupo.
 ## Regras de negócio
 
 - Todo grupo deve ter ao menos um membro com papel `OWNER`.
+- Um grupo pode ter mais de um `OWNER` simultaneamente, ainda que, na criação, exista apenas o criador (ver `UC-GROUP-008` para promoção de novos `OWNER`s).
 - A criação de um grupo não afeta recursos pessoais já existentes do usuário.
 - Um usuário pode pertencer a mais de um grupo.
 
@@ -49,6 +50,5 @@ Após criado, o grupo passa a ser um contexto disponível para recursos com visi
 
 ## Questões em aberto
 
-- Um grupo pode ter mais de um `OWNER` desde a criação?
 - Existe necessidade de registrar um tipo/categoria de grupo (família, casal, residência), ou isso é apenas uso informal, sem modelagem?
 - Existe limite de quantos grupos um usuário pode criar ou participar?

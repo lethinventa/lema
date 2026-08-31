@@ -21,17 +21,20 @@ Membro solicita o convite de uma pessoa para o grupo.
 ## Fluxo principal
 
 1. Membro informa a pessoa a ser convidada.
-2. Sistema registra um convite pendente associado ao grupo e à pessoa convidada.
+2. Sistema registra um convite (`Invitation`) com estado `PENDING`, associado ao grupo e à pessoa convidada.
 3. Pessoa convidada é notificada (canal não definido neste momento).
 
 ## Variações
 
 - Pessoa convidada ainda não possui conta no Lema (hipótese; o fluxo de cadastro não é detalhado neste caso de uso).
+- Membro que enviou o convite o cancela enquanto ainda está `PENDING`: convite passa para o estado `CANCELLED`.
 
 ## Regras de negócio
 
-- Um convite pendente não concede acesso ao grupo até ser aceito.
-- Uma pessoa não pode ter dois convites pendentes simultâneos para o mesmo grupo.
+- Um convite em estado `PENDING` não concede acesso ao grupo até ser aceito.
+- Uma pessoa não pode ter dois convites `PENDING` simultâneos para o mesmo grupo.
+- O convite é conceitualmente independente de canal (e-mail, WhatsApp, link, notificação ou qualquer interface específica).
+- Os estados possíveis de um convite são: `PENDING`, `ACCEPTED`, `DECLINED`, `EXPIRED`, `CANCELLED`.
 - Apenas membros com permissão para convidar podem iniciar este caso de uso (ver Questões em aberto).
 
 ## Visibilidade
@@ -50,6 +53,7 @@ Relaciona-se com `UC-GROUP-003` (Aceitar convite) e `UC-GROUP-006` (Visualizar m
 ## Questões em aberto
 
 - Quais papéis podem convidar novos membros — apenas `OWNER`, ou qualquer `MEMBER`?
-- Qual é o canal de convite (e-mail, link, WhatsApp)? Este caso de uso é independente da interface, mas o produto precisará decidir isso futuramente.
-- Convites têm prazo de expiração?
-- Um convite pode ser cancelado por quem o enviou, antes de ser aceito?
+- Qual é o canal de convite (e-mail, link, WhatsApp)?
+- Qual o prazo padrão até um convite `PENDING` se tornar `EXPIRED`?
+- Qual a estratégia de reenvio de um convite?
+- Qual o comportamento de notificações associado a cada estado do convite?
