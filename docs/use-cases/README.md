@@ -13,7 +13,10 @@ Os IDs são organizados por domínio:
 - `UC-PERM-000` — Permissões
 - `UC-CAL-000` — Calendário
 - `UC-FOOD-000` — Alimentação
-- `UC-HOME-000` — Central do Lar
+- `UC-AUTH-000` — Autenticação
+- `UC-USER-000` — Usuários
+- `UC-TODAY-000` — Home/Hoje (tela inicial do app — não confundir com `UC-HOME-000`)
+- `UC-HOME-000` — Central do Lar (tablet compartilhado, V2)
 - `UC-INT-000` — Integrações
 
 ## Template
@@ -93,9 +96,60 @@ Domínio detalhado — casos de uso documentados individualmente em [`docs/use-c
 - [`UC-GOAL-006`](goals/UC-GOAL-006-create-group-goal.md) — Criar objetivo de grupo
 - [`UC-GOAL-007`](goals/UC-GOAL-007-relate-goal-to-resource.md) — Relacionar objetivo a outros recursos
 
-### Outros domínios (ainda não detalhados)
+### Finanças
 
-- `UC-FIN-001` — Registrar despesa manual
+Domínio detalhado — casos de uso documentados individualmente em [`docs/use-cases/finance/`](finance/):
+
+- [`UC-FIN-001`](finance/UC-FIN-001-record-expense.md) — Registrar despesa manual
+- [`UC-FIN-002`](finance/UC-FIN-002-update-transaction.md) — Atualizar transação
+- [`UC-FIN-003`](finance/UC-FIN-003-delete-transaction.md) — Excluir transação
+- [`UC-FIN-004`](finance/UC-FIN-004-share-transaction.md) — Compartilhar transação
+- [`UC-FIN-005`](finance/UC-FIN-005-create-group-transaction.md) — Registrar transação de grupo
+- [`UC-FIN-006`](finance/UC-FIN-006-create-account.md) — Criar conta
+- [`UC-FIN-007`](finance/UC-FIN-007-create-budget.md) — Criar orçamento
+- [`UC-FIN-008`](finance/UC-FIN-008-view-consolidated-finances.md) — Visualizar visão consolidada de finanças
+- [`UC-FIN-009`](finance/UC-FIN-009-configure-group-financial-arrangement.md) — Configurar acordo financeiro do grupo
+- [`UC-FIN-010`](finance/UC-FIN-010-update-group-financial-arrangement.md) — Atualizar acordo financeiro do grupo
+
+### Alimentação
+
+Domínio detalhado (V2 do roadmap) — casos de uso documentados individualmente em [`docs/use-cases/food/`](food/):
+
+- [`UC-FOOD-001`](food/UC-FOOD-001-plan-meal.md) — Planejar refeição
+- [`UC-FOOD-002`](food/UC-FOOD-002-update-meal.md) — Atualizar refeição planejada
+- [`UC-FOOD-003`](food/UC-FOOD-003-delete-meal.md) — Excluir refeição planejada
+- [`UC-FOOD-004`](food/UC-FOOD-004-share-meal.md) — Compartilhar refeição planejada
+- [`UC-FOOD-005`](food/UC-FOOD-005-create-group-meal.md) — Planejar refeição de grupo
+- [`UC-FOOD-006`](food/UC-FOOD-006-generate-shopping-list.md) — Gerar lista de compras a partir de uma refeição
+- [`UC-FOOD-007`](food/UC-FOOD-007-update-meal-status.md) — Marcar refeição como realizada ou cancelada
+- [`UC-FOOD-008`](food/UC-FOOD-008-plan-recurring-meal.md) — Planejar refeição recorrente
+
+### Autenticação
+
+Domínio detalhado — casos de uso documentados individualmente em [`docs/use-cases/auth/`](auth/):
+
+- [`UC-AUTH-001`](auth/UC-AUTH-001-sign-up.md) — Criar conta
+- [`UC-AUTH-002`](auth/UC-AUTH-002-sign-in.md) — Autenticar
+- [`UC-AUTH-003`](auth/UC-AUTH-003-sign-out.md) — Encerrar sessão
+- [`UC-AUTH-004`](auth/UC-AUTH-004-recover-access.md) — Recuperar acesso
+- [`UC-AUTH-005`](auth/UC-AUTH-005-update-credentials.md) — Alterar credenciais
+- [`UC-AUTH-006`](auth/UC-AUTH-006-configure-mfa.md) — Configurar autenticação multifator (MFA)
+
+### Usuários
+
+Domínio detalhado — casos de uso documentados individualmente em [`docs/use-cases/users/`](users/):
+
+- [`UC-USER-001`](users/UC-USER-001-complete-profile.md) — Completar perfil
+- [`UC-USER-002`](users/UC-USER-002-update-profile.md) — Atualizar perfil
+- [`UC-USER-003`](users/UC-USER-003-view-profile.md) — Visualizar perfil de outra pessoa
+- [`UC-USER-004`](users/UC-USER-004-delete-account.md) — Excluir conta
+
+### Home/Hoje
+
+Domínio detalhado — casos de uso documentados individualmente em [`docs/use-cases/today/`](today/):
+
+- [`UC-TODAY-001`](today/UC-TODAY-001-view-home.md) — Visualizar Home/Hoje
+- [`UC-TODAY-002`](today/UC-TODAY-002-filter-home-by-context.md) — Filtrar Home por contexto
 
 ## Futuros
 

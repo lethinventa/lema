@@ -20,7 +20,7 @@ Usuário cria uma tarefa e define um padrão de recorrência.
 
 1. Usuário cria a tarefa (ver `UC-TASK-001`) e define um padrão de recorrência.
 2. Sistema registra a tarefa como recorrente, associada a esse padrão.
-3. Quando uma ocorrência é concluída, uma nova ocorrência é disponibilizada conforme o padrão (mecanismo exato não definido — ver Questões em aberto).
+3. Quando uma ocorrência é concluída, uma nova ocorrência é disponibilizada conforme o padrão, já com o(s) mesmo(s) responsável(is) da série.
 
 ## Variações
 

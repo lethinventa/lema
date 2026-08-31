@@ -12,3 +12,4 @@
 10. O usuário deve sempre entender claramente quem pode visualizar determinada informação.
 11. Informações privadas nunca devem aparecer em interfaces ou contextos compartilhados por padrão.
 12. O sistema deve reduzir a quantidade de aplicativos necessários para organizar a vida cotidiana.
+13. Objetivos podem funcionar como hubs leves que conectam finanças, tarefas, eventos e outros recursos relacionados a uma mesma intenção de vida — sem se tornar um gerenciador de projetos detalhado.

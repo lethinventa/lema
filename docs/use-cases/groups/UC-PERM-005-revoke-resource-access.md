@@ -29,7 +29,7 @@ Proprietário decide remover o acesso de uma pessoa específica ao recurso.
 ## Regras de negócio
 
 - Revogar acesso não apaga o recurso nem afeta o proprietário.
-- Apenas o proprietário pode revogar acesso de um recurso `SHARED` (hipótese mínima).
+- Apenas o proprietário pode revogar acesso de um recurso `SHARED`, conforme já estabelecido em `permissions.md`: só o proprietário pode adicionar ou remover pessoas do compartilhamento.
 - Quando `sharedWith` fica vazio, a visibilidade do recurso muda automaticamente para `PRIVATE` (ver `docs/product/decisions/PD-003-visibility-transitions.md`).
 
 ## Visibilidade

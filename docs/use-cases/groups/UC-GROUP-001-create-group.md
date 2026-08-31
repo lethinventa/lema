@@ -21,7 +21,8 @@ Usuário solicita a criação de um novo grupo.
 1. Usuário informa um nome para o grupo.
 2. Sistema cria o grupo.
 3. Sistema associa o usuário criador ao grupo com papel `OWNER`.
-4. Grupo passa a existir, tendo o criador como único membro.
+4. Usuário completa o onboarding financeiro do grupo, obrigatório em toda criação de grupo (ver `UC-FIN-009`).
+5. Grupo passa a existir, tendo o criador como único membro.
 
 ## Variações
 
@@ -33,6 +34,7 @@ Usuário solicita a criação de um novo grupo.
 - Um grupo pode ter mais de um `OWNER` simultaneamente, ainda que, na criação, exista apenas o criador (ver `UC-GROUP-008` para promoção de novos `OWNER`s).
 - A criação de um grupo não afeta recursos pessoais já existentes do usuário.
 - Um usuário pode pertencer a mais de um grupo.
+- Todo grupo criado passa pelo onboarding financeiro mínimo (`UC-FIN-009`) — não é uma etapa opcional a ser adiada.
 
 ## Visibilidade
 
@@ -40,13 +42,14 @@ A criação do grupo em si não envolve diretamente um recurso `PRIVATE`, `SHARE
 
 ## Relações com outros módulos
 
-Após criado, o grupo passa a ser um contexto disponível para recursos com visibilidade `GROUP`, como Tasks, Events, Lists e Transactions.
+Após criado, o grupo passa a ser um contexto disponível para recursos com visibilidade `GROUP`, como Tasks, Events, Lists e Transactions. Inclui `UC-FIN-009` (onboarding financeiro do grupo) como etapa obrigatória do próprio fluxo de criação.
 
 ## Critérios de aceite
 
 - Um novo grupo é criado com um nome definido.
 - O criador é automaticamente registrado como membro do grupo com papel `OWNER`.
 - Nenhum outro usuário é adicionado automaticamente ao grupo.
+- Um grupo não termina de ser criado sem que o onboarding financeiro mínimo (`UC-FIN-009`) seja concluído.
 
 ## Questões em aberto
 

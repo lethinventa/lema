@@ -11,6 +11,7 @@ O modelo de domínio previa que uma `Membership` poderia futuramente armazenar u
 ## Decisão
 
 - Os papéis de grupo, neste momento, são apenas `OWNER` e `MEMBER`. Não existe papel intermediário.
+- Qualquer `MEMBER` pode convidar novos membros para o grupo — convidar não é uma ação de gestão estrutural do grupo (como editar dados do grupo ou gerenciar papéis), e sim uma extensão natural da confiança já existente entre quem já compartilha o grupo (ver `UC-GROUP-002`).
 - Um grupo pode ter mais de um `OWNER` simultaneamente.
 - Um grupo deve sempre ter ao menos um `OWNER`.
 - Apenas `OWNER` pode:
@@ -30,9 +31,8 @@ Um modelo mínimo de dois papéis é suficiente para sustentar os casos de uso j
 
 - `UC-GROUP-004`, `UC-GROUP-005`, `UC-GROUP-007` e `UC-GROUP-008` passam a exigir explicitamente papel `OWNER` para as ações que gerenciam o grupo ou seus membros.
 - Fica estruturalmente impossível um grupo ficar sem `OWNER` através dos fluxos normais de remoção, saída ou rebaixamento.
-- Quem pode **convidar** novos membros não foi decidido aqui — continua em aberto (ver `UC-GROUP-002`).
+- `UC-GROUP-002` passa a registrar explicitamente que qualquer `MEMBER` (não apenas `OWNER`) pode convidar novos membros.
 
 ## Questões futuras
 
 - Eventual criação de um papel intermediário (ex.: alguém que convida ou remove membros, mas não gerencia papéis), caso surja necessidade concreta.
-- Quem pode convidar novos membros: apenas `OWNER`, ou qualquer `MEMBER`.

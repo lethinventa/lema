@@ -32,6 +32,8 @@ Ator decide excluir um objetivo.
 - Excluir um objetivo `GROUP` não afeta a existência do grupo nem de outros objetivos.
 - Excluir um objetivo segue a política padrão de exclusão do Lema (`PD-005-deletion-policy.md`): lixeira por 30 dias, com restauração possível nesse período.
 - Excluir um objetivo não exclui os recursos relacionados a ele (Tasks, Events, Documents etc.), apenas encerra as relações com eles (ver `UC-GOAL-007` quanto a essa questão).
+- Se o objetivo for uma submeta, suas `GoalAllocations` (`RESERVED`/`COMMITTED`/`PAID`) acompanham o mesmo ciclo de vida da submeta — vão para a lixeira junto com ela e são restauradas junto, se aplicável. `Transactions` já registradas (que sustentam alocações `PAID`) não são excluídas; apenas deixam de estar relacionadas enquanto a submeta estiver na lixeira (ver `docs/product/decisions/PD-007-goal-lightweight-hub.md`).
+- Excluir um objetivo "pai" não exclui suas submetas automaticamente — elas permanecem como objetivos independentes, sem mais um pai associado, consistente com o padrão do sistema de não propagar exclusão a recursos relacionados.
 
 ## Visibilidade
 
@@ -46,6 +48,8 @@ Relaciona-se com `UC-GOAL-007` quanto ao destino das relações com outros recur
 - Objetivo excluído deixa de aparecer na lista de objetivos ativos para qualquer pessoa que tinha acesso a ele.
 - Objetivo excluído permanece na lixeira por 30 dias, podendo ser restaurado nesse período.
 - Após 30 dias, o objetivo é apagado definitivamente e não pode mais ser restaurado.
+- Se o objetivo excluído for uma submeta, suas `GoalAllocations` acompanham o mesmo ciclo de lixeira/restauração.
+- Excluir um objetivo pai não afeta a existência de suas submetas.
 
 ## Questões em aberto
 

@@ -1,0 +1,58 @@
+# UC-FIN-005 — Registrar transação de grupo
+
+## Objetivo
+
+Permitir que um membro registre uma transação que pertence ao grupo, e não a ele individualmente — por exemplo, uma despesa da casa. Este caso de uso aplica `UC-PERM-003` ao domínio de finanças.
+
+## Ator
+
+- Ator principal: membro do grupo (qualquer papel — `OWNER` ou `MEMBER`).
+
+## Pré-condições
+
+- Usuário é membro ativo de um grupo.
+- O grupo já possui um `GroupFinancialArrangement` com o mínimo obrigatório definido, já que esse onboarding é parte da própria criação do grupo (ver `UC-FIN-009` e `UC-GROUP-001`).
+
+## Gatilho
+
+Membro decide registrar uma transação pertencente ao grupo, em vez de pessoal.
+
+## Fluxo principal
+
+1. Membro registra a transação, informando quem pagou (pagador) e, se aplicável, de qual conta o valor saiu.
+2. Membro define seu contexto como o grupo, conforme `UC-PERM-003`.
+3. Sistema resolve a `SplitRule` aplicável, na ordem: regra definida na própria transação → exceção do `GroupFinancialArrangement` para a categoria/conta/tipo de despesa → regra padrão do grupo. Como todo grupo sai da criação com uma regra padrão definida (ver `UC-FIN-009`), o fallback de informar a divisão manualmente por falta de qualquer configuração (ver `PD-006-financial-organization-model.md`) não se aplica a transações `GROUP` na prática — só a transações `SHARED` fora do contexto de um grupo (ver `UC-FIN-004`).
+4. Transação é criada com `owner = Group` e `createdBy` igual ao usuário que a registrou.
+
+## Variações
+
+- Pagador diferente de quem registra a transação (ex.: Lethicia registra uma compra que Mateus pagou).
+- Responsável econômico diferente do pagador (ex.: Mateus paga, mas a responsabilidade é só de Lethicia — sem reembolso aplicável).
+- Membro sobrepõe a regra padrão do grupo diretamente na transação: válido, tem prioridade máxima na resolução da `SplitRule`.
+
+## Regras de negócio
+
+- Seguem-se as mesmas regras de `UC-PERM-003`: qualquer `MEMBER` pode criar; `owner = Group`; `createdBy = User`.
+- Qualquer membro do grupo pode editar ou excluir uma transação `GROUP`, independentemente de seu papel, conforme `docs/product/decisions/PD-004-group-resource-governance.md`.
+- A transação continua pertencendo ao grupo mesmo que quem a registrou (`createdBy`) deixe de ser membro (ver `docs/product/decisions/PD-002-resource-ownership.md`, `UC-GROUP-004` e `UC-GROUP-005`).
+- O registro de uma transação `GROUP` não implica que a conta usada para pagá-la também seja `GROUP` — uma despesa de grupo não significa dinheiro de grupo (ver `PD-006-financial-organization-model.md`).
+- A visibilidade da despesa em si (quem pagou, categoria, valor) é vista por todo o grupo; os detalhes de divisão (quem deve quanto a quem) podem ficar restritos apenas às pessoas envolvidas, conforme o nível de transparência do `GroupFinancialArrangement`.
+
+## Visibilidade
+
+`GROUP`, conforme `permissions.md`. Propriedade: `owner = Group`, `createdBy = User`. A visibilidade da conta usada para pagar e dos detalhes de divisão financeira são independentes da visibilidade da transação em si (ver "Visibilidade de recursos financeiros" em `permissions.md`).
+
+## Relações com outros módulos
+
+Aplica `UC-PERM-003`. Relaciona-se com `UC-GROUP-004` (Remover membro), `UC-GROUP-005` (Sair do grupo) e `UC-FIN-006` (conta de grupo, ex.: "conta da casa"). Depende do `GroupFinancialArrangement` do grupo, configurado por `UC-FIN-009` (onboarding financeiro do grupo) e refinado por `UC-FIN-010`.
+
+## Critérios de aceite
+
+- Transação criada como `GROUP` é visível para os membros do grupo associado.
+- Transação `GROUP` continua existindo mesmo que quem a registrou saia do grupo ou seja removido.
+- A `SplitRule` aplicada é resolvida na ordem definida (transação → exceção do grupo → padrão do grupo → manual).
+- A conta usada para pagar a transação não fica automaticamente visível ao grupo apenas por a transação ser `GROUP`.
+
+## Questões em aberto
+
+Nenhuma questão em aberto identificada neste momento (ver `UC-FIN-009` quanto à governança do `GroupFinancialArrangement`).

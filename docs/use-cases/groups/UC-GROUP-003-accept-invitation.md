@@ -27,6 +27,7 @@ Pessoa convidada responde ao convite.
 
 - Pessoa convidada recusa o convite: convite passa para o estado `DECLINED`, e ela não é associada ao grupo.
 - Convite já está em estado `EXPIRED` ou `CANCELLED`: não pode mais ser aceito nem recusado.
+- Pessoa convidada ainda não tinha conta no Lema: a aceitação acontece automaticamente ao concluir o cadastro pelo link do convite (ver `UC-AUTH-001`), sem uma etapa 1–2 separada de visualizar e confirmar o convite.
 
 ## Regras de negócio
 
