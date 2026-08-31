@@ -28,13 +28,15 @@ Usuário decide registrar algo que precisa ser feito.
 
 - Tarefa criada sem prazo definido: válido, a tarefa não possui data associada.
 - Tarefa criada sem responsável definido: válido, nenhuma pessoa fica designada até uma atribuição posterior.
-- Tarefa criada já com um responsável definido no mesmo fluxo, como atalho para `UC-TASK-005`.
+- Tarefa criada já com um ou mais responsáveis definidos no mesmo fluxo, como atalho para `UC-TASK-005`.
 - Tarefa criada como recorrente: ver `UC-TASK-006`.
 
 ## Regras de negócio
 
 - Toda tarefa possui um `owner` (`User` para `PRIVATE`/`SHARED`, `Group` para `GROUP`) e um `createdBy` (o usuário que a criou), conforme `permissions.md` e `docs/product/decisions/PD-002-resource-ownership.md`.
 - Uma tarefa pode existir sem prazo e sem responsável.
+- Uma tarefa pode ter mais de um responsável simultaneamente (ver `UC-TASK-005`).
+- Não há campos obrigatórios além do título.
 - Criar uma tarefa `GROUP` exige que o usuário seja membro ativo do grupo no momento da criação.
 
 ## Visibilidade
@@ -52,5 +54,4 @@ Depende de `UC-PERM-001`, `UC-PERM-002` e `UC-PERM-003` para a mecânica de visi
 
 ## Questões em aberto
 
-- Uma tarefa pode ter mais de um responsável simultaneamente? (ver `UC-TASK-005`)
-- Existem campos obrigatórios além do título (ex.: descrição, categoria)?
+Nenhuma questão em aberto identificada neste momento.

@@ -6,7 +6,7 @@ Permitir editar os dados de uma tarefa existente (ex.: título, prazo, descriç�
 
 ## Ator
 
-- Ator principal: proprietário da tarefa (`PRIVATE`/`SHARED`) ou membro do grupo (`GROUP`), conforme a visibilidade — ver Questões em aberto quanto a `GROUP`.
+- Ator principal: proprietário da tarefa (`PRIVATE`/`SHARED`) ou qualquer membro do grupo, independentemente do papel (`GROUP`).
 
 ## Pré-condições
 
@@ -25,7 +25,7 @@ Ator decide alterar dados de uma tarefa.
 
 ## Variações
 
-- Tarefa já concluída: pode ser editada sem alterar seu estado de conclusão (ver Questões em aberto).
+- Tarefa já concluída: pode ser editada normalmente, sem alterar seu estado de conclusão nem apagar o histórico já registrado.
 - Alterar o responsável da tarefa: tratado por `UC-TASK-005`, não por este caso de uso.
 - Alterar a visibilidade da tarefa: tratado por `UC-PERM-004`, não por este caso de uso.
 
@@ -33,7 +33,8 @@ Ator decide alterar dados de uma tarefa.
 
 - Atualizar uma tarefa não altera seu `owner`, `createdBy` nem seu histórico de conclusão.
 - Para tarefas `SHARED`, tanto o proprietário quanto as pessoas em `sharedWith` podem editar, conforme `permissions.md`.
-- Para tarefas `GROUP`, quem pode editar ainda não está definido (ver Questões em aberto).
+- Para tarefas `GROUP`, qualquer membro do grupo pode editar, independentemente de seu papel (`OWNER` ou `MEMBER`).
+- Editar uma tarefa concluída não desfaz sua conclusão.
 
 ## Visibilidade
 
@@ -50,5 +51,4 @@ Relaciona-se com `UC-PERM-004` (mudança de visibilidade) e `UC-TASK-005` (atrib
 
 ## Questões em aberto
 
-- Quem pode editar uma tarefa `GROUP` — qualquer membro do grupo, apenas quem a criou (`createdBy`), ou apenas um `OWNER` do grupo?
-- Uma tarefa já concluída pode ser editada livremente, ou apenas alguns campos ficam bloqueados?
+Nenhuma questão em aberto identificada neste momento.

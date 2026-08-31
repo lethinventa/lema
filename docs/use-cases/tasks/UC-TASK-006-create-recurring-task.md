@@ -25,12 +25,15 @@ Usuário cria uma tarefa e define um padrão de recorrência.
 ## Variações
 
 - Recorrência com data final definida.
-- Recorrência sem data final (indefinida).
+- Recorrência sem data final (indefinida) — comportamento padrão, já que não existe prazo final de recorrência por padrão.
 
 ## Regras de negócio
 
 - Uma tarefa recorrente mantém a mesma visibilidade, `owner` e `createdBy` entre suas ocorrências.
 - Concluir uma ocorrência não deve exigir que o usuário recrie manualmente a tarefa para o próximo período.
+- Cada ocorrência pode ser editada, concluída ou excluída individualmente, sem afetar as demais ocorrências da série (ver `UC-TASK-002`, `UC-TASK-003` e `UC-TASK-004`).
+- Excluir uma tarefa recorrente pergunta ao ator se a exclusão deve afetar apenas a ocorrência atual ou toda a série (ver `UC-TASK-004`).
+- Não existe prazo final de recorrência por padrão; a recorrência é indefinida, a menos que uma data final seja explicitamente definida.
 
 ## Visibilidade
 
@@ -44,11 +47,9 @@ Relaciona-se diretamente com `UC-TASK-001` (criação) e `UC-TASK-003` (conclus�
 
 - Após concluir uma ocorrência, a tarefa volta a estar disponível como pendente para o próximo período, conforme o padrão definido.
 - É possível identificar que uma tarefa é recorrente e qual é o seu padrão.
+- É possível editar, concluir ou excluir uma ocorrência específica sem afetar as demais ocorrências da série.
+- Ao excluir, o sistema pergunta se a ação deve afetar apenas a ocorrência atual ou toda a série.
 
 ## Questões em aberto
 
-- Uma tarefa recorrente é a mesma tarefa "reaberta" a cada ocorrência, ou cada ocorrência gera um novo registro? Essa decisão afeta diretamente como o histórico de conclusão é registrado (ver `UC-TASK-003`).
-- O responsável atribuído permanece o mesmo automaticamente em cada nova ocorrência?
-- É possível editar apenas uma ocorrência específica sem afetar as futuras?
-- Excluir uma tarefa recorrente afeta apenas a próxima ocorrência ou toda a série (ver `UC-TASK-004`)?
-- Existe prazo final de recorrência por padrão, ou ela é sempre indefinida até ser encerrada manualmente?
+- O(s) responsável(is) atribuído(s) a uma tarefa recorrente permanece(m) automaticamente em cada nova ocorrência, ou precisa(m) ser reatribuído(s) a cada vez?
