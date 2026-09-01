@@ -1,8 +1,8 @@
 import { Eye } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import { PrimaryButton } from '../components/Buttons'
+import { DomainLabel } from '../components/DomainLabel'
 import { OnboardingScreen } from '../components/OnboardingScreen'
-import { SectionLabel } from '../components/SectionLabel'
 import { SelectableCard } from '../components/SelectableCard'
 import { useOnboarding, type TransparencyLevel } from '../state/OnboardingContext'
 
@@ -36,7 +36,9 @@ export function GroupFinanceTransparencyScreen() {
       }
     >
       <div>
-        <SectionLabel icon={<Eye size={15} strokeWidth={2.2} />}>Nível de transparência financeira</SectionLabel>
+        <DomainLabel icon={<Eye size={15} strokeWidth={2.4} />} tone="peach">
+          Nível de transparência financeira
+        </DomainLabel>
         <div className="flex flex-col gap-2">
           {TRANSPARENCY_OPTIONS.map((opt) => (
             <SelectableCard

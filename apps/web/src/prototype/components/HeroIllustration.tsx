@@ -7,7 +7,7 @@ import { Calendar, CheckSquare, Users, Wallet } from 'lucide-react'
  */
 export function HeroIllustration() {
   return (
-    <div className="flex h-48 flex-col justify-between rounded-md bg-dark p-5">
+    <div className="flex h-48 flex-col justify-between rounded-md bg-accent p-5">
       <div className="flex items-center justify-between">
         <span className="flex h-9 w-9 items-center justify-center rounded-sm bg-white/10 text-white">
           <CheckSquare size={16} strokeWidth={2.2} />

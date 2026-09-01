@@ -1,0 +1,157 @@
+import { CalendarDays, CheckSquare2, Target, Wallet } from 'lucide-react'
+import { useState } from 'react'
+import { ContextFilterChips, type ContextFilterValue } from '../components/ContextFilterChips'
+import { DomainLabel } from '../components/DomainLabel'
+import { HomeLayout } from '../components/HomeLayout'
+import { Tile } from '../components/Tile'
+import { type HomeContext, mockCalendar, mockFinance, mockGoals, mockTasks, mockUser } from './homeMockData'
+
+type ContextFilter = ContextFilterValue
+
+function matches(filter: ContextFilter, context: HomeContext) {
+  return filter === 'all' || filter === context
+}
+
+function EmptyRow() {
+  return <p className="py-2 text-[13px] text-ink-faint">Nada por aqui hoje.</p>
+}
+
+export function HomeScreen() {
+  const [filter, setFilter] = useState<ContextFilter>('all')
+  const [tasks, setTasks] = useState(mockTasks)
+
+  function toggleTask(id: string) {
+    setTasks((prev) => prev.map((task) => (task.id === id ? { ...task, done: !task.done } : task)))
+  }
+
+  const visibleTasks = tasks.filter((t) => matches(filter, t.context))
+  const visibleCalendar = mockCalendar.filter((c) => matches(filter, c.context))
+  const visibleGoals = mockGoals.filter((g) => matches(filter, g.context))
+  const visibleFinance = mockFinance.filter((f) => matches(filter, f.context))
+
+  return (
+    <HomeLayout>
+      <div className="px-6 pb-4 pt-8">
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-[22px] font-semibold leading-tight text-ink">Bom dia, {mockUser.firstName}</h1>
+            <p className="mt-0.5 text-[13px] text-ink-muted">Segunda-feira, 31 de agosto</p>
+          </div>
+          <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-pill bg-accent-soft text-[14px] font-semibold text-accent">
+            {mockUser.firstName[0]}
+          </span>
+        </div>
+
+        <div className="mt-5">
+          <ContextFilterChips value={filter} onChange={setFilter} />
+        </div>
+
+        <div className="mt-6 grid grid-cols-2 gap-3">
+          {visibleGoals.length === 0 ? (
+            <Tile span={2}>
+              <DomainLabel icon={<Target size={15} strokeWidth={2.4} />} tone="lavender">
+                Objetivos
+              </DomainLabel>
+              <EmptyRow />
+            </Tile>
+          ) : (
+            visibleGoals.map((goal) => (
+              <div
+                key={goal.id}
+                className="relative col-span-2 overflow-hidden rounded-lg bg-accent px-5 py-6 text-white"
+              >
+                <span className="absolute right-5 top-5 rounded-sm bg-mint-bg px-2 py-1 text-[12px] font-extrabold text-mint-fg">
+                  {goal.progress}%
+                </span>
+                <span className="flex items-center gap-1.5 text-[12px] font-semibold uppercase tracking-wide text-white/70">
+                  <Target size={13} strokeWidth={2.4} />
+                  Objetivo em andamento
+                </span>
+                <h2 className="mt-2 max-w-[75%] text-[22px] font-extrabold leading-snug text-balance">
+                  {goal.title}
+                </h2>
+                <div className="mt-5 h-2 w-full overflow-hidden rounded-pill bg-white/25">
+                  <div className="h-full rounded-pill bg-white" style={{ width: `${goal.progress}%` }} />
+                </div>
+                <span className="mt-2 block text-[13px] font-medium text-white/80">{goal.progressLabel}</span>
+              </div>
+            ))
+          )}
+
+          <Tile span={2}>
+            <DomainLabel icon={<CheckSquare2 size={15} strokeWidth={2.4} />} tone="mint">
+              Tarefas de hoje
+            </DomainLabel>
+            {visibleTasks.length === 0 ? (
+              <EmptyRow />
+            ) : (
+              <div className="flex flex-col divide-y divide-line">
+                {visibleTasks.map((task) => (
+                  <button
+                    key={task.id}
+                    type="button"
+                    onClick={() => toggleTask(task.id)}
+                    className="flex w-full items-center gap-3 py-3 text-left transition active:scale-[0.99]"
+                  >
+                    <span
+                      className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-pill border-2 ${
+                        task.done ? 'border-accent bg-accent' : 'border-line'
+                      }`}
+                    >
+                      {task.done ? <CheckSquare2 size={13} strokeWidth={3} className="text-white" /> : null}
+                    </span>
+                    <span
+                      className={`text-[15px] font-semibold ${task.done ? 'text-ink-faint line-through' : 'text-ink'}`}
+                    >
+                      {task.title}
+                    </span>
+                  </button>
+                ))}
+              </div>
+            )}
+          </Tile>
+
+          <Tile span={2}>
+            <DomainLabel icon={<CalendarDays size={12} strokeWidth={2.4} />} tone="sky" size="sm">
+              Compromissos
+            </DomainLabel>
+            {visibleCalendar.length === 0 ? (
+              <EmptyRow />
+            ) : (
+              <div className="flex flex-col divide-y divide-line">
+                {visibleCalendar.map((item) => (
+                  <div key={item.id} className="flex items-center gap-3 py-2.5">
+                    <span className="shrink-0 rounded-sm bg-sky-bg px-1.5 py-0.5 text-[11px] font-bold tabular-nums text-sky-fg">
+                      {item.time}
+                    </span>
+                    <span className="text-[13px] font-medium text-ink">{item.title}</span>
+                  </div>
+                ))}
+              </div>
+            )}
+          </Tile>
+
+          <Tile span={2}>
+            <DomainLabel icon={<Wallet size={12} strokeWidth={2.4} />} tone="peach" size="sm">
+              Finanças
+            </DomainLabel>
+            {visibleFinance.length === 0 ? (
+              <EmptyRow />
+            ) : (
+              <div className="flex flex-col divide-y divide-line">
+                {visibleFinance.map((item) => (
+                  <div key={item.id} className="flex items-center justify-between gap-3 py-2.5">
+                    <span className="text-[13px] font-medium text-ink">{item.title}</span>
+                    <span className="shrink-0 rounded-sm bg-peach-bg px-1.5 py-0.5 text-[11px] font-bold text-peach-fg">
+                      {item.amount}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            )}
+          </Tile>
+        </div>
+      </div>
+    </HomeLayout>
+  )
+}

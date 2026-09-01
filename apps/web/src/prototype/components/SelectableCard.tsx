@@ -1,13 +1,14 @@
 import { CheckCircle2 } from 'lucide-react'
 import type { ReactNode } from 'react'
 
-export type IconTone = 'mint' | 'peach' | 'lavender' | 'sky'
+export type IconTone = 'mint' | 'peach' | 'lavender' | 'sky' | 'sun'
 
 const TONE_STYLES: Record<IconTone, string> = {
   mint: 'bg-mint-bg text-mint-fg',
   peach: 'bg-peach-bg text-peach-fg',
   lavender: 'bg-lavender-bg text-lavender-fg',
   sky: 'bg-sky-bg text-sky-fg',
+  sun: 'bg-sun-bg text-sun-fg',
 }
 
 interface SelectableCardProps {

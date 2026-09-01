@@ -1,8 +1,8 @@
 import { Wallet } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import { PrimaryButton } from '../components/Buttons'
+import { DomainLabel } from '../components/DomainLabel'
 import { OnboardingScreen } from '../components/OnboardingScreen'
-import { SectionLabel } from '../components/SectionLabel'
 import { SelectableCard } from '../components/SelectableCard'
 import { useOnboarding } from '../state/OnboardingContext'
 
@@ -23,7 +23,9 @@ export function GroupFinanceMoneyScreen() {
       }
     >
       <div>
-        <SectionLabel icon={<Wallet size={15} strokeWidth={2.2} />}>Existe dinheiro comum no grupo?</SectionLabel>
+        <DomainLabel icon={<Wallet size={15} strokeWidth={2.4} />} tone="peach">
+          Existe dinheiro comum no grupo?
+        </DomainLabel>
         <div className="flex flex-col gap-2">
           <SelectableCard
             title="Sim, temos caixa comum"

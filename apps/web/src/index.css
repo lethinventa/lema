@@ -3,26 +3,29 @@
 @theme {
   --font-sans: "Onest", ui-sans-serif, system-ui, sans-serif;
 
-  --color-bg: #faf9f4;
+  /* Brand palette — vivid, high-saturation system (2026-08-31 direction). */
+  --color-bg: #f8f8f8;
   --color-surface: #ffffff;
-  --color-surface-muted: #f0efe8;
+  --color-surface-muted: #eeeeee;
   --color-ink: #14150f;
-  --color-ink-muted: #6c6c62;
-  --color-ink-faint: #a3a297;
-  --color-dark: #16281f;
-  --color-line: rgba(20, 21, 15, 0.08);
-  --color-accent: #2f6f4f;
-  --color-accent-soft: #e4efe7;
+  --color-ink-muted: #6b6b6b;
+  --color-ink-faint: #a0a0a0;
+  --color-dark: #000000;
+  --color-line: rgba(0, 0, 0, 0.08);
+  --color-accent: #a000ff;
+  --color-accent-soft: #f2e0ff;
   --color-danger: #c1483a;
 
-  --color-mint-bg: #dcefe1;
-  --color-mint-fg: #2f6f4f;
-  --color-peach-bg: #f4e8d7;
-  --color-peach-fg: #b17b3d;
-  --color-lavender-bg: #e7e2f5;
-  --color-lavender-fg: #6f5da8;
-  --color-sky-bg: #dde9f5;
-  --color-sky-fg: #3f6fa6;
+  --color-mint-bg: #96ff70;
+  --color-mint-fg: #14150f;
+  --color-peach-bg: #fe8744;
+  --color-peach-fg: #14150f;
+  --color-lavender-bg: #a000ff;
+  --color-lavender-fg: #ffffff;
+  --color-sky-bg: #7ee8fc;
+  --color-sky-fg: #14150f;
+  --color-sun-bg: #feff61;
+  --color-sun-fg: #14150f;
 
   /* Single consistent control radius (14–16px) per design direction — avoid a large
      hierarchy of radii and avoid pill shapes on buttons/cards/chips. --radius-pill is
@@ -50,5 +53,11 @@
 
   * {
     box-sizing: border-box;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+
+  *::-webkit-scrollbar {
+    display: none;
   }
 }

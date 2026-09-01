@@ -1,8 +1,8 @@
 import { Scale } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import { PrimaryButton } from '../components/Buttons'
+import { DomainLabel } from '../components/DomainLabel'
 import { OnboardingScreen } from '../components/OnboardingScreen'
-import { SectionLabel } from '../components/SectionLabel'
 import { SelectableCard } from '../components/SelectableCard'
 import { useOnboarding, type SplitRule } from '../state/OnboardingContext'
 
@@ -34,7 +34,9 @@ export function GroupFinanceSplitScreen() {
       }
     >
       <div>
-        <SectionLabel icon={<Scale size={15} strokeWidth={2.2} />}>Regra padrão de divisão das despesas</SectionLabel>
+        <DomainLabel icon={<Scale size={15} strokeWidth={2.4} />} tone="peach">
+          Regra padrão de divisão das despesas
+        </DomainLabel>
         <div className="flex flex-col gap-2">
           {SPLIT_RULES.map((rule) => (
             <SelectableCard

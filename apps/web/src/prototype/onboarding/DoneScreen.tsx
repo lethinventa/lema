@@ -1,12 +1,12 @@
 import { CheckCircle2, CheckSquare2, Wallet } from 'lucide-react'
 import type { ReactNode } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { PrimaryButton } from '../components/Buttons'
+import { GhostButton, PrimaryButton } from '../components/Buttons'
 import { Wordmark } from '../components/Wordmark'
 import { useOnboarding } from '../state/OnboardingContext'
 
 function suggestionFor(groupChoice: string | null): { icon: ReactNode; label: string } {
-  if (groupChoice === 'create') return { icon: <Wallet size={16} strokeWidth={2.2} />, label: 'Configurar as finanças do grupo' }
+  if (groupChoice === 'create') return { icon: <Wallet size={16} strokeWidth={2.2} />, label: 'Registrar a primeira despesa do grupo' }
   if (groupChoice === 'join') return { icon: <CheckSquare2 size={16} strokeWidth={2.2} />, label: 'Ver as tarefas da família' }
   return { icon: <CheckSquare2 size={16} strokeWidth={2.2} />, label: 'Criar sua primeira tarefa' }
 }
@@ -45,8 +45,7 @@ export function DoneScreen() {
             Prévia — Home
           </span>
           <p className="mt-2 text-[14px] leading-normal text-ink-muted">
-            Sua Home está vazia por enquanto — é aqui que vai aparecer o que precisa da sua atenção no
-            dia a dia.
+            É na Home que vai aparecer o que precisa da sua atenção no dia a dia.
           </p>
           <div className="mt-4 flex items-center gap-3 rounded-md bg-surface-muted px-3 py-3">
             <span className="flex h-7 w-7 items-center justify-center rounded-sm bg-mint-bg text-mint-fg">
@@ -54,15 +53,12 @@ export function DoneScreen() {
             </span>
             <span className="text-[14px] font-medium text-ink">{suggestion.label}</span>
           </div>
-          <p className="mt-3 text-[11px] leading-normal text-ink-faint">
-            A tela de Home completa ainda não foi desenhada — este é só um resumo do que o onboarding
-            deixou pronto.
-          </p>
         </div>
       </div>
 
-      <div className="border-t border-line bg-bg px-6 pb-[max(20px,env(safe-area-inset-bottom))] pt-4">
-        <PrimaryButton onClick={handleRestart}>Testar o fluxo de novo</PrimaryButton>
+      <div className="flex flex-col gap-2 border-t border-line bg-bg px-6 pb-[max(20px,env(safe-area-inset-bottom))] pt-4">
+        <PrimaryButton onClick={() => navigate('/home')}>Ir para a Home</PrimaryButton>
+        <GhostButton onClick={handleRestart}>Testar o fluxo de novo</GhostButton>
       </div>
     </div>
   )
