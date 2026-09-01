@@ -1,10 +1,9 @@
-import { Wallet } from 'lucide-react'
 import { Navigate, Route, Routes } from 'react-router-dom'
 import { CalendarScreen } from './prototype/calendar/CalendarScreen'
 import { PhoneFrame } from './prototype/components/PhoneFrame'
+import { FinanceScreen } from './prototype/finance/FinanceScreen'
 import { GoalsScreen } from './prototype/goals/GoalsScreen'
 import { HomeScreen } from './prototype/home/HomeScreen'
-import { PlaceholderScreen } from './prototype/home/PlaceholderScreen'
 import { DoneScreen } from './prototype/onboarding/DoneScreen'
 import { GroupChoiceScreen } from './prototype/onboarding/GroupChoiceScreen'
 import { GroupCreateScreen } from './prototype/onboarding/GroupCreateScreen'
@@ -37,7 +36,7 @@ export default function App() {
           <Route path="/home/tarefas" element={<TasksScreen />} />
           <Route path="/home/calendario" element={<CalendarScreen />} />
           <Route path="/home/objetivos" element={<GoalsScreen />} />
-          <Route path="/home/financas" element={<PlaceholderScreen title="Finanças" icon={Wallet} />} />
+          <Route path="/home/financas" element={<FinanceScreen />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </PhoneFrame>
