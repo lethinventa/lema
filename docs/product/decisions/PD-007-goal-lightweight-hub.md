@@ -36,7 +36,9 @@ Objetivos podem funcionar como hubs leves que conectam finanças, tarefas, event
 
 ### GoalAllocation como entidade própria
 
-`RESERVED` e `COMMITTED` são representados por uma nova entidade conceitual, `GoalAllocation`: um valor associado a um `Goal` (ou submeta), com um estado (`RESERVED`, `COMMITTED` ou `PAID`) e, quando `PAID`, uma referência à `Transaction` correspondente. `RESERVED` e `COMMITTED` não têm `Transaction` associada, porque representam dinheiro que ainda não se moveu. Não são uma extensão de `Budget` (que representa um teto de gasto) nem de `Transaction` (que representa movimentação já ocorrida) — são um conceito de planejamento à parte.
+`RESERVED` e `COMMITTED` são representados por uma nova entidade conceitual, `GoalAllocation`: um valor associado a um `Goal` (ou submeta), sem `Transaction` associada, porque representam dinheiro que ainda não se moveu. Não são uma extensão de `Budget` (que representa um teto de gasto) nem de `Transaction` (que representa movimentação já ocorrida) — são um conceito de planejamento à parte.
+
+`PAID` **não é um estado de `GoalAllocation`** (refinamento feito durante a prototipação, ver `UC-GOAL-007`): é sempre a soma das `Transaction`s que referenciam esse `Goal` diretamente (campo `goalId` em `Transaction`). Vincular uma transação ao objetivo já registra o valor como `PAID` — não existe uma ação separada de "marcar uma alocação como paga", nem uma `GoalAllocation` que "vira" `PAID`. Essa simplificação evita que o mesmo valor precise ser digitado duas vezes (uma em Finanças, outra dentro do objetivo).
 
 ### Submetas têm um único nível
 
@@ -52,11 +54,11 @@ Referenciar um `Document` (ex.: um contrato) em uma `GoalAllocation` no estado `
 
 ### Custo estimado é um campo direto, não calculado
 
-O custo estimado de um objetivo ou submeta é um valor definido diretamente pelo usuário, independente da soma de suas `GoalAllocations`. O "restante a organizar" continua sendo sempre calculado como custo estimado menos a soma de `RESERVED` + `COMMITTED` + `PAID`.
+O custo estimado de um objetivo ou submeta é um valor definido diretamente pelo usuário, independente da soma de suas `GoalAllocations`. O "restante a organizar" continua sendo sempre calculado como custo estimado menos (soma de `GoalAllocations` `RESERVED` + `COMMITTED` mais a soma das `Transaction`s vinculadas ao objetivo, que formam o `PAID`).
 
 ### Exclusão de submeta com alocações
 
-Excluir uma submeta segue a mesma política padrão de exclusão do Lema (`docs/product/decisions/PD-005-deletion-policy.md`): vai para a lixeira por 30 dias, podendo ser restaurada. Suas `GoalAllocations` acompanham o mesmo ciclo de vida da submeta. `Transactions` já registradas (que sustentam alocações `PAID`) não são excluídas — elas têm ciclo de vida próprio (`UC-FIN-003`) e apenas deixam de estar relacionadas à submeta enquanto ela estiver na lixeira.
+Excluir uma submeta segue a mesma política padrão de exclusão do Lema (`docs/product/decisions/PD-005-deletion-policy.md`): vai para a lixeira por 30 dias, podendo ser restaurada. Suas `GoalAllocations` (`RESERVED`/`COMMITTED`) acompanham o mesmo ciclo de vida da submeta. `Transactions` já vinculadas (que formam o `PAID`) não são excluídas — elas têm ciclo de vida próprio (`UC-FIN-003`) e apenas deixam de contar pra essa submeta enquanto ela estiver na lixeira.
 
 ## Motivo
 
@@ -66,7 +68,7 @@ Sem esse conceito, um objetivo complexo como "Casamento" forçaria o usuário a 
 
 - `domain-model.md` precisa registrar `Goal → Goal` como relação válida (submeta, limitada a um nível), os três estados financeiros conceituais e a nova entidade `GoalAllocation`.
 - Os `UC-GOAL-*` já documentados (`UC-GOAL-001` a `UC-GOAL-007`) foram escritos antes desta decisão e não cobrem submetas nem estados financeiros. Eles precisarão de revisão — em especial `UC-GOAL-001` (criação, para admitir uma submeta), `UC-GOAL-003` (conclusão, quanto a como o progresso de um objetivo com submetas é calculado) e `UC-GOAL-007` (relações, para cobrir `Goal → Goal` e os três estados financeiros) — mas essa revisão fica deliberadamente fora do escopo deste momento, a pedido explícito.
-- Novos casos de uso (criar submeta, registrar valor reservado/comprometido, mover valor de `RESERVED` para `COMMITTED`/`PAID`) só devem ser escritos depois que as questões futuras abaixo forem suficientemente resolvidas.
+- Novos casos de uso (criar submeta, registrar valor reservado/comprometido, vincular uma `Transaction` a um objetivo pra formar o `PAID`) só devem ser escritos depois que as questões futuras abaixo forem suficientemente resolvidas.
 
 ## Questões futuras
 

@@ -1,9 +1,9 @@
 // Dados mockados da área de Objetivos (UC-GOAL-*). Sem persistência real —
-// suficiente pra testar lista, progresso, criação rápida e conclusão.
+// suficiente pra testar lista, progresso, criação rápida, conclusão, submetas
+// e o modelo financeiro (GoalAllocation, ver goalAllocationsMockData.ts).
 //
 // UC-GOAL-001: todo objetivo nasce com progresso 0%. UC-GOAL-003: a conclusão
 // é permanente — por isso não existe "reabrir" aqui, diferente de tarefas.
-// Submetas e GoalAllocations (UC-GOAL-007) ficam de fora desta rodada.
 
 import type { HomeContext } from '../home/homeMockData'
 
@@ -12,9 +12,15 @@ export interface MockGoal {
   title: string
   context: HomeContext
   done: boolean
+  // Progresso manual — só é usado quando o objetivo não tem custoEstimado
+  // nem submetas (fallback, ver UC-GOAL-001). Nos demais casos, o progresso
+  // exibido é sempre derivado (goalsSelectors.ts), nunca este campo.
   progress: number
-  deadline?: string
+  deadline?: string // ISO — pré-requisito pra "ideal por mês" (UC-GOAL-008)
   category?: string
+  custoEstimado?: number
+  createdAt: string // ISO — usado pro cálculo de ritmo esperado (UC-GOAL-008)
+  parentGoalId?: string // submeta (Goal→Goal, 1 nível — PD-007)
 }
 
 export const initialGoals: MockGoal[] = [
@@ -23,20 +29,82 @@ export const initialGoals: MockGoal[] = [
     title: 'Viagem para a praia',
     context: 'shared',
     done: false,
-    progress: 64,
-    deadline: 'Dez/2026',
+    progress: 0,
+    deadline: '2026-12-31',
     category: 'Viagem',
+    custoEstimado: 5000,
+    createdAt: '2026-03-01',
   },
-  { id: 'gl2', title: 'Trocar o carro', context: 'personal', done: false, progress: 30, category: 'Financeiro' },
+  {
+    id: 'gl2',
+    title: 'Trocar o carro',
+    context: 'personal',
+    done: false,
+    progress: 30,
+    category: 'Financeiro',
+    createdAt: '2026-06-01',
+  },
   {
     id: 'gl3',
     title: 'Reforma da cozinha',
     context: 'group',
     done: false,
-    progress: 85,
-    deadline: 'Nov/2026',
+    progress: 0,
+    deadline: '2026-11-30',
     category: 'Casa',
+    createdAt: '2026-05-01',
   },
-  { id: 'gl4', title: 'Fundo de emergência', context: 'shared', done: false, progress: 45, category: 'Financeiro' },
-  { id: 'gl5', title: 'Correr 5km sem parar', context: 'personal', done: true, progress: 100, category: 'Saúde' },
+  {
+    id: 'gl3a',
+    title: 'Marcenaria',
+    context: 'group',
+    done: false,
+    progress: 0,
+    category: 'Casa',
+    custoEstimado: 8000,
+    createdAt: '2026-05-01',
+    parentGoalId: 'gl3',
+  },
+  {
+    id: 'gl3b',
+    title: 'Eletrodomésticos',
+    context: 'group',
+    done: false,
+    progress: 0,
+    category: 'Casa',
+    custoEstimado: 6000,
+    createdAt: '2026-05-01',
+    parentGoalId: 'gl3',
+  },
+  {
+    id: 'gl3c',
+    title: 'Mão de obra',
+    context: 'group',
+    done: false,
+    progress: 0,
+    category: 'Casa',
+    custoEstimado: 3000,
+    createdAt: '2026-05-01',
+    parentGoalId: 'gl3',
+  },
+  {
+    id: 'gl4',
+    title: 'Fundo de emergência',
+    context: 'shared',
+    done: false,
+    progress: 0,
+    deadline: '2026-12-31',
+    category: 'Financeiro',
+    custoEstimado: 10000,
+    createdAt: '2026-01-05',
+  },
+  {
+    id: 'gl5',
+    title: 'Correr 5km sem parar',
+    context: 'personal',
+    done: true,
+    progress: 100,
+    category: 'Saúde',
+    createdAt: '2026-04-01',
+  },
 ]

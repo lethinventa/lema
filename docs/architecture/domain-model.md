@@ -114,11 +114,17 @@ Diferentes submetas do mesmo objetivo podem seguir regras financeiras completame
 
 `RESERVED` e `COMMITTED` são representados por uma entidade própria, `GoalAllocation` (ver abaixo) — não são uma extensão de `Transaction` nem de `Budget`.
 
+Quando um objetivo tem custo estimado e prazo definidos, o sistema deriva dois valores adicionais, nunca armazenados — apenas calculados: o **valor ideal por mês** (restante a organizar dividido pelos meses até o prazo) e um **aviso de ritmo**, exibido quando o valor já alocado está bem abaixo do que seria proporcional ao tempo já decorrido desde a criação do objetivo até o prazo (ver `UC-GOAL-008`).
+
 A hierarquia de submetas é limitada a um único nível: uma submeta não pode ter suas próprias submetas. Quando um objetivo possui submetas, seu progresso é calculado automaticamente como a média do progresso delas, em vez de editado manualmente (ver `docs/product/decisions/PD-007-goal-lightweight-hub.md`).
 
 ### GoalAllocation
 
-Representa um valor associado a um `Goal` (ou submeta) em um dos três estados financeiros: `RESERVED`, `COMMITTED` ou `PAID`. Uma `GoalAllocation` em estado `PAID` referencia a `Transaction` correspondente; nos estados `RESERVED` e `COMMITTED` não há `Transaction` associada, porque o dinheiro ainda não se moveu. Uma `GoalAllocation` em `COMMITTED` pode, opcionalmente, referenciar um `Document` (ex.: um contrato), mas isso não é obrigatório. O custo estimado de um objetivo/submeta é um valor independente, definido diretamente pelo usuário — não é calculado a partir da soma das `GoalAllocations`. Ao excluir uma submeta, suas `GoalAllocations` seguem o mesmo ciclo de vida dela (lixeira por 30 dias, ver `docs/product/decisions/PD-005-deletion-policy.md`); `Transactions` já registradas não são excluídas, apenas deixam de estar relacionadas enquanto a submeta estiver na lixeira.
+Representa um valor associado a um `Goal` (ou submeta) em um dos dois estados `RESERVED` ou `COMMITTED` — dinheiro que ainda não se moveu, por isso nenhuma `GoalAllocation` referencia uma `Transaction`. Uma `GoalAllocation` em `COMMITTED` pode, opcionalmente, referenciar um `Document` (ex.: um contrato), mas isso não é obrigatório.
+
+`PAID` não é um estado de `GoalAllocation` — é sempre a soma das `Transaction`s que têm esse `Goal` como referência (`goalId`, ver `Transaction` abaixo). Vincular uma transação a um objetivo é o próprio ato de contabilizá-la como `PAID`; não existe uma ação separada de "marcar uma alocação como paga". Essa escolha evita que o mesmo valor precise ser digitado duas vezes — uma em Finanças, outra dentro do objetivo (ver `UC-GOAL-007`).
+
+O custo estimado de um objetivo/submeta é um valor independente, definido diretamente pelo usuário — não é calculado a partir da soma das `GoalAllocations` nem das `Transaction`s vinculadas. Ao excluir uma submeta, suas `GoalAllocations` seguem o mesmo ciclo de vida dela (lixeira por 30 dias, ver `docs/product/decisions/PD-005-deletion-policy.md`); `Transactions` já registradas não são excluídas, apenas deixam de estar relacionadas enquanto a submeta estiver na lixeira.
 
 ### Transaction
 
@@ -131,11 +137,20 @@ Movimentação financeira. Além de `owner`, `createdBy` e visibilidade (ver "Pr
 - conta associada (`Account`) — de onde o dinheiro efetivamente saiu ou entrou;
 - pagador — quem efetivamente pagou ou recebeu, que pode ser diferente do `owner` em uma transação `GROUP`;
 - responsável econômico — quem deve arcar com o valor, que pode ser diferente de quem pagou;
-- `SplitRule` — regra de divisão do valor entre responsáveis, quando aplicável.
+- `SplitRule` — regra de divisão do valor entre responsáveis, quando aplicável;
+- objetivo relacionado (opcional) — quando presente, essa transação é o que forma o valor `PAID` daquele `Goal` (ver `GoalAllocation`, acima);
+- forma de pagamento (débito ou crédito) — só relevante quando a `Account` associada é um cartão de crédito (ver "Cartão de crédito e Fatura", abaixo); para as demais contas, toda transação se comporta como débito.
 
 A visibilidade da transação (contexto da despesa) é independente da visibilidade da conta usada para pagá-la, e também é independente da visibilidade dos detalhes de divisão financeira (ver `permissions.md`).
 
-O MVP cobre apenas o tipo despesa; registrar receitas é conceitualmente parte do modelo, mas fica fora do escopo do MVP (ver `UC-FIN-001`).
+O MVP cobre os tipos receita e despesa (ver `UC-FIN-001`).
+
+#### Parcelamento e recorrência
+
+Uma transação pode fazer parte de um parcelamento ou de uma recorrência — dois mecanismos distintos:
+
+- **Parcelamento**: usado tipicamente para compras no cartão de crédito divididas em N vezes. Ao criar, o sistema gera de uma vez as N `Transaction`s futuras, cada uma com valor calculado automaticamente e um `parcelamentoId` comum que as agrupa, além de sua posição (`numeroParcela`/`totalParcelas`). Editar ou excluir uma parcela afeta apenas ela, sem efeito cascata sobre as demais (ver `UC-FIN-012`).
+- **Recorrência**: usada para despesas/receitas que se repetem indefinidamente (ex.: assinatura mensal), representada por uma `RecurrenceRule` (valor, categoria, conta associada, contexto, dia do mês, data de início, data de fim opcional). Apenas a ocorrência do período atual é materializada como uma `Transaction` real; ocorrências futuras são projetadas para efeito de cálculo (ver "Saldo previsto" em `Account`), mas só viram `Transaction` quando a data chega. Cancelar a regra não apaga as `Transaction`s já materializadas (ver `UC-FIN-013`).
 
 ### SplitRule
 
@@ -148,11 +163,25 @@ Quando uma `SplitRule` aplicada a uma ou mais transações resulta em valores n�
 Origem ou destino financeiro (ex.: conta corrente, cartão de crédito, dinheiro). Pode possuir:
 
 - nome;
-- tipo;
+- tipo (conta corrente, cartão de crédito, dinheiro/carteira, poupança ou outra);
 - contexto;
-- visibilidade.
+- visibilidade;
+- `padrao` — se essa conta é pré-selecionada ao lançar uma transação nova. No máximo uma conta pode estar marcada como padrão por usuário, entre as contas pessoais/compartilhadas que ele usa; marcar uma nova desmarca a anterior automaticamente. Contas `GROUP` não participam desse conceito no MVP;
+- `ignorarNosTotais` — exclui a conta da soma total agregada (ex.: uma conta de investimento que não deve contar como "dinheiro disponível para gastar"), sem afetar o saldo da própria conta.
 
-A visibilidade de uma `Account` é independente da visibilidade de qualquer `Transaction` que a referencie (ver `permissions.md` e `PD-006-financial-organization-model.md`).
+A visibilidade de uma `Account` é independente da visibilidade de qualquer `Transaction` que a referencie (ver `permissions.md` e `PD-006-financial-organization-model.md`). Excluir uma conta segue a política padrão de lixeira (`PD-005-deletion-policy.md`): as `Transaction`s associadas não são excluídas, apenas ficam desvinculadas enquanto a conta está na lixeira, e são revinculadas se a conta for restaurada — mesmo princípio já aplicado à exclusão de submeta de `Goal`.
+
+#### Saldo previsto
+
+Além do saldo atual (soma das transações já realizadas), toda `Account` expõe um **saldo previsto**: saldo atual mais as transações futuras já materializadas dentro do período corrente (inclui parcelas futuras) mais as ocorrências projetadas de `RecurrenceRule` ainda não materializadas dentro do período corrente. É sempre um valor calculado, nunca armazenado — a janela de projeção vai até o fim do período corrente (mês), não além.
+
+#### Cartão de crédito e Fatura
+
+Um cartão de crédito é uma `Account` com `tipo = cartão de crédito`, com campos adicionais: `limite`, `diaFechamento`, `diaVencimento` e `contaPagamento` (a `Account` de onde o pagamento da fatura sai; pode estar indefinida).
+
+Um mesmo cartão pode oferecer as duas funções ao mesmo tempo (ex.: um cartão como o Inter, com débito e crédito no mesmo plástico) — isso não é uma propriedade do cartão, é escolhido em cada `Transaction` individualmente. Uma transação no crédito entra no ciclo da fatura; uma transação no débito se comporta, para efeito de saldo, como se tivesse sido lançada direto na `contaPagamento` do cartão — afeta o saldo dela na hora, nunca aparece em nenhuma fatura, e não pode ser parcelada. Débito só é possível quando o cartão tem uma `contaPagamento` definida.
+
+`Invoice` (Fatura) é uma entidade própria, associada a um cartão e a um período (ciclo de fechamento). Persiste apenas identidade, `status` (`ABERTA`/`FECHADA`/`PAGA`) e `dataPagamento`; o valor total e a lista de transações do ciclo são sempre derivados das `Transaction`s **no crédito** daquele cartão dentro do período — nunca duplicados, seguindo o mesmo princípio já usado no saldo par-a-par de `SplitRule` e no progresso de `Goal`. A fatura passa de `ABERTA` para `FECHADA` automaticamente ao passar o dia de fechamento; "registrar pagamento" (disponível apenas quando `FECHADA`) cria uma `Transaction` de saída na conta de pagamento e muda o status para `PAGA` (ver `UC-FIN-011`).
 
 ### Budget
 
@@ -164,7 +193,7 @@ Planejamento financeiro relacionado a período, categoria ou objetivo. Pode poss
 - contexto;
 - visibilidade.
 
-Este é o escopo básico do MVP (registrar um planejamento). Acompanhamento automático de gastos, alertas de estouro e orçamentos mais avançados estão previstos apenas para V2, conforme `docs/product/roadmap.md`. Despesas recorrentes e lançamentos sugeridos a partir de notificações bancárias também são V2.
+Este é o escopo básico do MVP (registrar um planejamento). Acompanhamento automático de gastos, alertas de estouro e orçamentos mais avançados estão previstos apenas para V2, conforme `docs/product/roadmap.md`. Lançamentos sugeridos a partir de notificações bancárias também são V2. A visão geral financeira (despesas por categoria, ranking de categorias, economia mensal) é apenas uma visualização derivada das `Transaction`s existentes — não depende de `Budget` e está no MVP (ver `UC-FIN-014`).
 
 ### FinancialProfile
 

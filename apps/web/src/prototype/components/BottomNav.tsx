@@ -3,10 +3,10 @@ import { NavLink } from 'react-router-dom'
 
 const TABS = [
   { to: '/home', label: 'Home', icon: Home, end: true },
-  { to: '/home/tarefas', label: 'Tarefas', icon: CheckSquare2 },
-  { to: '/home/calendario', label: 'Calendário', icon: CalendarDays },
-  { to: '/home/objetivos', label: 'Objetivos', icon: Target },
-  { to: '/home/financas', label: 'Finanças', icon: Wallet },
+  { to: '/home/tarefas', label: 'Tarefas', icon: CheckSquare2, end: false },
+  { to: '/home/calendario', label: 'Calendário', icon: CalendarDays, end: false },
+  { to: '/home/objetivos', label: 'Objetivos', icon: Target, end: false },
+  { to: '/home/financas', label: 'Finanças', icon: Wallet, end: false },
 ] as const
 
 export function BottomNav() {

@@ -16,8 +16,22 @@
   --color-accent-soft: #f2e0ff;
   --color-danger: #c1483a;
 
+  /* Domain accent — Objetivos gets its own hero/primary-indicator color,
+     separate from --color-accent (which is Finanças' money color and the
+     app's CTA color). Same info shouldn't share a color with different info. */
+  --color-goal: #c2255c;
+  --color-goal-soft: #fbe4ec;
+
+  /* Status only (2026-09-XX revision) — mint/peach/sky/sun are reserved for
+     STATE (success/attention/info/highlight). Never reuse for category,
+     person, or structural flags — that confusion is why this revision
+     happened. See prototype/components/palette.ts for category/person color. */
   --color-mint-bg: #96ff70;
   --color-mint-fg: #14150f;
+  /* mint-bg is a lime fill made for badges/rings, not for text — too low
+     contrast as text on a light surface. mint-text is the same "success"
+     meaning at legible contrast (e.g. the % on SavingsGauge). */
+  --color-mint-text: #2f9e44;
   --color-peach-bg: #fe8744;
   --color-peach-fg: #14150f;
   --color-lavender-bg: #a000ff;
@@ -26,6 +40,35 @@
   --color-sky-fg: #14150f;
   --color-sun-bg: #feff61;
   --color-sun-fg: #14150f;
+
+  /* Category palette — muted, distinct from the vivid status/accent colors on
+     purpose, so a category tag never gets mistaken for a status pill. */
+  --color-cat-sage-bg: #eaf0e0;
+  --color-cat-sage-fg: #4c6b30;
+  --color-cat-sky-bg: #e3edf7;
+  --color-cat-sky-fg: #33628f;
+  --color-cat-clay-bg: #f6e8de;
+  --color-cat-clay-fg: #9a5730;
+  --color-cat-blush-bg: #f6e1e9;
+  --color-cat-blush-fg: #9c3564;
+  --color-cat-lilac-bg: #ece1f6;
+  --color-cat-lilac-fg: #6d3597;
+  --color-cat-sand-bg: #f3ecdc;
+  --color-cat-sand-fg: #85703a;
+  --color-cat-teal-bg: #dcf0ec;
+  --color-cat-teal-fg: #29715f;
+  --color-cat-slate-bg: #e5e7f0;
+  --color-cat-slate-fg: #454f73;
+
+  /* Person palette — for avatars, deterministically assigned per name. Kept
+     out of the category/status palettes so "who" never collides with "what"
+     or "state" in the same visual language. */
+  --color-person-1: #a85f3a;
+  --color-person-2: #3a6ea8;
+  --color-person-3: #7a3aa8;
+  --color-person-4: #2f7a6e;
+  --color-person-5: #a83a68;
+  --color-person-6: #5b7a3a;
 
   /* Single consistent control radius (14–16px) per design direction — avoid a large
      hierarchy of radii and avoid pill shapes on buttons/cards/chips. --radius-pill is
@@ -59,5 +102,30 @@
 
   *::-webkit-scrollbar {
     display: none;
+  }
+}
+
+@layer components {
+  /* Tinted shadows — never pure gray/black. .shadow-card sits under ordinary
+     surfaces; .shadow-hero sits under accent-colored hero blocks. */
+  .shadow-card {
+    box-shadow: 0 6px 16px -10px rgba(20, 21, 15, 0.16);
+  }
+
+  .shadow-hero {
+    box-shadow:
+      0 14px 28px -14px rgba(160, 0, 255, 0.45),
+      inset 0 1px 0 rgba(255, 255, 255, 0.16);
+  }
+
+  /* Rose-tinted counterpart to .shadow-hero, for Objetivos' own hero color. */
+  .shadow-hero-goal {
+    box-shadow:
+      0 14px 28px -14px rgba(194, 37, 92, 0.45),
+      inset 0 1px 0 rgba(255, 255, 255, 0.16);
+  }
+
+  .tabular {
+    font-variant-numeric: tabular-nums;
   }
 }

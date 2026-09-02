@@ -16,7 +16,7 @@ Inclui:
 - tarefas;
 - calendário;
 - objetivos;
-- finanças básicas.
+- finanças básicas — incluindo receita e despesa, contas com saldo previsto, cartão de crédito com fatura, e transações recorrentes/parceladas (ver `docs/architecture/domain-model.md` e `docs/use-cases/finance/`).
 
 ## V2
 
@@ -28,8 +28,7 @@ Possibilidades:
 - organização da casa;
 - manutenção doméstica;
 - documentos;
-- despesas recorrentes;
-- orçamentos mais avançados;
+- orçamentos mais avançados (acompanhamento automático e alertas de estouro);
 - lançamentos financeiros sugeridos automaticamente;
 - bot no WhatsApp;
 - Central do Lar para tablet compartilhado.

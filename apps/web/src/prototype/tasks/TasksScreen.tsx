@@ -1,9 +1,13 @@
 import { CheckSquare2, Plus, Repeat } from 'lucide-react'
 import { useState } from 'react'
+import { Avatar } from '../components/Avatar'
 import { ContextFilterChips, type ContextFilterValue } from '../components/ContextFilterChips'
 import { DomainLabel } from '../components/DomainLabel'
+import { FlagChip } from '../components/FlagChip'
 import { HomeLayout } from '../components/HomeLayout'
 import { Tile } from '../components/Tile'
+import { VisibilityDot } from '../components/VisibilityDot'
+import { formatRelativeDayLabel } from '../calendar/dateUtils'
 import { type HomeContext, mockGroup } from '../home/homeMockData'
 import { initialTasks, type MockTask } from './tasksMockData'
 import { TaskSheet, type TaskSheetValues } from './TaskSheet'
@@ -24,30 +28,26 @@ function TaskRow({ task, onToggle, onEdit }: { task: MockTask; onToggle: () => v
       >
         {task.done ? <CheckSquare2 size={13} strokeWidth={3} className="text-white" /> : null}
       </button>
-      <button type="button" onClick={onEdit} className="flex-1 text-left">
-        <span className={`text-[15px] font-semibold ${task.done ? 'text-ink-faint line-through' : 'text-ink'}`}>
-          {task.title}
+      <button type="button" onClick={onEdit} className="flex flex-1 items-start justify-between gap-2 text-left">
+        <span>
+          <span className="flex items-center gap-1.5">
+            <span className={`text-[15px] font-semibold ${task.done ? 'text-ink-faint line-through' : 'text-ink'}`}>
+              {task.title}
+            </span>
+            {task.assignee ? <Avatar name={task.assignee} /> : null}
+          </span>
+          {!task.done && (task.dueDate || task.recurring) ? (
+            <div className="mt-1.5 flex flex-wrap items-center gap-1.5">
+              {task.dueDate ? (
+                <span className="rounded-sm bg-sky-bg px-1.5 py-0.5 text-[11px] font-bold text-sky-fg">
+                  {formatRelativeDayLabel(task.dueDate)}
+                </span>
+              ) : null}
+              {task.recurring ? <FlagChip icon={Repeat}>Recorrente</FlagChip> : null}
+            </div>
+          ) : null}
         </span>
-        {!task.done && (task.dueLabel || task.assignee || task.recurring) ? (
-          <div className="mt-1.5 flex flex-wrap items-center gap-1.5">
-            {task.dueLabel ? (
-              <span className="rounded-sm bg-sky-bg px-1.5 py-0.5 text-[11px] font-bold text-sky-fg">
-                {task.dueLabel}
-              </span>
-            ) : null}
-            {task.assignee ? (
-              <span className="rounded-sm bg-lavender-bg px-1.5 py-0.5 text-[11px] font-bold text-lavender-fg">
-                {task.assignee}
-              </span>
-            ) : null}
-            {task.recurring ? (
-              <span className="flex items-center gap-1 text-[11px] font-medium text-ink-faint">
-                <Repeat size={12} strokeWidth={2.4} />
-                Recorrente
-              </span>
-            ) : null}
-          </div>
-        ) : null}
+        <VisibilityDot context={task.context} className="mt-1.5" />
       </button>
     </div>
   )
@@ -64,7 +64,7 @@ export function TasksScreen() {
 
   function handleCreate(values: TaskSheetValues) {
     setTasks((prev) => [
-      { id: `tk-${Date.now()}`, title: values.title, context: values.context, done: false, dueLabel: values.dueLabel || undefined },
+      { id: `tk-${Date.now()}`, title: values.title, context: values.context, done: false, dueDate: values.dueDate || undefined },
       ...prev,
     ])
     setSheet(null)
@@ -75,7 +75,7 @@ export function TasksScreen() {
     setTasks((prev) =>
       prev.map((task) =>
         task.id === sheet.taskId
-          ? { ...task, title: values.title, context: values.context, dueLabel: values.dueLabel || undefined }
+          ? { ...task, title: values.title, context: values.context, dueDate: values.dueDate || undefined }
           : task,
       ),
     )
@@ -169,7 +169,7 @@ export function TasksScreen() {
           initial={{
             title: editingTask.title,
             context: editingTask.context === 'group' ? 'group' : 'personal',
-            dueLabel: editingTask.dueLabel ?? '',
+            dueDate: editingTask.dueDate ?? '',
           }}
           onSave={handleEditSave}
           onDelete={handleDelete}

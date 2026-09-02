@@ -1,101 +1,103 @@
-import { CalendarDays, MapPin, Plus, Repeat } from 'lucide-react'
+import { CalendarDays, Grid3x3, List, Plus } from 'lucide-react'
 import { useState } from 'react'
 import { ContextFilterChips, type ContextFilterValue } from '../components/ContextFilterChips'
 import { HomeLayout } from '../components/HomeLayout'
 import { Tile } from '../components/Tile'
 import { type HomeContext, mockGroup } from '../home/homeMockData'
+import { initialTasks, type MockTask } from '../tasks/tasksMockData'
+import { CalendarAgendaView } from './CalendarAgendaView'
+import { CalendarMonthView } from './CalendarMonthView'
+import { CalendarWeekView } from './CalendarWeekView'
 import { EventSheet, type EventSheetValues } from './EventSheet'
 import { initialEvents, type MockEvent } from './calendarMockData'
+import {
+  applyOccurrenceDelete,
+  applyOccurrenceEdit,
+  applySeriesDelete,
+  applySeriesEdit,
+  type EventEditInput,
+  type EventOccurrence,
+} from './calendarSelectors'
+import { TODAY_ISO } from './dateUtils'
+
+type ViewMode = 'agenda' | 'week' | 'month'
+
+const VIEW_OPTIONS: { value: ViewMode; label: string; icon: typeof List }[] = [
+  { value: 'agenda', label: 'Agenda', icon: List },
+  { value: 'week', label: 'Semana', icon: CalendarDays },
+  { value: 'month', label: 'Mês', icon: Grid3x3 },
+]
 
 function matches(filter: ContextFilterValue, context: HomeContext) {
   return filter === 'all' || filter === context
 }
 
-function EventRow({ event, onEdit }: { event: MockEvent; onEdit: () => void }) {
-  return (
-    <button type="button" onClick={onEdit} className="flex w-full items-start gap-3 py-3 text-left">
-      <span className="mt-0.5 w-12 shrink-0 text-[13px] font-bold tabular-nums text-ink">{event.time}</span>
-      <span className="flex-1">
-        <span className="block text-[15px] font-semibold text-ink">{event.title}</span>
-        {event.location || event.participant || event.recurring ? (
-          <div className="mt-1.5 flex flex-wrap items-center gap-1.5">
-            {event.location ? (
-              <span className="flex items-center gap-1 text-[11px] font-medium text-ink-faint">
-                <MapPin size={12} strokeWidth={2.4} />
-                {event.location}
-              </span>
-            ) : null}
-            {event.participant ? (
-              <span className="rounded-sm bg-lavender-bg px-1.5 py-0.5 text-[11px] font-bold text-lavender-fg">
-                {event.participant}
-              </span>
-            ) : null}
-            {event.recurring ? (
-              <span className="flex items-center gap-1 text-[11px] font-medium text-ink-faint">
-                <Repeat size={12} strokeWidth={2.4} />
-                Recorrente
-              </span>
-            ) : null}
-          </div>
-        ) : null}
-      </span>
-    </button>
-  )
+function toEditInput(values: EventSheetValues): EventEditInput {
+  return {
+    title: values.title,
+    context: values.context,
+    date: values.date,
+    time: values.time,
+    endTime: values.endTime || undefined,
+    location: values.location || undefined,
+    participants: values.participants.length ? values.participants : undefined,
+    recurrence: values.recurrenceFreq ? { freq: values.recurrenceFreq, endDate: values.recurrenceEndDate || undefined } : undefined,
+  }
 }
+
+type SheetState = { mode: 'create'; defaultDate: string } | { mode: 'edit'; occurrence: EventOccurrence } | null
 
 export function CalendarScreen() {
   const [filter, setFilter] = useState<ContextFilterValue>('all')
-  const [events, setEvents] = useState(initialEvents)
-  const [sheet, setSheet] = useState<{ mode: 'create' } | { mode: 'edit'; eventId: string } | null>(null)
+  const [view, setView] = useState<ViewMode>('agenda')
+  const [anchorDate, setAnchorDate] = useState(TODAY_ISO)
+  const [selectedDate, setSelectedDate] = useState(TODAY_ISO)
+  const [events, setEvents] = useState<MockEvent[]>(initialEvents)
+  const [tasks, setTasks] = useState<MockTask[]>(initialTasks)
+  const [sheet, setSheet] = useState<SheetState>(null)
+
+  const visibleEvents = events.filter((e) => matches(filter, e.context))
+  const visibleTasks = tasks.filter((t) => matches(filter, t.context) && t.dueDate)
 
   function handleCreate(values: EventSheetValues) {
-    setEvents((prev) => [
-      ...prev,
-      {
-        id: `ev-${Date.now()}`,
-        title: values.title,
-        context: values.context,
-        dayLabel: values.dayLabel,
-        time: values.time,
-        location: values.location || undefined,
-      },
-    ])
+    setEvents((prev) => [...prev, { id: `ev-${Date.now()}`, ...toEditInput(values) }])
     setSheet(null)
   }
 
   function handleEditSave(values: EventSheetValues) {
     if (sheet?.mode !== 'edit') return
-    setEvents((prev) =>
-      prev.map((event) =>
-        event.id === sheet.eventId
-          ? {
-              ...event,
-              title: values.title,
-              context: values.context,
-              dayLabel: values.dayLabel,
-              time: values.time,
-              location: values.location || undefined,
-            }
-          : event,
-      ),
-    )
+    const { occurrence } = sheet
+    const rootId = occurrence.event.seriesId ?? occurrence.event.id
+    const input = toEditInput(values)
+
+    if (occurrence.isRecurring) {
+      setEvents((prev) =>
+        values.scope === 'series' ? applySeriesEdit(prev, rootId, input) : applyOccurrenceEdit(prev, rootId, occurrence.date, input),
+      )
+    } else {
+      setEvents((prev) => prev.map((e) => (e.id === occurrence.event.id ? { id: e.id, ...input } : e)))
+    }
     setSheet(null)
   }
 
-  function handleDelete() {
+  function handleDelete(scope: 'occurrence' | 'series') {
     if (sheet?.mode !== 'edit') return
-    setEvents((prev) => prev.filter((event) => event.id !== sheet.eventId))
+    const { occurrence } = sheet
+    const rootId = occurrence.event.seriesId ?? occurrence.event.id
+
+    if (occurrence.isRecurring) {
+      setEvents((prev) => (scope === 'series' ? applySeriesDelete(prev, rootId) : applyOccurrenceDelete(prev, rootId, occurrence.date)))
+    } else {
+      setEvents((prev) => prev.filter((e) => e.id !== occurrence.event.id))
+    }
     setSheet(null)
   }
 
-  const visible = events.filter((e) => matches(filter, e.context))
-  const groups: { dayLabel: string; items: MockEvent[] }[] = []
-  for (const event of visible) {
-    const group = groups.find((g) => g.dayLabel === event.dayLabel)
-    if (group) group.items.push(event)
-    else groups.push({ dayLabel: event.dayLabel, items: [event] })
+  function handleToggleTask(id: string) {
+    setTasks((prev) => prev.map((t) => (t.id === id ? { ...t, done: !t.done } : t)))
   }
-  const editingEvent = sheet?.mode === 'edit' ? events.find((e) => e.id === sheet.eventId) : undefined
+
+  const defaultCreateDate = view === 'month' ? selectedDate : view === 'week' ? anchorDate : TODAY_ISO
 
   return (
     <HomeLayout>
@@ -104,12 +106,12 @@ export function CalendarScreen() {
           <div>
             <h1 className="text-[22px] font-semibold leading-tight text-ink">Calendário</h1>
             <p className="mt-0.5 text-[13px] text-ink-muted">
-              {visible.length === 0 ? 'Nada na agenda' : `${visible.length} compromisso${visible.length > 1 ? 's' : ''} esta semana`}
+              {visibleEvents.length === 0 ? 'Nada na agenda' : `${visibleEvents.length} compromisso${visibleEvents.length > 1 ? 's' : ''}`}
             </p>
           </div>
           <button
             type="button"
-            onClick={() => setSheet({ mode: 'create' })}
+            onClick={() => setSheet({ mode: 'create', defaultDate: defaultCreateDate })}
             className="flex h-10 w-10 shrink-0 items-center justify-center rounded-pill bg-accent text-white transition active:scale-90"
             aria-label="Novo compromisso"
           >
@@ -121,48 +123,103 @@ export function CalendarScreen() {
           <ContextFilterChips value={filter} onChange={setFilter} />
         </div>
 
-        <div className="mt-6 grid grid-cols-2 gap-3">
-          {groups.length === 0 ? (
+        <div className="mt-3 flex gap-2">
+          {VIEW_OPTIONS.map((opt) => (
+            <button
+              key={opt.value}
+              type="button"
+              onClick={() => setView(opt.value)}
+              className={`flex flex-1 items-center justify-center gap-1.5 rounded-sm border px-3 py-2 text-[12.5px] font-semibold transition active:scale-95 ${
+                view === opt.value ? 'border-accent bg-accent text-white' : 'border-line bg-surface text-ink-muted'
+              }`}
+            >
+              <opt.icon size={13} strokeWidth={2.4} />
+              {opt.label}
+            </button>
+          ))}
+        </div>
+
+        <div className="mt-6">
+          {view === 'agenda' ? (
+            <CalendarAgendaView
+              events={visibleEvents}
+              tasks={visibleTasks}
+              onSelectOccurrence={(occ) => setSheet({ mode: 'edit', occurrence: occ })}
+              onToggleTask={handleToggleTask}
+            />
+          ) : null}
+
+          {view === 'week' ? (
             <Tile span={2}>
-              <span className="mb-3 flex items-center gap-2">
-                <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-sm bg-sky-bg text-sky-fg">
-                  <CalendarDays size={15} strokeWidth={2.4} />
-                </span>
-                <span className="text-[15px] font-bold text-ink">Agenda</span>
-              </span>
-              <p className="py-2 text-[13px] text-ink-faint">Nada por aqui — toque em + pra criar um compromisso.</p>
+              <CalendarWeekView
+                events={visibleEvents}
+                tasks={visibleTasks}
+                anchorDate={anchorDate}
+                onNavigate={setAnchorDate}
+                onSelectOccurrence={(occ) => setSheet({ mode: 'edit', occurrence: occ })}
+                onToggleTask={handleToggleTask}
+              />
             </Tile>
-          ) : (
-            groups.map((group) => (
-              <Tile key={group.dayLabel} span={2}>
-                <span className="mb-1 inline-block rounded-sm bg-sky-bg px-2 py-1 text-[12px] font-bold uppercase tracking-wide text-sky-fg">
-                  {group.dayLabel}
-                </span>
-                <div className="flex flex-col divide-y divide-line">
-                  {group.items.map((event) => (
-                    <EventRow key={event.id} event={event} onEdit={() => setSheet({ mode: 'edit', eventId: event.id })} />
-                  ))}
-                </div>
-              </Tile>
-            ))
-          )}
+          ) : null}
+
+          {view === 'month' ? (
+            <Tile span={2}>
+              <CalendarMonthView
+                events={visibleEvents}
+                tasks={visibleTasks}
+                anchorMonth={anchorDate}
+                selectedDate={selectedDate}
+                onNavigate={(next) => {
+                  setAnchorDate(next)
+                  setSelectedDate(next)
+                }}
+                onSelectDate={setSelectedDate}
+                onSelectOccurrence={(occ) => setSheet({ mode: 'edit', occurrence: occ })}
+                onToggleTask={handleToggleTask}
+              />
+            </Tile>
+          ) : null}
         </div>
       </div>
 
       {sheet?.mode === 'create' ? (
-        <EventSheet mode="create" groupName={mockGroup.name} onSave={handleCreate} onClose={() => setSheet(null)} />
-      ) : null}
-
-      {sheet?.mode === 'edit' && editingEvent ? (
         <EventSheet
-          mode="edit"
+          mode="create"
           groupName={mockGroup.name}
           initial={{
-            title: editingEvent.title,
-            context: editingEvent.context === 'group' ? 'group' : 'personal',
-            dayLabel: editingEvent.dayLabel,
-            time: editingEvent.time,
-            location: editingEvent.location ?? '',
+            title: '',
+            context: 'personal',
+            date: sheet.defaultDate,
+            time: '',
+            endTime: '',
+            location: '',
+            participants: [],
+            recurrenceFreq: '',
+            recurrenceEndDate: '',
+            scope: 'occurrence',
+          }}
+          onSave={handleCreate}
+          onClose={() => setSheet(null)}
+        />
+      ) : null}
+
+      {sheet?.mode === 'edit' ? (
+        <EventSheet
+          key={sheet.occurrence.occurrenceKey}
+          mode="edit"
+          groupName={mockGroup.name}
+          isRecurringOccurrence={sheet.occurrence.isRecurring}
+          initial={{
+            title: sheet.occurrence.event.title,
+            context: sheet.occurrence.event.context === 'group' ? 'group' : 'personal',
+            date: sheet.occurrence.date,
+            time: sheet.occurrence.event.time,
+            endTime: sheet.occurrence.event.endTime ?? '',
+            location: sheet.occurrence.event.location ?? '',
+            participants: sheet.occurrence.event.participants ?? [],
+            recurrenceFreq: sheet.occurrence.event.recurrence?.freq ?? '',
+            recurrenceEndDate: sheet.occurrence.event.recurrence?.endDate ?? '',
+            scope: 'occurrence',
           }}
           onSave={handleEditSave}
           onDelete={handleDelete}

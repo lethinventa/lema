@@ -7,7 +7,7 @@ import type { HomeContext } from '../home/homeMockData'
 export interface TaskSheetValues {
   title: string
   context: Extract<HomeContext, 'personal' | 'group'>
-  dueLabel: string
+  dueDate: string // ISO, opcional (string vazia = sem prazo)
 }
 
 interface TaskSheetProps {
@@ -22,11 +22,11 @@ interface TaskSheetProps {
 export function TaskSheet({ mode, groupName, initial, onSave, onDelete, onClose }: TaskSheetProps) {
   const [title, setTitle] = useState(initial?.title ?? '')
   const [context, setContext] = useState<'personal' | 'group'>(initial?.context ?? 'personal')
-  const [dueLabel, setDueLabel] = useState(initial?.dueLabel ?? '')
+  const [dueDate, setDueDate] = useState(initial?.dueDate ?? '')
 
   function handleSave() {
     if (!title.trim()) return
-    onSave({ title: title.trim(), context, dueLabel: dueLabel.trim() })
+    onSave({ title: title.trim(), context, dueDate })
   }
 
   return (
@@ -77,9 +77,9 @@ export function TaskSheet({ mode, groupName, initial, onSave, onDelete, onClose 
 
           <TextField
             label="Prazo (opcional)"
-            placeholder="Ex.: Hoje, Sexta, 12/09"
-            value={dueLabel}
-            onChange={(e) => setDueLabel(e.target.value)}
+            type="date"
+            value={dueDate}
+            onChange={(e) => setDueDate(e.target.value)}
           />
         </div>
 

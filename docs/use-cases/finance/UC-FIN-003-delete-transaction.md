@@ -32,7 +32,7 @@ Ator decide excluir uma transação.
 - Excluir uma transação `GROUP` não afeta a existência do grupo nem de outras transações.
 - Excluir uma transação segue a política padrão de exclusão do Lema (`PD-005-deletion-policy.md`): lixeira por 30 dias, com restauração possível nesse período.
 - Se a transação compunha um saldo corrente entre pessoas (ver `domain-model.md`), excluí-la remove sua contribuição a esse saldo; restaurá-la dentro dos 30 dias a recalcula de volta.
-- Se a transação estiver referenciada por uma `GoalAllocation` em estado `PAID` (ver `UC-GOAL-007`), a alocação permanece registrada, mas perde a referência à transação enquanto ela estiver na lixeira ou após a exclusão definitiva.
+- Se a transação estiver vinculada a um objetivo (`goalId`, ver `UC-GOAL-007`), ela deixa de contar no `PAID` desse objetivo enquanto estiver na lixeira, voltando a contar se for restaurada. Não existe uma `GoalAllocation` separada para desvincular — o `PAID` é sempre a soma direta das `Transaction`s vinculadas.
 
 ## Visibilidade
 

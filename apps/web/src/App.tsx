@@ -1,6 +1,9 @@
 import { Navigate, Route, Routes } from 'react-router-dom'
 import { CalendarScreen } from './prototype/calendar/CalendarScreen'
 import { PhoneFrame } from './prototype/components/PhoneFrame'
+import { AccountDetailScreen } from './prototype/finance/AccountDetailScreen'
+import { AccountsScreen } from './prototype/finance/AccountsScreen'
+import { CardDetailScreen } from './prototype/finance/CardDetailScreen'
 import { FinanceScreen } from './prototype/finance/FinanceScreen'
 import { GoalsScreen } from './prototype/goals/GoalsScreen'
 import { HomeScreen } from './prototype/home/HomeScreen'
@@ -14,6 +17,9 @@ import { GroupJoinScreen } from './prototype/onboarding/GroupJoinScreen'
 import { ProfileScreen } from './prototype/onboarding/ProfileScreen'
 import { SignUpScreen } from './prototype/onboarding/SignUpScreen'
 import { StartScreen } from './prototype/onboarding/StartScreen'
+import { DeleteAccountScreen } from './prototype/profile/DeleteAccountScreen'
+import { ProfileHubScreen } from './prototype/profile/ProfileHubScreen'
+import { SecurityScreen } from './prototype/profile/SecurityScreen'
 import { OnboardingProvider } from './prototype/state/OnboardingContext'
 import { TasksScreen } from './prototype/tasks/TasksScreen'
 
@@ -37,6 +43,12 @@ export default function App() {
           <Route path="/home/calendario" element={<CalendarScreen />} />
           <Route path="/home/objetivos" element={<GoalsScreen />} />
           <Route path="/home/financas" element={<FinanceScreen />} />
+          <Route path="/home/financas/contas" element={<AccountsScreen />} />
+          <Route path="/home/financas/contas/:accountId" element={<AccountDetailScreen />} />
+          <Route path="/home/financas/cartoes/:accountId" element={<CardDetailScreen />} />
+          <Route path="/perfil" element={<ProfileHubScreen />} />
+          <Route path="/perfil/seguranca" element={<SecurityScreen />} />
+          <Route path="/perfil/excluir" element={<DeleteAccountScreen />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </PhoneFrame>
