@@ -2,9 +2,9 @@
   "version": "0.0.1",
   "configurations": [
     {
-      "name": "web",
+      "name": "web-design-prototype",
       "runtimeExecutable": "npm",
-      "runtimeArgs": ["run", "dev", "--prefix", "apps/web"],
+      "runtimeArgs": ["run", "dev", "--prefix", "apps/web-design-prototype"],
       "port": 5173,
       "autoPort": true
     }

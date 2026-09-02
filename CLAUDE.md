@@ -23,9 +23,10 @@ Antes de implementar qualquer fluxo ou tela, consulte os UCs, PDs e journeys rel
 ## Estado atual do repositório
 
 - Sem `package.json` na raiz — o repo é majoritariamente documentação + um app.
-- `apps/web` é o único app criado (outros possíveis: mobile, home-hub, whatsapp-bot). `packages/` está vazio. Stack de `apps/web`: Vite + React 19 + TypeScript + react-router-dom v7 + Tailwind CSS v4 + oxlint. Scripts: `dev`, `build`, `lint`, `preview`.
-- Protótipo em `apps/web/src/prototype/` já cobre: onboarding (JRN-001+JRN-002 até UC-FIN-009), Home, Tarefas, Calendário, Objetivos, Finanças. Estado é sempre local por tela (`useState`) — não há store compartilhado entre telas; isso é o comportamento esperado desta fase, não um bug.
+- `apps/web-design-prototype` é o único app criado até agora. **Não é o produto final** — é um protótipo front-end mockado (vibe-coded, sem backend) de uso exclusivo do time de design (Lethicia) para validar fluxos e experiência; nenhum código dele será reaproveitado na implementação real (ver `apps/README.md`). Stack: Vite + React 19 + TypeScript + react-router-dom v7 + Tailwind CSS v4 + oxlint. Scripts: `dev`, `build`, `lint`, `preview`.
+- Protótipo em `apps/web-design-prototype/src/prototype/` já cobre: onboarding (JRN-001+JRN-002 até UC-FIN-009), Home, Tarefas, Calendário, Objetivos, Finanças. Estado é sempre local por tela (`useState`) — não há store compartilhado entre telas; isso é o comportamento esperado desta fase, não um bug.
 - `docs/ui/` ainda **não existe** — nenhuma tela recebeu handoff formal (`APPROVED FOR DEV`) ainda, mesmo com várias áreas já implementadas e testadas no protótipo.
+- Implementação real: stack definida como Vue/Nuxt (serverless), ainda não iniciada. Vai ser um app novo (`apps/web` provavelmente), construído a partir dos casos de uso/jornadas/telas aprovadas — não a partir do código do protótipo. `packages/` está vazio.
 
 ---
 
