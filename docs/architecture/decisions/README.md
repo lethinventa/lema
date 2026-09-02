@@ -8,6 +8,7 @@ Um ADR (Architecture Decision Record) é um registro curto de uma decisão de ar
 - [ADR-002 — Estrutura de pastas e isolamento por feature](ADR-002-feature-folder-structure.md)
 - [ADR-003 — Qualidade de código: lint, formatação e git hooks](ADR-003-code-quality-tooling.md)
 - [ADR-004 — Estratégia de testes](ADR-004-testing-strategy.md)
+- [ADR-005 — Ambiente de desenvolvimento local](ADR-005-local-dev-environment.md)
 
 ## Template
 

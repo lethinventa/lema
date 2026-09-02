@@ -17,7 +17,9 @@
     "db:studio": "drizzle-kit studio",
     "test": "vitest run",
     "test:watch": "vitest",
-    "test:e2e": "playwright test"
+    "test:e2e": "playwright test",
+    "dev:setup": "bash scripts/dev-setup.sh",
+    "dev:teardown": "bash scripts/dev-teardown.sh"
   },
   "dependencies": {
     "@nuxt/ui": "4.11.0",
@@ -44,6 +46,7 @@
     "prettier": "^3.9.6",
     "prettier-plugin-organize-imports": "^4.3.0",
     "simple-git-hooks": "^2.14.0",
+    "supabase": "^2.116.0",
     "typescript": "^6.0.3",
     "vitest": "^4.1.11",
     "vue-tsc": "^3.3.11"

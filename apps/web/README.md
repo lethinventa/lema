@@ -6,11 +6,15 @@ Stack: Nuxt (Vue) + Tailwind v4 + Nuxt UI + Supabase (Postgres + Auth + Storage)
 
 ## Rodar localmente
 
+Pré-requisito: Docker rodando. `dev:setup` sobe uma stack local completa do Supabase (Postgres + Auth + Storage, via Supabase CLI/Docker Compose — ver `ADR-001-real-app-stack.md`), cria `.env` a partir de `.env.example` se não existir, sincroniza as credenciais locais nele e aplica o schema do Drizzle.
+
 ```bash
 pnpm install
-cp .env.example .env   # preencher com as chaves do projeto Supabase
+pnpm dev:setup   # sobe Postgres + Auth + Storage local e configura .env
 pnpm dev
 ```
+
+Isso aponta pro Supabase **local**, isolado do projeto cloud. Studio local em `http://127.0.0.1:54323`; e-mails de auth (confirmação, magic link) caem no Mailpit em `http://127.0.0.1:54324`, não em caixas de entrada reais. Rode `pnpm dev:teardown` pra derrubar a stack.
 
 ## Scripts
 
@@ -24,9 +28,11 @@ pnpm typecheck           # nuxt typecheck
 pnpm test                # testes unitários (Vitest)
 pnpm test:watch          # Vitest em modo watch
 pnpm test:e2e             # testes end-to-end (Playwright)
-pnpm db:generate          # gera migration a partir de lib/db/schema.ts
-pnpm db:migrate            # aplica migrations no banco
-pnpm db:studio              # abre o Drizzle Studio
+pnpm dev:setup            # sobe a stack local do Supabase e configura .env
+pnpm dev:teardown          # derruba a stack local do Supabase
+pnpm db:generate            # gera migration a partir de lib/db/schema.ts
+pnpm db:migrate               # aplica migrations no banco
+pnpm db:studio                 # abre o Drizzle Studio
 ```
 
 ## Estrutura

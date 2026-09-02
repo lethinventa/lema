@@ -15,7 +15,7 @@ Este documento é o mapa de entrada para qualquer sessão do Claude Code neste r
 - **Arquitetura** (`docs/architecture/`)
   - `domain-model.md` — modelo conceitual de entidades (não é schema de banco): User, Group, Membership, Invitation, Task, Event, Goal, GoalAllocation, Transaction, SplitRule, Account, Budget, FinancialProfile, GroupFinancialArrangement, List, Meal, ShoppingItem, Document.
   - `permissions.md` — modelo PRIVATE/SHARED/GROUP, transições de visibilidade permitidas, ressalvas de visibilidade financeira (Transaction ≠ Account, despesa ≠ detalhe do split).
-  - `decisions/ADR-001` a `ADR-004` — decisões técnicas da implementação real (stack: Nuxt/Vue+Supabase+Drizzle+Vercel; estrutura de pastas por feature; lint/formatação/git hooks; estratégia de testes). Decisões de produto ficam nas PD-* acima.
+  - `decisions/ADR-001` a `ADR-005` — decisões técnicas da implementação real (stack: Nuxt/Vue+Supabase+Drizzle+Vercel; estrutura de pastas por feature; lint/formatação/git hooks; estratégia de testes; ambiente de dev local via Supabase CLI/Docker). Decisões de produto ficam nas PD-* acima.
 - **Time** (`docs/team/`) — `workflow.md`, `definition-of-ready.md`, `definition-of-done.md`: quem faz o quê (Lethicia = produto/UX/front mockado; Mateus = dev/backend/infra) e o fluxo ideia→caso de uso→design→implementação→validação.
 
 Antes de implementar qualquer fluxo ou tela, consulte os UCs, PDs e journeys relevantes. Não inventar regra de produto silenciosamente — se algo necessário estiver indefinido na documentação, sinalizar como questão em aberto em vez de decidir por conta própria.
@@ -30,7 +30,7 @@ Antes de implementar qualquer fluxo ou tela, consulte os UCs, PDs e journeys rel
 - `apps/web-design-prototype` é o único app criado até agora. **Não é o produto final** — é um protótipo front-end mockado (vibe-coded, sem backend) de uso exclusivo do time de design (Lethicia) para validar fluxos e experiência; nenhum código dele será reaproveitado na implementação real (ver `apps/README.md`). Stack: Vite + React 19 + TypeScript + react-router-dom v7 + Tailwind CSS v4 + oxlint. Scripts: `dev`, `build`, `lint`, `preview`.
 - Protótipo em `apps/web-design-prototype/src/prototype/` já cobre: onboarding (JRN-001+JRN-002 até UC-FIN-009), Home, Tarefas, Calendário, Objetivos, Finanças. Estado é sempre local por tela (`useState`) — não há store compartilhado entre telas; isso é o comportamento esperado desta fase, não um bug.
 - `docs/ui/` ainda **não existe** — nenhuma tela recebeu handoff formal (`APPROVED FOR DEV`) ainda, mesmo com várias áreas já implementadas e testadas no protótipo.
-- Implementação real: stack e arquitetura decididas em `docs/architecture/decisions/ADR-001` a `ADR-004`, ainda não iniciada (código). Vai ser um app novo em `apps/web`, construído a partir dos casos de uso/jornadas/telas aprovadas — não a partir do código do protótipo. `packages/` está vazio.
+- Implementação real em `apps/web` (Nuxt/Vue): stack e arquitetura decididas em `docs/architecture/decisions/ADR-001` a `ADR-005`. Scaffolding inicial pronto (tooling, estrutura de pastas, esqueleto de Drizzle/Supabase, ambiente de dev local via `pnpm dev:setup`) — nenhuma feature de domínio implementada ainda, construído a partir dos casos de uso/jornadas/telas aprovadas, não do código do protótipo. `packages/` está vazio.
 
 ---
 
