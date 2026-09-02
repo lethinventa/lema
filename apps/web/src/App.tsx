@@ -8,6 +8,7 @@ import { FinanceScreen } from './prototype/finance/FinanceScreen'
 import { GoalsScreen } from './prototype/goals/GoalsScreen'
 import { HomeScreen } from './prototype/home/HomeScreen'
 import { DoneScreen } from './prototype/onboarding/DoneScreen'
+import { FinancialSetupScreen } from './prototype/onboarding/FinancialSetupScreen'
 import { GroupChoiceScreen } from './prototype/onboarding/GroupChoiceScreen'
 import { GroupCreateScreen } from './prototype/onboarding/GroupCreateScreen'
 import { GroupFinanceMoneyScreen } from './prototype/onboarding/GroupFinanceMoneyScreen'
@@ -38,6 +39,7 @@ export default function App() {
           <Route path="/onboarding/group-finance/split" element={<GroupFinanceSplitScreen />} />
           <Route path="/onboarding/group-finance/transparency" element={<GroupFinanceTransparencyScreen />} />
           <Route path="/onboarding/done" element={<DoneScreen />} />
+          <Route path="/onboarding/financeiro-pessoal" element={<FinancialSetupScreen />} />
           <Route path="/home" element={<HomeScreen />} />
           <Route path="/home/tarefas" element={<TasksScreen />} />
           <Route path="/home/calendario" element={<CalendarScreen />} />

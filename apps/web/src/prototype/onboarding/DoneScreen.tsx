@@ -57,8 +57,13 @@ export function DoneScreen() {
       </div>
 
       <div className="flex flex-col gap-2 border-t border-line bg-bg px-6 pb-[max(20px,env(safe-area-inset-bottom))] pt-4">
-        <PrimaryButton onClick={() => navigate('/home')}>Ir para a Home</PrimaryButton>
-        <GhostButton onClick={handleRestart}>Testar o fluxo de novo</GhostButton>
+        <PrimaryButton onClick={() => navigate('/onboarding/financeiro-pessoal')}>
+          Configurar minhas finanças (2 min)
+        </PrimaryButton>
+        <GhostButton onClick={() => navigate('/home')}>Ir para a Home</GhostButton>
+        <button type="button" onClick={handleRestart} className="text-center text-[12px] font-medium text-ink-faint">
+          Testar o fluxo de novo
+        </button>
       </div>
     </div>
   )

@@ -6,6 +6,12 @@ export type SplitRule = '50-50' | 'proportional' | 'responsibility' | 'none'
 
 export type TransparencyLevel = 'full' | 'involved-only'
 
+export interface FixedExpenseEntry {
+  id: string
+  name: string
+  amount: number
+}
+
 export interface OnboardingData {
   name: string
   email: string
@@ -20,6 +26,12 @@ export interface OnboardingData {
   hasSharedMoney: boolean | null
   splitRule: SplitRule | null
   transparency: TransparencyLevel | null
+  // Configuração financeira pessoal opcional (ver JRN-001) — sem UC formal
+  // ainda, e sem ligação com o estado (também local) das telas de Finanças.
+  monthlyIncome: number
+  fixedExpenses: FixedExpenseEntry[]
+  savings: number
+  financialSetupDone: boolean
 }
 
 const initialData: OnboardingData = {
@@ -36,6 +48,10 @@ const initialData: OnboardingData = {
   hasSharedMoney: null,
   splitRule: null,
   transparency: null,
+  monthlyIncome: 0,
+  fixedExpenses: [],
+  savings: 0,
+  financialSetupDone: false,
 }
 
 interface OnboardingContextValue {
