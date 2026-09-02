@@ -44,4 +44,12 @@ Quatro regras de import, todas enforçadas via ESLint — não apenas documentad
 
 ## Questões em aberto
 
-- A sintaxe exata das regras `import-x/no-restricted-paths` e `no-restricted-imports` (com padrão de negação para permitir só o `index.ts`) ainda não foi testada num projeto real — validar durante a configuração inicial do ESLint.
+Nenhuma no momento — a sintaxe das regras foi validada durante a configuração inicial do ESLint em `apps/web/eslint.config.mjs` (ver nota abaixo).
+
+## Nota de implementação: ESLint + resolução de módulos
+
+A validação real revelou detalhes não óbvios, registrados aqui para não precisar ser redescoberto:
+
+- O alias `~/` só existe no `.nuxt/tsconfig.json` **gerado** pelo Nuxt — o `tsconfig.json` na raiz do app é apenas um stub de project references (`files: [], references: [...]`), sem os `paths`. Regras do `eslint-plugin-import-x` que precisam resolver o alias (`no-restricted-paths`) precisam apontar o resolver explicitamente para `.nuxt/tsconfig.json` (`eslint-import-resolver-typescript`, opção `project`).
+- `settings` do ESLint (incluindo qual resolver de import está ativo) não é escopado por regra — é por arquivo. Duas configs diferentes de resolver aplicadas ao mesmo conjunto de arquivos não coexistem; a última declarada vence para todas as regras daquele arquivo. Por isso a regra de "sem import relativo que sobe diretório" não usa `import-x/no-relative-parent-imports` (que depende de resolver e passaria a marcar até imports por alias como se fossem relativos, já que compara caminho resolvido, não o texto do import) — em vez disso é um `no-restricted-imports` com `regex: '^\\.\\./'`, que opera sobre o texto do import e não precisa de resolução nenhuma.
+- A regra `import-x/no-restricted-paths` rejeita `zones: []` (array vazio) no schema. Como `features/` está vazio até a primeira feature ser criada, a regra fica como `'off'` (em vez de ser omitida) enquanto não existir nenhuma feature, e vira `['error', { zones: [...] }]` automaticamente assim que a primeira for criada — o valor mora numa variável própria, não é espalhado (`...cond ? [...] : []`) dentro da chamada de `withNuxt(...)`, porque isso faz o TypeScript perder a tipagem contextual da tupla da regra (`'error'` alarga para `string`) e quebra `nuxt typecheck`.

@@ -39,4 +39,10 @@ O app real precisa de lint, formatação automática e um mecanismo para enforç
 ## Consequências
 
 - O hook de pre-commit não é uma garantia — pode ser pulado com `--no-verify`, ou simplesmente não existir se alguém clonar o repositório sem rodar o setup dos hooks. Um enforcement real dependeria de CI, que ainda não foi configurado (ver `ADR-001-real-app-stack.md`).
-- É preciso confirmar, durante a instalação, se `prettier-plugin-organize-imports` cobre arquivos `.vue` adequadamente (pode depender de `vue-tsc` como peer dependency) — ainda não verificado.
+- `typescript` está fixado em `~6.0.2` (mesma faixa usada no protótipo), não na versão mais recente disponível — ver nota de implementação abaixo.
+
+## Nota de implementação: `prettier-plugin-organize-imports` e a versão do TypeScript
+
+Confirmado: `prettier-plugin-organize-imports` cobre `.vue` normalmente, mas precisa de `vue-tsc` instalado como dependência (peer opcional) — sem ele, o plugin ainda formata o arquivo mas pula a etapa de organizar imports.
+
+Achado não óbvio: com `typescript@7.0.2` (a versão mais recente na hora da instalação), o plugin quebra silenciosamente — `prettier --write` não dá erro visível, só simplesmente não reorganiza nada. Rodando com `DEBUG=true` aparece o erro real: `TypeError: Cannot read properties of undefined (reading 'fileExists')` dentro do próprio plugin, ao tentar localizar o `tsconfig.json`. O pacote é testado oficialmente contra TypeScript 5.9, não 7.x. Fixar `typescript` em `~6.0.2` resolveu — reavaliar essa trava quando `prettier-plugin-organize-imports` declarar suporte explícito a TypeScript 7.
