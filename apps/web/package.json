@@ -19,7 +19,8 @@
     "test:watch": "vitest",
     "test:e2e": "playwright test",
     "dev:setup": "bash scripts/dev-setup.sh",
-    "dev:teardown": "bash scripts/dev-teardown.sh"
+    "dev:teardown": "bash scripts/dev-teardown.sh",
+    "dev:up": "pnpm dev:setup && pnpm dev"
   },
   "dependencies": {
     "@nuxt/ui": "4.11.0",

@@ -14,6 +14,7 @@ Ambiente de dev local completo via **Supabase CLI** (pacote `supabase`, devDepen
 
 - **`dev:setup`**: valida que o Docker está rodando; cria `.env` a partir de `.env.example` se não existir; roda `supabase start`; lê `supabase status -o env` e sincroniza `NUXT_DATABASE_URL`, `NUXT_PUBLIC_SUPABASE_URL`, `NUXT_PUBLIC_SUPABASE_ANON_KEY` e `NUXT_SUPABASE_SERVICE_ROLE_KEY` no `.env`; aplica o schema do Drizzle (`db:generate` + `db:migrate`).
 - **`dev:teardown`**: `supabase stop`.
+- **`dev:up`**: `dev:setup` seguido de `pnpm dev` — um comando só pra quem quer infra + app de uma vez. Continua existindo `dev:setup` e `dev` separados de propósito: reiniciar só o servidor Nuxt (loop comum durante o desenvolvimento) não precisa re-checar Docker/Supabase toda vez.
 
 `supabase/config.toml` (gerado por `supabase init`) fica versionado — define as portas e config da stack local. `supabase/.branches` e `supabase/.temp` ficam de fora do git (gitignore próprio gerado pela CLI).
 

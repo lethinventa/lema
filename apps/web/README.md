@@ -1,6 +1,6 @@
 # Lema — App real (web)
 
-Implementação real do Lema — não confundir com `apps/web-design-prototype`, que é só o protótipo de design e não é reaproveitado aqui. Stack e decisões de arquitetura documentadas em `docs/architecture/decisions/ADR-001` a `ADR-004`.
+Implementação real do Lema — não confundir com `apps/web-design-prototype`, que é só o protótipo de design e não é reaproveitado aqui. Stack e decisões de arquitetura documentadas em `docs/architecture/decisions/ADR-001` a `ADR-005`.
 
 Stack: Nuxt (Vue) + Tailwind v4 + Nuxt UI + Supabase (Postgres + Auth + Storage) + Drizzle + Vercel.
 
@@ -10,11 +10,12 @@ Pré-requisito: Docker rodando. `dev:setup` sobe uma stack local completa do Sup
 
 ```bash
 pnpm install
-pnpm dev:setup   # sobe Postgres + Auth + Storage local e configura .env
-pnpm dev
+pnpm dev:up   # infra local (idempotente) + servidor de desenvolvimento, em um comando só
 ```
 
 Isso aponta pro Supabase **local**, isolado do projeto cloud. Studio local em `http://127.0.0.1:54323`; e-mails de auth (confirmação, magic link) caem no Mailpit em `http://127.0.0.1:54324`, não em caixas de entrada reais. Rode `pnpm dev:teardown` pra derrubar a stack.
+
+`dev:up` é só `dev:setup` seguido de `dev` — se você só quer reiniciar o servidor Nuxt sem re-checar a infra (que já é idempotente, mas ainda assim chama o Supabase CLI toda vez), rode `pnpm dev` direto.
 
 ## Scripts
 
@@ -29,6 +30,7 @@ pnpm test                # testes unitários (Vitest)
 pnpm test:watch          # Vitest em modo watch
 pnpm test:e2e             # testes end-to-end (Playwright)
 pnpm dev:setup            # sobe a stack local do Supabase e configura .env
+pnpm dev:up                # dev:setup + dev, em um comando só
 pnpm dev:teardown          # derruba a stack local do Supabase
 pnpm db:generate            # gera migration a partir de lib/db/schema.ts
 pnpm db:migrate               # aplica migrations no banco
