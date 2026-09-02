@@ -10,6 +10,7 @@ export interface MockRecurrenceRule {
   title: string
   category: string
   context: Extract<HomeContext, 'personal' | 'group'>
+  groupId?: string
   type: TransactionType
   amount: number
   accountId?: string

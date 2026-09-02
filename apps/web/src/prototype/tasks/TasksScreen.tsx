@@ -1,20 +1,15 @@
 import { CheckSquare2, Plus, Repeat } from 'lucide-react'
 import { useState } from 'react'
 import { Avatar } from '../components/Avatar'
-import { ContextFilterChips, type ContextFilterValue } from '../components/ContextFilterChips'
+import { ContextFilterChips, type ContextFilterValue, matchesContext } from '../components/ContextFilterChips'
 import { DomainLabel } from '../components/DomainLabel'
 import { FlagChip } from '../components/FlagChip'
 import { HomeLayout } from '../components/HomeLayout'
 import { Tile } from '../components/Tile'
 import { VisibilityDot } from '../components/VisibilityDot'
 import { formatRelativeDayLabel } from '../calendar/dateUtils'
-import { type HomeContext, mockGroup } from '../home/homeMockData'
 import { initialTasks, type MockTask } from './tasksMockData'
 import { TaskSheet, type TaskSheetValues } from './TaskSheet'
-
-function matches(filter: ContextFilterValue, context: HomeContext) {
-  return filter === 'all' || filter === context
-}
 
 function TaskRow({ task, onToggle, onEdit }: { task: MockTask; onToggle: () => void; onEdit: () => void }) {
   return (
@@ -47,7 +42,7 @@ function TaskRow({ task, onToggle, onEdit }: { task: MockTask; onToggle: () => v
             </div>
           ) : null}
         </span>
-        <VisibilityDot context={task.context} className="mt-1.5" />
+        <VisibilityDot context={task.context} groupId={task.groupId} className="mt-1.5" />
       </button>
     </div>
   )
@@ -64,7 +59,14 @@ export function TasksScreen() {
 
   function handleCreate(values: TaskSheetValues) {
     setTasks((prev) => [
-      { id: `tk-${Date.now()}`, title: values.title, context: values.context, done: false, dueDate: values.dueDate || undefined },
+      {
+        id: `tk-${Date.now()}`,
+        title: values.title,
+        context: values.context,
+        groupId: values.groupId,
+        done: false,
+        dueDate: values.dueDate || undefined,
+      },
       ...prev,
     ])
     setSheet(null)
@@ -75,7 +77,13 @@ export function TasksScreen() {
     setTasks((prev) =>
       prev.map((task) =>
         task.id === sheet.taskId
-          ? { ...task, title: values.title, context: values.context, dueDate: values.dueDate || undefined }
+          ? {
+              ...task,
+              title: values.title,
+              context: values.context,
+              groupId: values.groupId,
+              dueDate: values.dueDate || undefined,
+            }
           : task,
       ),
     )
@@ -88,7 +96,7 @@ export function TasksScreen() {
     setSheet(null)
   }
 
-  const visible = tasks.filter((t) => matches(filter, t.context))
+  const visible = tasks.filter((t) => matchesContext(filter, t))
   const pending = visible.filter((t) => !t.done)
   const completed = visible.filter((t) => t.done)
   const editingTask = sheet?.mode === 'edit' ? tasks.find((t) => t.id === sheet.taskId) : undefined
@@ -159,16 +167,16 @@ export function TasksScreen() {
       </div>
 
       {sheet?.mode === 'create' ? (
-        <TaskSheet mode="create" groupName={mockGroup.name} onSave={handleCreate} onClose={() => setSheet(null)} />
+        <TaskSheet mode="create" onSave={handleCreate} onClose={() => setSheet(null)} />
       ) : null}
 
       {sheet?.mode === 'edit' && editingTask ? (
         <TaskSheet
           mode="edit"
-          groupName={mockGroup.name}
           initial={{
             title: editingTask.title,
             context: editingTask.context === 'group' ? 'group' : 'personal',
+            groupId: editingTask.groupId,
             dueDate: editingTask.dueDate ?? '',
           }}
           onSave={handleEditSave}

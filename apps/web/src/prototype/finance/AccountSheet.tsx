@@ -2,13 +2,14 @@ import { Trash2 } from 'lucide-react'
 import { useState } from 'react'
 import { GhostButton, PrimaryButton } from '../components/Buttons'
 import { SelectField, TextField } from '../components/TextField'
-import type { HomeContext } from '../home/homeMockData'
+import { VisibilityPicker, type VisibilitySelection } from '../components/VisibilityPicker'
 import { accountTypeLabels, type AccountType, type MockAccount } from './accountsMockData'
 
 export interface AccountSheetValues {
   name: string
   type: AccountType
-  context: Extract<HomeContext, 'personal' | 'group'>
+  context: 'personal' | 'group'
+  groupId?: string
   padrao: boolean
   ignorarNosTotais: boolean
   saldoBase: string
@@ -20,7 +21,6 @@ export interface AccountSheetValues {
 
 interface AccountSheetProps {
   mode: 'create' | 'edit'
-  groupName: string
   initial?: AccountSheetValues
   paymentAccountOptions: MockAccount[]
   onSave: (values: AccountSheetValues) => void
@@ -62,7 +62,6 @@ function ToggleRow({
 
 export function AccountSheet({
   mode,
-  groupName,
   initial,
   paymentAccountOptions,
   onSave,
@@ -71,7 +70,10 @@ export function AccountSheet({
 }: AccountSheetProps) {
   const [name, setName] = useState(initial?.name ?? '')
   const [type, setType] = useState<AccountType>(initial?.type ?? 'corrente')
-  const [context, setContext] = useState<'personal' | 'group'>(initial?.context ?? 'personal')
+  const [visibility, setVisibility] = useState<VisibilitySelection>({
+    context: initial?.context ?? 'personal',
+    groupId: initial?.groupId,
+  })
   const [padrao, setPadrao] = useState(initial?.padrao ?? false)
   const [ignorarNosTotais, setIgnorarNosTotais] = useState(initial?.ignorarNosTotais ?? false)
   const [saldoBase, setSaldoBase] = useState(initial?.saldoBase ?? '')
@@ -89,7 +91,8 @@ export function AccountSheet({
     onSave({
       name: name.trim(),
       type,
-      context,
+      context: visibility.context,
+      groupId: visibility.groupId,
       padrao,
       ignorarNosTotais,
       saldoBase: saldoBase.trim(),
@@ -194,33 +197,9 @@ export function AccountSheet({
             </>
           ) : null}
 
-          <div>
-            <span className="mb-2 block text-[13px] font-medium text-ink-muted">Visibilidade</span>
-            <div className="flex gap-2">
-              <button
-                type="button"
-                onClick={() => setContext('personal')}
-                className={`flex-1 rounded-sm border px-3 py-2.5 text-[13px] font-semibold transition active:scale-95 ${
-                  context === 'personal'
-                    ? 'border-accent bg-accent text-white'
-                    : 'border-line bg-surface text-ink-muted'
-                }`}
-              >
-                Pessoal
-              </button>
-              <button
-                type="button"
-                onClick={() => setContext('group')}
-                className={`flex-1 rounded-sm border px-3 py-2.5 text-[13px] font-semibold transition active:scale-95 ${
-                  context === 'group' ? 'border-accent bg-accent text-white' : 'border-line bg-surface text-ink-muted'
-                }`}
-              >
-                {groupName}
-              </button>
-            </div>
-          </div>
+          <VisibilityPicker value={visibility} onChange={setVisibility} />
 
-          {context === 'personal' ? (
+          {visibility.context === 'personal' ? (
             <ToggleRow
               label="Conta padrão"
               hint="Pré-selecionada ao lançar uma transação nova. Desmarca a conta padrão anterior."

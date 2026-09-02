@@ -5,7 +5,6 @@ import { BackHeader } from '../components/BackHeader'
 import { FlagChip } from '../components/FlagChip'
 import { HomeLayout } from '../components/HomeLayout'
 import { Tile } from '../components/Tile'
-import { mockGroup } from '../home/homeMockData'
 import { AccountSheet, type AccountSheetValues } from './AccountSheet'
 import { accountTypeLabels, formatCurrency, initialAccounts, parseAmount } from './accountsMockData'
 import { initialTransactions } from './financeMockData'
@@ -124,12 +123,12 @@ export function AccountDetailScreen() {
       {editing ? (
         <AccountSheet
           mode="edit"
-          groupName={mockGroup.name}
           paymentAccountOptions={accounts.filter((acc) => acc.type !== 'cartao' && acc.id !== account.id)}
           initial={{
             name: account.name,
             type: account.type,
             context: account.context,
+            groupId: account.groupId,
             padrao: account.padrao,
             ignorarNosTotais: account.ignorarNosTotais,
             saldoBase: account.saldoBase.toString().replace('.', ','),

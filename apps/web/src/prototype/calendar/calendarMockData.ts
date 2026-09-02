@@ -19,6 +19,7 @@ export interface MockEvent {
   id: string
   title: string
   context: HomeContext
+  groupId?: string
   date: string // ISO — data da(s) ocorrência(s), ou da 1ª ocorrência se recorrente
   time: string
   endTime?: string
@@ -58,6 +59,7 @@ export const initialEvents: MockEvent[] = [
     id: 'ev3',
     title: 'Jantar em família',
     context: 'group',
+    groupId: 'familia-duarte',
     date: TODAY_ISO,
     time: '20:00',
     endTime: '22:00',
@@ -84,6 +86,7 @@ export const initialEvents: MockEvent[] = [
     id: 'ev6',
     title: 'Reunião de condomínio',
     context: 'group',
+    groupId: 'familia-duarte',
     date: condominioStart,
     time: '19:30',
     endTime: '20:30',
@@ -95,6 +98,7 @@ export const initialEvents: MockEvent[] = [
     id: 'ev6-override-1',
     title: 'Reunião de condomínio',
     context: 'group',
+    groupId: 'familia-duarte',
     date: addMonths(condominioStart, 1),
     time: '20:00',
     endTime: '21:00',
@@ -115,9 +119,20 @@ export const initialEvents: MockEvent[] = [
     id: 'ev8',
     title: 'Almoço em família',
     context: 'group',
+    groupId: 'familia-duarte',
     date: addDays(TODAY_ISO, 5),
     time: '12:30',
     endTime: '14:00',
     participants: ['Mateus'],
+  },
+  {
+    id: 'ev9',
+    title: 'Consulta da mãe',
+    context: 'group',
+    groupId: 'casa-da-mae',
+    date: addDays(TODAY_ISO, 2),
+    time: '11:00',
+    endTime: '12:00',
+    location: 'Clínica São Lucas',
   },
 ]

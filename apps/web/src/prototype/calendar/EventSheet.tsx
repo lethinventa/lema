@@ -3,12 +3,13 @@ import { useState } from 'react'
 import { Avatar } from '../components/Avatar'
 import { GhostButton, PrimaryButton } from '../components/Buttons'
 import { SelectField, TextField } from '../components/TextField'
-import type { HomeContext } from '../home/homeMockData'
+import { VisibilityPicker, type VisibilitySelection } from '../components/VisibilityPicker'
 import type { RecurrenceFreq } from './calendarMockData'
 
 export interface EventSheetValues {
   title: string
-  context: Extract<HomeContext, 'personal' | 'group'>
+  context: 'personal' | 'group'
+  groupId?: string
   date: string // ISO
   time: string
   endTime: string
@@ -25,7 +26,6 @@ export interface EventSheetValues {
 
 interface EventSheetProps {
   mode: 'create' | 'edit'
-  groupName: string
   initial?: EventSheetValues
   isRecurringOccurrence?: boolean
   onSave: (values: EventSheetValues) => void
@@ -41,9 +41,12 @@ const RECURRENCE_LABELS: Record<RecurrenceFreq | '', string> = {
 }
 const RECURRENCE_OPTIONS = ['Não repete', 'Diariamente', 'Semanalmente', 'Mensalmente']
 
-export function EventSheet({ mode, groupName, initial, isRecurringOccurrence, onSave, onDelete, onClose }: EventSheetProps) {
+export function EventSheet({ mode, initial, isRecurringOccurrence, onSave, onDelete, onClose }: EventSheetProps) {
   const [title, setTitle] = useState(initial?.title ?? '')
-  const [context, setContext] = useState<'personal' | 'group'>(initial?.context ?? 'personal')
+  const [visibility, setVisibility] = useState<VisibilitySelection>({
+    context: initial?.context ?? 'personal',
+    groupId: initial?.groupId,
+  })
   const [date, setDate] = useState(initial?.date ?? '')
   const [time, setTime] = useState(initial?.time ?? '')
   const [endTime, setEndTime] = useState(initial?.endTime ?? '')
@@ -61,7 +64,8 @@ export function EventSheet({ mode, groupName, initial, isRecurringOccurrence, on
     if (!canSave) return
     onSave({
       title: title.trim(),
-      context,
+      context: visibility.context,
+      groupId: visibility.groupId,
       date,
       time,
       endTime: endTime.trim(),
@@ -147,31 +151,7 @@ export function EventSheet({ mode, groupName, initial, isRecurringOccurrence, on
             onChange={(e) => setLocation(e.target.value)}
           />
 
-          <div>
-            <span className="mb-2 block text-[13px] font-medium text-ink-muted">Visibilidade</span>
-            <div className="flex gap-2">
-              <button
-                type="button"
-                onClick={() => setContext('personal')}
-                className={`flex-1 rounded-sm border px-3 py-2.5 text-[13px] font-semibold transition active:scale-95 ${
-                  context === 'personal'
-                    ? 'border-accent bg-accent text-white'
-                    : 'border-line bg-surface text-ink-muted'
-                }`}
-              >
-                Pessoal
-              </button>
-              <button
-                type="button"
-                onClick={() => setContext('group')}
-                className={`flex-1 rounded-sm border px-3 py-2.5 text-[13px] font-semibold transition active:scale-95 ${
-                  context === 'group' ? 'border-accent bg-accent text-white' : 'border-line bg-surface text-ink-muted'
-                }`}
-              >
-                {groupName}
-              </button>
-            </div>
-          </div>
+          <VisibilityPicker value={visibility} onChange={setVisibility} />
 
           <div>
             {participants.length > 0 ? (

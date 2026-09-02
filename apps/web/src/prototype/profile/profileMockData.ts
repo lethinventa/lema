@@ -8,7 +8,7 @@
 // arbitrário. Uma tela de Membros (UC-GROUP-006) resolveria isso de verdade,
 // mas ainda não existe no protótipo.
 
-import { mockGroup } from '../home/homeMockData'
+import { mockGroups } from '../home/homeMockData'
 
 export interface GroupMembership {
   groupId: string
@@ -17,7 +17,15 @@ export interface GroupMembership {
   memberCount: number
 }
 
-export const mockMemberships: GroupMembership[] = [{ groupId: mockGroup.id, groupName: mockGroup.name, role: 'OWNER', memberCount: 1 }]
+// A pessoa é OWNER solo dos dois grupos que criou no onboarding — nenhum
+// convite foi aceito em nenhum deles ainda, então ambos bloqueiam exclusão
+// de conta (ver findGroupsBlockingDeletion).
+export const mockMemberships: GroupMembership[] = mockGroups.map((g) => ({
+  groupId: g.id,
+  groupName: g.name,
+  role: 'OWNER',
+  memberCount: 1,
+}))
 
 export function findGroupsBlockingDeletion(memberships: GroupMembership[]) {
   return memberships.filter((m) => m.role === 'OWNER' && m.memberCount <= 1)

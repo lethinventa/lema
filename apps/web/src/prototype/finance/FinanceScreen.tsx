@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom'
 import { Avatar } from '../components/Avatar'
 import { CategoryChip } from '../components/CategoryChip'
 import { CategoryRanking } from '../components/CategoryRanking'
-import { ContextFilterChips, type ContextFilterValue } from '../components/ContextFilterChips'
+import { ContextFilterChips, type ContextFilterValue, matchesContext } from '../components/ContextFilterChips'
 import { DonutChart } from '../components/DonutChart'
 import { FlagChip } from '../components/FlagChip'
 import { HomeLayout } from '../components/HomeLayout'
@@ -13,7 +13,6 @@ import { SavingsGauge } from '../components/SavingsGauge'
 import { Tile } from '../components/Tile'
 import { VisibilityDot } from '../components/VisibilityDot'
 import { initialGoals } from '../goals/goalsMockData'
-import { type HomeContext, mockGroup } from '../home/homeMockData'
 import {
   addMonthsIso,
   addMonthsToMonthIso,
@@ -33,10 +32,6 @@ import {
 } from './financeSelectors'
 import { initialRecurrenceRules, type MockRecurrenceRule } from './recurrenceMockData'
 import { TransactionSheet, type TransactionSheetValues } from './TransactionSheet'
-
-function matches(filter: ContextFilterValue, context: HomeContext) {
-  return filter === 'all' || filter === context
-}
 
 const goalTitleById = new Map(initialGoals.map((g) => [g.id, g.title]))
 
@@ -65,7 +60,7 @@ function TransactionRow({ tx, onEdit }: { tx: MockTransaction; onEdit: () => voi
         <span className={`tabular text-[14.5px] font-bold ${isIncome ? 'text-mint-text' : 'text-ink'}`}>
           {isIncome ? '+' : '−'} {formatCurrency(tx.amount)}
         </span>
-        <VisibilityDot context={tx.context} />
+        <VisibilityDot context={tx.context} groupId={tx.groupId} />
       </span>
     </button>
   )
@@ -100,6 +95,7 @@ export function FinanceScreen() {
           title: values.title,
           category: values.category,
           context: values.context,
+          groupId: values.groupId,
           type: values.type,
           amount: value,
           dateLabel: formatDateLabel(date),
@@ -125,6 +121,7 @@ export function FinanceScreen() {
           title: values.title,
           category: values.category,
           context: values.context,
+          groupId: values.groupId,
           type: values.type,
           amount,
           accountId: values.accountId || undefined,
@@ -139,6 +136,7 @@ export function FinanceScreen() {
           title: values.title,
           category: values.category,
           context: values.context,
+          groupId: values.groupId,
           type: values.type,
           amount,
           dateLabel: formatDateLabel(values.date),
@@ -158,6 +156,7 @@ export function FinanceScreen() {
           title: values.title,
           category: values.category,
           context: values.context,
+          groupId: values.groupId,
           type: values.type,
           amount,
           dateLabel: formatDateLabel(values.date),
@@ -183,6 +182,7 @@ export function FinanceScreen() {
               title: values.title,
               category: values.category,
               context: values.context,
+              groupId: values.groupId,
               type: values.type,
               amount: parseAmount(values.amount),
               dateLabel: formatDateLabel(values.date),
@@ -210,7 +210,7 @@ export function FinanceScreen() {
   }
 
   const periodTransactions = getPeriodTransactions(transactions, month)
-  const visible = periodTransactions.filter((tx) => matches(filter, tx.context))
+  const visible = periodTransactions.filter((tx) => matchesContext(filter, tx))
   const { income, expense } = getIncomeExpenseTotals(visible)
   const expenseByCategory = getCategoryBreakdown(visible, 'despesa')
   const rankingData = getCategoryBreakdown(visible, rankingTab)
@@ -411,7 +411,6 @@ export function FinanceScreen() {
       {sheet?.mode === 'create' ? (
         <TransactionSheet
           mode="create"
-          groupName={mockGroup.name}
           accountOptions={initialAccounts}
           goalOptions={goalOptions}
           onSave={handleCreate}
@@ -422,13 +421,13 @@ export function FinanceScreen() {
       {sheet?.mode === 'edit' && editingTx ? (
         <TransactionSheet
           mode="edit"
-          groupName={mockGroup.name}
           accountOptions={initialAccounts}
           goalOptions={goalOptions}
           initial={{
             title: editingTx.title,
             category: editingTx.category,
             context: editingTx.context === 'group' ? 'group' : 'personal',
+            groupId: editingTx.groupId,
             type: editingTx.type,
             amount: editingTx.amount.toString().replace('.', ','),
             date: editingTx.date,

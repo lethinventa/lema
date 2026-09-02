@@ -2,15 +2,16 @@ import { CheckCircle2, ChevronLeft, ChevronRight, Plus, Target, Trash2, Triangle
 import { useState } from 'react'
 import { GhostButton, PrimaryButton } from '../components/Buttons'
 import { TextField } from '../components/TextField'
+import { VisibilityPicker, type VisibilitySelection } from '../components/VisibilityPicker'
 import { formatCurrency } from '../finance/financeMockData'
 import type { MockTransaction } from '../finance/financeMockData'
-import type { HomeContext } from '../home/homeMockData'
 import type { AllocationStatus, MockGoalAllocation } from './goalAllocationsMockData'
 import type { PaceInfo } from './goalsSelectors'
 
 export interface GoalSheetValues {
   title: string
-  context: Extract<HomeContext, 'personal' | 'group'>
+  context: 'personal' | 'group'
+  groupId?: string
   deadline: string // ISO
   category: string
   progress: number
@@ -26,7 +27,6 @@ interface SubgoalSummary {
 
 interface GoalSheetProps {
   mode: 'create' | 'edit'
-  groupName: string
   initial?: GoalSheetValues
   done?: boolean
   isSubgoal?: boolean
@@ -147,7 +147,6 @@ function SubgoalCard({ subgoal, onOpen }: { subgoal: SubgoalSummary; onOpen: () 
 
 export function GoalSheet({
   mode,
-  groupName,
   initial,
   done,
   isSubgoal,
@@ -169,7 +168,10 @@ export function GoalSheet({
   onRegisterPayment,
 }: GoalSheetProps) {
   const [title, setTitle] = useState(initial?.title ?? '')
-  const [context, setContext] = useState<'personal' | 'group'>(initial?.context ?? 'personal')
+  const [visibility, setVisibility] = useState<VisibilitySelection>({
+    context: initial?.context ?? 'personal',
+    groupId: initial?.groupId,
+  })
   const [deadline, setDeadline] = useState(initial?.deadline ?? '')
   const [category, setCategory] = useState(initial?.category ?? '')
   const [progress, setProgress] = useState(initial?.progress ?? 0)
@@ -183,7 +185,15 @@ export function GoalSheet({
 
   function handleSave() {
     if (!title.trim()) return
-    onSave({ title: title.trim(), context, deadline, category: category.trim(), progress, custoEstimado: custoEstimado.trim() })
+    onSave({
+      title: title.trim(),
+      context: visibility.context,
+      groupId: visibility.groupId,
+      deadline,
+      category: category.trim(),
+      progress,
+      custoEstimado: custoEstimado.trim(),
+    })
   }
 
   return (
@@ -225,31 +235,7 @@ export function GoalSheet({
             </div>
           </div>
 
-          <div>
-            <span className="mb-2 block text-[13px] font-medium text-ink-muted">Visibilidade</span>
-            <div className="flex gap-2">
-              <button
-                type="button"
-                onClick={() => setContext('personal')}
-                className={`flex-1 rounded-sm border px-3 py-2.5 text-[13px] font-semibold transition active:scale-95 ${
-                  context === 'personal'
-                    ? 'border-accent bg-accent text-white'
-                    : 'border-line bg-surface text-ink-muted'
-                }`}
-              >
-                Pessoal
-              </button>
-              <button
-                type="button"
-                onClick={() => setContext('group')}
-                className={`flex-1 rounded-sm border px-3 py-2.5 text-[13px] font-semibold transition active:scale-95 ${
-                  context === 'group' ? 'border-accent bg-accent text-white' : 'border-line bg-surface text-ink-muted'
-                }`}
-              >
-                {groupName}
-              </button>
-            </div>
-          </div>
+          <VisibilityPicker value={visibility} onChange={setVisibility} />
 
           {!hasSubgoals ? (
             <TextField

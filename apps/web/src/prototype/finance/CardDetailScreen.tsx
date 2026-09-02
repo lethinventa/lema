@@ -6,7 +6,6 @@ import { FlagChip } from '../components/FlagChip'
 import { HomeLayout } from '../components/HomeLayout'
 import { Tile } from '../components/Tile'
 import { PrimaryButton } from '../components/Buttons'
-import { mockGroup } from '../home/homeMockData'
 import { AccountSheet, type AccountSheetValues } from './AccountSheet'
 import {
   MOCK_TODAY,
@@ -227,12 +226,12 @@ export function CardDetailScreen() {
       {editing ? (
         <AccountSheet
           mode="edit"
-          groupName={mockGroup.name}
           paymentAccountOptions={accounts.filter((acc) => acc.type !== 'cartao')}
           initial={{
             name: card.name,
             type: 'cartao',
             context: card.context,
+            groupId: card.groupId,
             padrao: card.padrao,
             ignorarNosTotais: card.ignorarNosTotais,
             saldoBase: '',

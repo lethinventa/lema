@@ -1,13 +1,28 @@
-import { mockGroup } from '../home/homeMockData'
+import { mockGroups } from '../home/homeMockData'
 
-export type ContextFilterValue = 'all' | 'personal' | 'group' | 'shared'
+const GROUP_PREFIX = 'group:'
 
-const CHIPS: { value: ContextFilterValue; label: string }[] = [
-  { value: 'all', label: 'Tudo' },
-  { value: 'personal', label: 'Pessoal' },
-  { value: 'group', label: mockGroup.name },
-  { value: 'shared', label: 'Compartilhado' },
-]
+// 'all' | 'personal' | 'shared' | 'group:<groupId>' — um chip por grupo do
+// usuário, não um valor fixo (ver Fase 1 do plano multi-grupo).
+export type ContextFilterValue = 'all' | 'personal' | 'shared' | `${typeof GROUP_PREFIX}${string}`
+
+export function groupFilterValue(groupId: string): ContextFilterValue {
+  return `${GROUP_PREFIX}${groupId}`
+}
+
+export function groupIdFromFilter(filter: ContextFilterValue): string | null {
+  return filter.startsWith(GROUP_PREFIX) ? filter.slice(GROUP_PREFIX.length) : null
+}
+
+export function matchesContext(
+  filter: ContextFilterValue,
+  item: { context: 'personal' | 'group' | 'shared'; groupId?: string },
+) {
+  if (filter === 'all') return true
+  const filterGroupId = groupIdFromFilter(filter)
+  if (filterGroupId) return item.context === 'group' && item.groupId === filterGroupId
+  return filter === item.context
+}
 
 interface ContextFilterChipsProps {
   value: ContextFilterValue
@@ -15,9 +30,16 @@ interface ContextFilterChipsProps {
 }
 
 export function ContextFilterChips({ value, onChange }: ContextFilterChipsProps) {
+  const chips: { value: ContextFilterValue; label: string }[] = [
+    { value: 'all', label: 'Tudo' },
+    { value: 'personal', label: 'Pessoal' },
+    ...mockGroups.map((g) => ({ value: groupFilterValue(g.id), label: g.name })),
+    { value: 'shared', label: 'Compartilhado' },
+  ]
+
   return (
     <div className="-mx-6 flex gap-2 overflow-x-auto px-6 pb-1">
-      {CHIPS.map((chip) => (
+      {chips.map((chip) => (
         <button
           key={chip.value}
           type="button"

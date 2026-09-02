@@ -23,6 +23,7 @@ export interface MockAccount {
   name: string
   type: AccountType
   context: Extract<HomeContext, 'personal' | 'group'>
+  groupId?: string
   padrao: boolean
   ignorarNosTotais: boolean
   // Saldo de referência anterior ao que o protótipo consegue derivar das
@@ -70,6 +71,7 @@ export const initialAccounts: MockAccount[] = [
     name: 'Conta da casa',
     type: 'corrente',
     context: 'group',
+    groupId: 'familia-duarte',
     padrao: false,
     ignorarNosTotais: false,
     saldoBase: 1200,

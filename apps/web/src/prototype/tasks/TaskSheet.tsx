@@ -2,31 +2,34 @@ import { Trash2 } from 'lucide-react'
 import { useState } from 'react'
 import { GhostButton, PrimaryButton } from '../components/Buttons'
 import { TextField } from '../components/TextField'
-import type { HomeContext } from '../home/homeMockData'
+import { VisibilityPicker, type VisibilitySelection } from '../components/VisibilityPicker'
 
 export interface TaskSheetValues {
   title: string
-  context: Extract<HomeContext, 'personal' | 'group'>
+  context: 'personal' | 'group'
+  groupId?: string
   dueDate: string // ISO, opcional (string vazia = sem prazo)
 }
 
 interface TaskSheetProps {
   mode: 'create' | 'edit'
-  groupName: string
   initial?: TaskSheetValues
   onSave: (values: TaskSheetValues) => void
   onDelete?: () => void
   onClose: () => void
 }
 
-export function TaskSheet({ mode, groupName, initial, onSave, onDelete, onClose }: TaskSheetProps) {
+export function TaskSheet({ mode, initial, onSave, onDelete, onClose }: TaskSheetProps) {
   const [title, setTitle] = useState(initial?.title ?? '')
-  const [context, setContext] = useState<'personal' | 'group'>(initial?.context ?? 'personal')
+  const [visibility, setVisibility] = useState<VisibilitySelection>({
+    context: initial?.context ?? 'personal',
+    groupId: initial?.groupId,
+  })
   const [dueDate, setDueDate] = useState(initial?.dueDate ?? '')
 
   function handleSave() {
     if (!title.trim()) return
-    onSave({ title: title.trim(), context, dueDate })
+    onSave({ title: title.trim(), context: visibility.context, groupId: visibility.groupId, dueDate })
   }
 
   return (
@@ -49,31 +52,7 @@ export function TaskSheet({ mode, groupName, initial, onSave, onDelete, onClose 
             onChange={(e) => setTitle(e.target.value)}
           />
 
-          <div>
-            <span className="mb-2 block text-[13px] font-medium text-ink-muted">Visibilidade</span>
-            <div className="flex gap-2">
-              <button
-                type="button"
-                onClick={() => setContext('personal')}
-                className={`flex-1 rounded-sm border px-3 py-2.5 text-[13px] font-semibold transition active:scale-95 ${
-                  context === 'personal'
-                    ? 'border-accent bg-accent text-white'
-                    : 'border-line bg-surface text-ink-muted'
-                }`}
-              >
-                Pessoal
-              </button>
-              <button
-                type="button"
-                onClick={() => setContext('group')}
-                className={`flex-1 rounded-sm border px-3 py-2.5 text-[13px] font-semibold transition active:scale-95 ${
-                  context === 'group' ? 'border-accent bg-accent text-white' : 'border-line bg-surface text-ink-muted'
-                }`}
-              >
-                {groupName}
-              </button>
-            </div>
-          </div>
+          <VisibilityPicker value={visibility} onChange={setVisibility} />
 
           <TextField
             label="Prazo (opcional)"

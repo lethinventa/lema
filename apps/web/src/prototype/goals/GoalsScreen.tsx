@@ -1,6 +1,6 @@
 import { CheckCircle2, Plus, Target, TriangleAlert } from 'lucide-react'
 import { useState } from 'react'
-import { ContextFilterChips, type ContextFilterValue } from '../components/ContextFilterChips'
+import { ContextFilterChips, type ContextFilterValue, matchesContext } from '../components/ContextFilterChips'
 import { HomeLayout } from '../components/HomeLayout'
 import { getCategoryStyle } from '../components/palette'
 import { Tile } from '../components/Tile'
@@ -8,17 +8,12 @@ import { VisibilityDot } from '../components/VisibilityDot'
 import { formatDate, formatDateLabel, initialAccounts, MOCK_TODAY, parseAmount } from '../finance/accountsMockData'
 import { initialTransactions, type MockTransaction } from '../finance/financeMockData'
 import { TransactionSheet, type TransactionSheetValues } from '../finance/TransactionSheet'
-import { type HomeContext, mockGroup } from '../home/homeMockData'
 import { type AllocationStatus, initialGoalAllocations, type MockGoalAllocation } from './goalAllocationsMockData'
 import { GoalSheet, type GoalSheetValues } from './GoalSheet'
 import { initialGoals, type MockGoal } from './goalsMockData'
 import { getGoalProgress, getGoalTransactions, getPaceInfo, getSubgoals } from './goalsSelectors'
 
 const TODAY_ISO = MOCK_TODAY.toISOString().slice(0, 10)
-
-function matches(filter: ContextFilterValue, context: HomeContext) {
-  return filter === 'all' || filter === context
-}
 
 // Uma pilha, não um único valor: entrar numa submeta ou registrar uma
 // transação vinculada empilha sobre o sheet atual em vez de abrir por cima
@@ -70,7 +65,7 @@ function GoalCard({
               </span>
             ) : null}
           </div>
-          <VisibilityDot context={goal.context} className="mt-1 shrink-0" />
+          <VisibilityDot context={goal.context} groupId={goal.groupId} className="mt-1 shrink-0" />
         </div>
         <h3 className="mt-2 text-[16px] font-bold text-ink">{goal.title}</h3>
         {!goal.done ? (
@@ -115,6 +110,7 @@ export function GoalsScreen() {
         id,
         title: values.title,
         context: values.context,
+        groupId: values.groupId,
         done: false,
         progress: values.progress,
         deadline: values.deadline || undefined,
@@ -138,6 +134,7 @@ export function GoalsScreen() {
               ...goal,
               title: values.title,
               context: values.context,
+              groupId: values.groupId,
               deadline: values.deadline || undefined,
               category: values.category || undefined,
               progress: values.progress,
@@ -206,7 +203,7 @@ export function GoalsScreen() {
   }
 
   const topLevel = goals.filter((g) => !g.parentGoalId)
-  const visible = topLevel.filter((g) => matches(filter, g.context))
+  const visible = topLevel.filter((g) => matchesContext(filter, g))
   const active = visible.filter((g) => !g.done)
   const completed = visible.filter((g) => g.done)
 
@@ -279,7 +276,6 @@ export function GoalsScreen() {
       {top?.kind === 'goal' && top.mode === 'create' ? (
         <GoalSheet
           mode="create"
-          groupName={mockGroup.name}
           isSubgoal={!!top.parentGoalId}
           parentTitle={parentTitle}
           onBack={stack.length > 1 ? popOne : undefined}
@@ -292,7 +288,6 @@ export function GoalsScreen() {
         <GoalSheet
           key={editingGoal.id}
           mode="edit"
-          groupName={mockGroup.name}
           done={editingGoal.done}
           isSubgoal={!!editingGoal.parentGoalId}
           allocations={allocations.filter((a) => a.goalId === editingGoal.id)}
@@ -310,6 +305,7 @@ export function GoalsScreen() {
           initial={{
             title: editingGoal.title,
             context: editingGoal.context === 'group' ? 'group' : 'personal',
+            groupId: editingGoal.groupId,
             deadline: editingGoal.deadline ?? '',
             category: editingGoal.category ?? '',
             progress: editingGoal.progress,
@@ -330,7 +326,6 @@ export function GoalsScreen() {
       {top?.kind === 'transaction' ? (
         <TransactionSheet
           mode="create"
-          groupName={mockGroup.name}
           accountOptions={initialAccounts}
           goalOptions={goalOptions}
           initial={{

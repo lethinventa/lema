@@ -1,9 +1,8 @@
 import { CalendarDays, Grid3x3, List, Plus } from 'lucide-react'
 import { useState } from 'react'
-import { ContextFilterChips, type ContextFilterValue } from '../components/ContextFilterChips'
+import { ContextFilterChips, type ContextFilterValue, matchesContext } from '../components/ContextFilterChips'
 import { HomeLayout } from '../components/HomeLayout'
 import { Tile } from '../components/Tile'
-import { type HomeContext, mockGroup } from '../home/homeMockData'
 import { initialTasks, type MockTask } from '../tasks/tasksMockData'
 import { CalendarAgendaView } from './CalendarAgendaView'
 import { CalendarMonthView } from './CalendarMonthView'
@@ -28,14 +27,11 @@ const VIEW_OPTIONS: { value: ViewMode; label: string; icon: typeof List }[] = [
   { value: 'month', label: 'Mês', icon: Grid3x3 },
 ]
 
-function matches(filter: ContextFilterValue, context: HomeContext) {
-  return filter === 'all' || filter === context
-}
-
 function toEditInput(values: EventSheetValues): EventEditInput {
   return {
     title: values.title,
     context: values.context,
+    groupId: values.groupId,
     date: values.date,
     time: values.time,
     endTime: values.endTime || undefined,
@@ -56,8 +52,8 @@ export function CalendarScreen() {
   const [tasks, setTasks] = useState<MockTask[]>(initialTasks)
   const [sheet, setSheet] = useState<SheetState>(null)
 
-  const visibleEvents = events.filter((e) => matches(filter, e.context))
-  const visibleTasks = tasks.filter((t) => matches(filter, t.context) && t.dueDate)
+  const visibleEvents = events.filter((e) => matchesContext(filter, e))
+  const visibleTasks = tasks.filter((t) => matchesContext(filter, t) && t.dueDate)
 
   function handleCreate(values: EventSheetValues) {
     setEvents((prev) => [...prev, { id: `ev-${Date.now()}`, ...toEditInput(values) }])
@@ -185,10 +181,10 @@ export function CalendarScreen() {
       {sheet?.mode === 'create' ? (
         <EventSheet
           mode="create"
-          groupName={mockGroup.name}
           initial={{
             title: '',
             context: 'personal',
+            groupId: undefined,
             date: sheet.defaultDate,
             time: '',
             endTime: '',
@@ -207,11 +203,11 @@ export function CalendarScreen() {
         <EventSheet
           key={sheet.occurrence.occurrenceKey}
           mode="edit"
-          groupName={mockGroup.name}
           isRecurringOccurrence={sheet.occurrence.isRecurring}
           initial={{
             title: sheet.occurrence.event.title,
             context: sheet.occurrence.event.context === 'group' ? 'group' : 'personal',
+            groupId: sheet.occurrence.event.groupId,
             date: sheet.occurrence.date,
             time: sheet.occurrence.event.time,
             endTime: sheet.occurrence.event.endTime ?? '',

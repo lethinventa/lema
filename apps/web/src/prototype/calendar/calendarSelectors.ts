@@ -78,6 +78,7 @@ function uniq(values: string[]) {
 export interface EventEditInput {
   title: string
   context: MockEvent['context']
+  groupId?: string
   date: string
   time: string
   endTime?: string
@@ -110,6 +111,7 @@ export function applyOccurrenceEdit(
     id: `${rootId}-ov-${occurrenceDate}`,
     title: input.title,
     context: input.context,
+    groupId: input.groupId,
     date: occurrenceDate,
     time: input.time,
     endTime: input.endTime,

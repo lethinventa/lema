@@ -12,15 +12,20 @@ export const mockUser = {
   firstName: 'Lethicia',
 }
 
-export const mockGroup: MockGroup = {
-  id: 'familia-duarte',
-  name: 'Família Duarte',
-}
+// Usuário pertence a mais de um grupo (ex.: a família e o cuidado da mãe) —
+// UC-TODAY-002 exige que o contexto de grupo seja escolhido um por vez, não
+// que só exista um grupo possível. Todo item com context 'group' referencia
+// um destes pelo campo groupId.
+export const mockGroups: MockGroup[] = [
+  { id: 'familia-duarte', name: 'Família Duarte' },
+  { id: 'casa-da-mae', name: 'Casa da Mãe' },
+]
 
 export interface TaskItem {
   id: string
   title: string
   context: HomeContext
+  groupId?: string
   done: boolean
 }
 
@@ -28,6 +33,7 @@ export interface CalendarItem {
   id: string
   title: string
   context: HomeContext
+  groupId?: string
   time: string
 }
 
@@ -35,6 +41,7 @@ export interface GoalItem {
   id: string
   title: string
   context: HomeContext
+  groupId?: string
   progress: number
   progressLabel: string
 }
@@ -43,18 +50,20 @@ export interface FinanceItem {
   id: string
   title: string
   context: HomeContext
+  groupId?: string
   amount: string
 }
 
 export const mockTasks: TaskItem[] = [
   { id: 't1', title: 'Levar o carro pro conserto', context: 'personal', done: false },
   { id: 't2', title: 'Comprar presente de aniversário da Ana', context: 'shared', done: false },
-  { id: 't3', title: 'Organizar a geladeira', context: 'group', done: true },
+  { id: 't3', title: 'Organizar a geladeira', context: 'group', groupId: 'familia-duarte', done: true },
+  { id: 't4', title: 'Levar a mãe ao médico', context: 'group', groupId: 'casa-da-mae', done: false },
 ]
 
 export const mockCalendar: CalendarItem[] = [
   { id: 'c1', title: 'Consulta médica', context: 'personal', time: '14:00' },
-  { id: 'c2', title: 'Jantar em família', context: 'group', time: '20:00' },
+  { id: 'c2', title: 'Jantar em família', context: 'group', groupId: 'familia-duarte', time: '20:00' },
 ]
 
 export const mockGoals: GoalItem[] = [
@@ -62,6 +71,7 @@ export const mockGoals: GoalItem[] = [
 ]
 
 export const mockFinance: FinanceItem[] = [
-  { id: 'f1', title: 'Conta de luz pendente', context: 'group', amount: 'R$ 210,00' },
+  { id: 'f1', title: 'Conta de luz pendente', context: 'group', groupId: 'familia-duarte', amount: 'R$ 210,00' },
   { id: 'f2', title: 'Dividir jantar de sexta', context: 'shared', amount: 'R$ 84,50' },
+  { id: 'f3', title: 'Farmácia da mãe', context: 'group', groupId: 'casa-da-mae', amount: 'R$ 68,00' },
 ]

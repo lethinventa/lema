@@ -13,6 +13,7 @@ export interface MockTransaction {
   title: string
   category: string
   context: HomeContext
+  groupId?: string
   type: TransactionType
   amount: number
   dateLabel: string
@@ -42,6 +43,7 @@ export const initialTransactions: MockTransaction[] = [
     title: 'Supermercado',
     category: 'Mercado',
     context: 'group',
+    groupId: 'familia-duarte',
     type: 'despesa',
     amount: 245.8,
     dateLabel: 'Hoje',
@@ -53,6 +55,7 @@ export const initialTransactions: MockTransaction[] = [
     title: 'Internet',
     category: 'Casa',
     context: 'group',
+    groupId: 'familia-duarte',
     type: 'despesa',
     amount: 120,
     dateLabel: 'Ontem',
@@ -112,6 +115,7 @@ export const initialTransactions: MockTransaction[] = [
     title: 'Conta de luz',
     category: 'Casa',
     context: 'group',
+    groupId: 'familia-duarte',
     type: 'despesa',
     amount: 210,
     dateLabel: '01/09',
@@ -244,6 +248,7 @@ export const initialTransactions: MockTransaction[] = [
     title: 'Marcenaria — primeira etapa',
     category: 'Casa',
     context: 'group',
+    groupId: 'familia-duarte',
     type: 'despesa',
     amount: 6800,
     dateLabel: '10/07',
@@ -256,12 +261,24 @@ export const initialTransactions: MockTransaction[] = [
     title: 'Mão de obra da reforma',
     category: 'Casa',
     context: 'group',
+    groupId: 'familia-duarte',
     type: 'despesa',
     amount: 2100,
     dateLabel: '05/08',
     date: '2026-08-05',
     accountId: 'acc-casa',
     goalId: 'gl3c',
+  },
+  {
+    id: 'tx19',
+    title: 'Farmácia da mãe',
+    category: 'Saúde',
+    context: 'group',
+    groupId: 'casa-da-mae',
+    type: 'despesa',
+    amount: 68,
+    dateLabel: 'Hoje',
+    date: '2026-09-15',
   },
 ]
 

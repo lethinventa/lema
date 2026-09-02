@@ -11,6 +11,7 @@ export interface MockGoal {
   id: string
   title: string
   context: HomeContext
+  groupId?: string
   done: boolean
   // Progresso manual — só é usado quando o objetivo não tem custoEstimado
   // nem submetas (fallback, ver UC-GOAL-001). Nos demais casos, o progresso
@@ -48,6 +49,7 @@ export const initialGoals: MockGoal[] = [
     id: 'gl3',
     title: 'Reforma da cozinha',
     context: 'group',
+    groupId: 'familia-duarte',
     done: false,
     progress: 0,
     deadline: '2026-11-30',
@@ -58,6 +60,7 @@ export const initialGoals: MockGoal[] = [
     id: 'gl3a',
     title: 'Marcenaria',
     context: 'group',
+    groupId: 'familia-duarte',
     done: false,
     progress: 0,
     category: 'Casa',
@@ -69,6 +72,7 @@ export const initialGoals: MockGoal[] = [
     id: 'gl3b',
     title: 'Eletrodomésticos',
     context: 'group',
+    groupId: 'familia-duarte',
     done: false,
     progress: 0,
     category: 'Casa',
@@ -80,6 +84,7 @@ export const initialGoals: MockGoal[] = [
     id: 'gl3c',
     title: 'Mão de obra',
     context: 'group',
+    groupId: 'familia-duarte',
     done: false,
     progress: 0,
     category: 'Casa',
@@ -106,5 +111,16 @@ export const initialGoals: MockGoal[] = [
     progress: 100,
     category: 'Saúde',
     createdAt: '2026-04-01',
+  },
+  {
+    id: 'gl6',
+    title: 'Trocar o colchão da mãe',
+    context: 'group',
+    groupId: 'casa-da-mae',
+    done: false,
+    progress: 0,
+    category: 'Casa',
+    custoEstimado: 1800,
+    createdAt: '2026-07-01',
   },
 ]

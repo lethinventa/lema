@@ -29,7 +29,7 @@ export function EventOccurrenceRow({ occurrence, onEdit }: { occurrence: EventOc
           </div>
         ) : null}
       </span>
-      <VisibilityDot context={event.context} className="mt-1.5" />
+      <VisibilityDot context={event.context} groupId={event.groupId} className="mt-1.5" />
     </button>
   )
 }
@@ -60,7 +60,7 @@ export function TaskAgendaRow({ task, onToggle }: { task: MockTask; onToggle: ()
           <FlagChip>Tarefa</FlagChip>
         </span>
       </span>
-      <VisibilityDot context={task.context} className="mt-1.5" />
+      <VisibilityDot context={task.context} groupId={task.groupId} className="mt-1.5" />
     </div>
   )
 }

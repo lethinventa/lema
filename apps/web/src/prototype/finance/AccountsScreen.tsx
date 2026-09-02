@@ -3,12 +3,11 @@ import type { ReactNode } from 'react'
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { BackHeader } from '../components/BackHeader'
-import { ContextFilterChips, type ContextFilterValue } from '../components/ContextFilterChips'
+import { ContextFilterChips, type ContextFilterValue, matchesContext } from '../components/ContextFilterChips'
 import { FlagChip } from '../components/FlagChip'
 import { HomeLayout } from '../components/HomeLayout'
 import { Tile } from '../components/Tile'
 import { VisibilityDot } from '../components/VisibilityDot'
-import { type HomeContext, mockGroup } from '../home/homeMockData'
 import { AccountSheet, type AccountSheetValues } from './AccountSheet'
 import {
   accountTypeLabels,
@@ -21,10 +20,6 @@ import {
 } from './accountsMockData'
 import { initialTransactions } from './financeMockData'
 import { getAccountBalance, getInvoiceTotal, getVisibleAccountsTotal } from './financeSelectors'
-
-function matches(filter: ContextFilterValue, context: HomeContext) {
-  return filter === 'all' || filter === context
-}
 
 const TYPE_ICONS: Record<MockAccount['type'], ReactNode> = {
   corrente: <Landmark size={18} strokeWidth={2.2} />,
@@ -54,7 +49,7 @@ function AccountRow({
       <span className="min-w-0 flex-1">
         <span className="flex items-center gap-1.5">
           <span className="truncate text-[14px] font-semibold text-ink">{account.name}</span>
-          <VisibilityDot context={account.context} />
+          <VisibilityDot context={account.context} groupId={account.groupId} />
         </span>
         <div className="mt-1 flex flex-wrap items-center gap-1.5">
           <span className="text-[11px] font-medium text-ink-faint">{accountTypeLabels[account.type]}</span>
@@ -81,7 +76,7 @@ export function AccountsScreen() {
   const [sheetOpen, setSheetOpen] = useState(false)
 
   const transactions = initialTransactions
-  const visible = accounts.filter((acc) => matches(filter, acc.context))
+  const visible = accounts.filter((acc) => matchesContext(filter, acc))
   const total = getVisibleAccountsTotal(visible, transactions)
 
   function handleCreate(values: AccountSheetValues) {
@@ -95,6 +90,7 @@ export function AccountsScreen() {
           name: values.name,
           type: values.type,
           context: values.context,
+          groupId: values.groupId,
           padrao: values.padrao,
           ignorarNosTotais: values.ignorarNosTotais,
           saldoBase: parseAmount(values.saldoBase),
@@ -173,7 +169,6 @@ export function AccountsScreen() {
       {sheetOpen ? (
         <AccountSheet
           mode="create"
-          groupName={mockGroup.name}
           paymentAccountOptions={accounts.filter((acc) => acc.type !== 'cartao')}
           onSave={handleCreate}
           onClose={() => setSheetOpen(false)}

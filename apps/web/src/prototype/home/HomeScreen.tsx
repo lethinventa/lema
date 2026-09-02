@@ -1,19 +1,13 @@
 import { CalendarDays, CheckSquare2, Target, Wallet } from 'lucide-react'
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { ContextFilterChips, type ContextFilterValue } from '../components/ContextFilterChips'
+import { ContextFilterChips, type ContextFilterValue, matchesContext } from '../components/ContextFilterChips'
 import { DomainLabel } from '../components/DomainLabel'
 import { HomeLayout } from '../components/HomeLayout'
 import { getInitials, getPersonColor } from '../components/palette'
 import { Tile } from '../components/Tile'
 import { VisibilityDot } from '../components/VisibilityDot'
-import { type HomeContext, mockCalendar, mockFinance, mockGoals, mockTasks, mockUser } from './homeMockData'
-
-type ContextFilter = ContextFilterValue
-
-function matches(filter: ContextFilter, context: HomeContext) {
-  return filter === 'all' || filter === context
-}
+import { mockCalendar, mockFinance, mockGoals, mockTasks, mockUser } from './homeMockData'
 
 function EmptyRow() {
   return <p className="py-2 text-[13px] text-ink-faint">Nada por aqui hoje.</p>
@@ -21,17 +15,17 @@ function EmptyRow() {
 
 export function HomeScreen() {
   const navigate = useNavigate()
-  const [filter, setFilter] = useState<ContextFilter>('all')
+  const [filter, setFilter] = useState<ContextFilterValue>('all')
   const [tasks, setTasks] = useState(mockTasks)
 
   function toggleTask(id: string) {
     setTasks((prev) => prev.map((task) => (task.id === id ? { ...task, done: !task.done } : task)))
   }
 
-  const visibleTasks = tasks.filter((t) => matches(filter, t.context))
-  const visibleCalendar = mockCalendar.filter((c) => matches(filter, c.context))
-  const visibleGoals = mockGoals.filter((g) => matches(filter, g.context))
-  const visibleFinance = mockFinance.filter((f) => matches(filter, f.context))
+  const visibleTasks = tasks.filter((t) => matchesContext(filter, t))
+  const visibleCalendar = mockCalendar.filter((c) => matchesContext(filter, c))
+  const visibleGoals = mockGoals.filter((g) => matchesContext(filter, g))
+  const visibleFinance = mockFinance.filter((f) => matchesContext(filter, f))
 
   return (
     <HomeLayout>
@@ -115,7 +109,7 @@ export function HomeScreen() {
                     >
                       {task.title}
                     </span>
-                    <VisibilityDot context={task.context} />
+                    <VisibilityDot context={task.context} groupId={task.groupId} />
                   </button>
                 ))}
               </div>
@@ -136,7 +130,7 @@ export function HomeScreen() {
                       {item.time}
                     </span>
                     <span className="flex-1 text-[13px] font-medium text-ink">{item.title}</span>
-                    <VisibilityDot context={item.context} />
+                    <VisibilityDot context={item.context} groupId={item.groupId} />
                   </div>
                 ))}
               </div>
@@ -155,7 +149,7 @@ export function HomeScreen() {
                   <div key={item.id} className="flex items-center justify-between gap-3 py-2.5">
                     <span className="flex flex-1 items-center gap-2 text-[13px] font-medium text-ink">
                       {item.title}
-                      <VisibilityDot context={item.context} />
+                      <VisibilityDot context={item.context} groupId={item.groupId} />
                     </span>
                     <span className="tabular shrink-0 rounded-sm bg-peach-bg px-1.5 py-0.5 text-[11px] font-bold text-peach-fg">
                       {item.amount}

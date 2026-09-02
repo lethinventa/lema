@@ -2,7 +2,7 @@ import { Trash2 } from 'lucide-react'
 import { useState } from 'react'
 import { GhostButton, PrimaryButton } from '../components/Buttons'
 import { SelectField, TextField } from '../components/TextField'
-import type { HomeContext } from '../home/homeMockData'
+import { VisibilityPicker, type VisibilitySelection } from '../components/VisibilityPicker'
 import type { MockAccount } from './accountsMockData'
 import type { TransactionType } from './financeMockData'
 
@@ -14,7 +14,8 @@ export interface GoalOption {
 export interface TransactionSheetValues {
   title: string
   category: string
-  context: Extract<HomeContext, 'personal' | 'group'>
+  context: 'personal' | 'group'
+  groupId?: string
   type: TransactionType
   amount: string
   date: string // ISO
@@ -29,7 +30,6 @@ export interface TransactionSheetValues {
 
 interface TransactionSheetProps {
   mode: 'create' | 'edit'
-  groupName: string
   initial?: TransactionSheetValues
   accountOptions: MockAccount[]
   goalOptions?: GoalOption[]
@@ -40,7 +40,6 @@ interface TransactionSheetProps {
 
 export function TransactionSheet({
   mode,
-  groupName,
   initial,
   accountOptions,
   goalOptions = [],
@@ -50,7 +49,10 @@ export function TransactionSheet({
 }: TransactionSheetProps) {
   const [title, setTitle] = useState(initial?.title ?? '')
   const [category, setCategory] = useState(initial?.category ?? '')
-  const [context, setContext] = useState<'personal' | 'group'>(initial?.context ?? 'personal')
+  const [visibility, setVisibility] = useState<VisibilitySelection>({
+    context: initial?.context ?? 'personal',
+    groupId: initial?.groupId,
+  })
   const [type, setType] = useState<TransactionType>(initial?.type ?? 'despesa')
   const [amount, setAmount] = useState(initial?.amount ?? '')
   const [date, setDate] = useState(initial?.date ?? '')
@@ -82,7 +84,8 @@ export function TransactionSheet({
     onSave({
       title: title.trim(),
       category: category.trim(),
-      context,
+      context: visibility.context,
+      groupId: visibility.groupId,
       type,
       amount: amount.trim(),
       date,
@@ -276,36 +279,11 @@ export function TransactionSheet({
             </div>
           ) : null}
 
-          <div>
-            <span className="mb-2 block text-[13px] font-medium text-ink-muted">Visibilidade</span>
-            <div className="flex gap-2">
-              <button
-                type="button"
-                onClick={() => setContext('personal')}
-                className={`flex-1 rounded-sm border px-3 py-2.5 text-[13px] font-semibold transition active:scale-95 ${
-                  context === 'personal'
-                    ? 'border-accent bg-accent text-white'
-                    : 'border-line bg-surface text-ink-muted'
-                }`}
-              >
-                Pessoal
-              </button>
-              <button
-                type="button"
-                onClick={() => setContext('group')}
-                className={`flex-1 rounded-sm border px-3 py-2.5 text-[13px] font-semibold transition active:scale-95 ${
-                  context === 'group' ? 'border-accent bg-accent text-white' : 'border-line bg-surface text-ink-muted'
-                }`}
-              >
-                {groupName}
-              </button>
-            </div>
-            {context === 'group' ? (
-              <p className="mt-2 text-[11px] leading-normal text-ink-faint">
-                A divisão segue a regra padrão configurada para o grupo.
-              </p>
-            ) : null}
-          </div>
+          <VisibilityPicker
+            value={visibility}
+            onChange={setVisibility}
+            hint={visibility.context === 'group' ? 'A divisão segue a regra padrão configurada para o grupo.' : undefined}
+          />
         </div>
 
         <div className="mt-6 flex flex-col gap-2">

@@ -1,4 +1,5 @@
 import type { HomeContext } from '../home/homeMockData'
+import { mockGroups } from '../home/homeMockData'
 
 const LABELS: Record<HomeContext, string> = {
   personal: 'Pessoal — só você vê',
@@ -10,7 +11,17 @@ const LABELS: Record<HomeContext, string> = {
 // quem pode ver aquilo (princípio 10/11 — visibilidade sempre clara).
 // personal = quieto (é o padrão); group = roxo, chama atenção (outras
 // pessoas veem isso); shared = meio-termo, anel em vez de preenchido.
-export function VisibilityDot({ context, className = '' }: { context: HomeContext; className?: string }) {
+export function VisibilityDot({
+  context,
+  groupId,
+  className = '',
+}: {
+  context: HomeContext
+  groupId?: string
+  className?: string
+}) {
+  const groupLabel = groupId ? mockGroups.find((g) => g.id === groupId)?.name : undefined
+
   if (context === 'personal') {
     return (
       <span
@@ -31,7 +42,7 @@ export function VisibilityDot({ context, className = '' }: { context: HomeContex
 
   return (
     <span
-      title={LABELS.group}
+      title={groupLabel ? `${groupLabel} — visível pra quem está no grupo` : LABELS.group}
       className={`h-[7px] w-[7px] shrink-0 rounded-pill bg-accent shadow-[0_0_0_2px_var(--color-surface)] ${className}`}
     />
   )

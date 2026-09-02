@@ -13,6 +13,7 @@ export interface MockTask {
   id: string
   title: string
   context: HomeContext
+  groupId?: string
   done: boolean
   dueDate?: string // ISO
   assignee?: string
@@ -40,6 +41,7 @@ export const initialTasks: MockTask[] = [
     id: 'tk4',
     title: 'Levar o lixo pra rua',
     context: 'group',
+    groupId: 'familia-duarte',
     done: false,
     assignee: 'Mateus',
     recurring: true,
@@ -56,8 +58,25 @@ export const initialTasks: MockTask[] = [
     id: 'tk7',
     title: 'Organizar a geladeira',
     context: 'group',
+    groupId: 'familia-duarte',
     done: true,
     assignee: 'Lethicia',
   },
-  { id: 'tk8', title: 'Revisar lista de compras', context: 'group', done: true },
+  { id: 'tk8', title: 'Revisar lista de compras', context: 'group', groupId: 'familia-duarte', done: true },
+  {
+    id: 'tk9',
+    title: 'Levar a mãe ao médico',
+    context: 'group',
+    groupId: 'casa-da-mae',
+    done: false,
+    dueDate: addDays(TODAY_ISO, 1),
+  },
+  {
+    id: 'tk10',
+    title: 'Pagar conta de luz da mãe',
+    context: 'group',
+    groupId: 'casa-da-mae',
+    done: false,
+    recurring: true,
+  },
 ]
