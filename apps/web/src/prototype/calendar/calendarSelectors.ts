@@ -84,6 +84,7 @@ export interface EventEditInput {
   endTime?: string
   location?: string
   participants?: string[]
+  participantIds?: string[]
   recurrence?: MockEventRecurrence
 }
 
@@ -117,6 +118,7 @@ export function applyOccurrenceEdit(
     endTime: input.endTime,
     location: input.location,
     participants: input.participants,
+    participantIds: input.participantIds,
     seriesId: rootId,
   }
   return [...withoutOldOverride, overrideEvent]

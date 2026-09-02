@@ -1,6 +1,7 @@
 import { Trash2 } from 'lucide-react'
 import { useState } from 'react'
 import { GhostButton, PrimaryButton } from '../components/Buttons'
+import { MemberPicker } from '../components/MemberPicker'
 import { TextField } from '../components/TextField'
 import { VisibilityPicker, type VisibilitySelection } from '../components/VisibilityPicker'
 
@@ -9,6 +10,7 @@ export interface TaskSheetValues {
   context: 'personal' | 'group'
   groupId?: string
   dueDate: string // ISO, opcional (string vazia = sem prazo)
+  assigneeIds: string[]
 }
 
 interface TaskSheetProps {
@@ -26,10 +28,17 @@ export function TaskSheet({ mode, initial, onSave, onDelete, onClose }: TaskShee
     groupId: initial?.groupId,
   })
   const [dueDate, setDueDate] = useState(initial?.dueDate ?? '')
+  const [assigneeIds, setAssigneeIds] = useState<string[]>(initial?.assigneeIds ?? [])
 
   function handleSave() {
     if (!title.trim()) return
-    onSave({ title: title.trim(), context: visibility.context, groupId: visibility.groupId, dueDate })
+    onSave({
+      title: title.trim(),
+      context: visibility.context,
+      groupId: visibility.groupId,
+      dueDate,
+      assigneeIds: visibility.context === 'group' ? assigneeIds : [],
+    })
   }
 
   return (
@@ -53,6 +62,16 @@ export function TaskSheet({ mode, initial, onSave, onDelete, onClose }: TaskShee
           />
 
           <VisibilityPicker value={visibility} onChange={setVisibility} />
+
+          {visibility.context === 'group' && visibility.groupId ? (
+            <MemberPicker
+              groupId={visibility.groupId}
+              label="Responsável (opcional)"
+              selectedIds={assigneeIds}
+              onChange={setAssigneeIds}
+              hint="Quem tem que fazer isso? Pode escolher mais de uma pessoa, ou nenhuma."
+            />
+          ) : null}
 
           <TextField
             label="Prazo (opcional)"

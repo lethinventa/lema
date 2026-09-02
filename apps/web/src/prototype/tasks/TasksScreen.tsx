@@ -8,10 +8,12 @@ import { HomeLayout } from '../components/HomeLayout'
 import { Tile } from '../components/Tile'
 import { VisibilityDot } from '../components/VisibilityDot'
 import { formatRelativeDayLabel } from '../calendar/dateUtils'
+import { resolveMemberNames } from '../groups/groupsMockData'
 import { initialTasks, type MockTask } from './tasksMockData'
 import { TaskSheet, type TaskSheetValues } from './TaskSheet'
 
 function TaskRow({ task, onToggle, onEdit }: { task: MockTask; onToggle: () => void; onEdit: () => void }) {
+  const assigneeNames = resolveMemberNames(task.groupId, task.assigneeIds)
   return (
     <div className="flex w-full items-start gap-3 py-3 text-left">
       <button
@@ -29,7 +31,9 @@ function TaskRow({ task, onToggle, onEdit }: { task: MockTask; onToggle: () => v
             <span className={`text-[15px] font-semibold ${task.done ? 'text-ink-faint line-through' : 'text-ink'}`}>
               {task.title}
             </span>
-            {task.assignee ? <Avatar name={task.assignee} /> : null}
+            {assigneeNames.map((name) => (
+              <Avatar key={name} name={name} />
+            ))}
           </span>
           {!task.done && (task.dueDate || task.recurring) ? (
             <div className="mt-1.5 flex flex-wrap items-center gap-1.5">
@@ -66,6 +70,7 @@ export function TasksScreen() {
         groupId: values.groupId,
         done: false,
         dueDate: values.dueDate || undefined,
+        assigneeIds: values.assigneeIds.length ? values.assigneeIds : undefined,
       },
       ...prev,
     ])
@@ -83,6 +88,7 @@ export function TasksScreen() {
               context: values.context,
               groupId: values.groupId,
               dueDate: values.dueDate || undefined,
+              assigneeIds: values.assigneeIds.length ? values.assigneeIds : undefined,
             }
           : task,
       ),
@@ -178,6 +184,7 @@ export function TasksScreen() {
             context: editingTask.context === 'group' ? 'group' : 'personal',
             groupId: editingTask.groupId,
             dueDate: editingTask.dueDate ?? '',
+            assigneeIds: editingTask.assigneeIds ?? [],
           }}
           onSave={handleEditSave}
           onDelete={handleDelete}

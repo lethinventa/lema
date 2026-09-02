@@ -2,6 +2,7 @@ import { Plus, Trash2, X } from 'lucide-react'
 import { useState } from 'react'
 import { Avatar } from '../components/Avatar'
 import { GhostButton, PrimaryButton } from '../components/Buttons'
+import { MemberPicker } from '../components/MemberPicker'
 import { SelectField, TextField } from '../components/TextField'
 import { VisibilityPicker, type VisibilitySelection } from '../components/VisibilityPicker'
 import type { RecurrenceFreq } from './calendarMockData'
@@ -15,6 +16,7 @@ export interface EventSheetValues {
   endTime: string
   location: string
   participants: string[]
+  participantIds: string[]
   recurrenceFreq: RecurrenceFreq | ''
   recurrenceEndDate: string
   // Só é lido quando se está editando uma ocorrência de série recorrente —
@@ -53,6 +55,7 @@ export function EventSheet({ mode, initial, isRecurringOccurrence, onSave, onDel
   const [location, setLocation] = useState(initial?.location ?? '')
   const [participants, setParticipants] = useState<string[]>(initial?.participants ?? [])
   const [newParticipant, setNewParticipant] = useState('')
+  const [participantIds, setParticipantIds] = useState<string[]>(initial?.participantIds ?? [])
   const [recurrenceFreq, setRecurrenceFreq] = useState<RecurrenceFreq | ''>(initial?.recurrenceFreq ?? '')
   const [recurrenceEndDate, setRecurrenceEndDate] = useState(initial?.recurrenceEndDate ?? '')
   const [scope, setScope] = useState<'occurrence' | 'series'>(initial?.scope ?? 'occurrence')
@@ -70,7 +73,8 @@ export function EventSheet({ mode, initial, isRecurringOccurrence, onSave, onDel
       time,
       endTime: endTime.trim(),
       location: location.trim(),
-      participants,
+      participants: visibility.context === 'personal' ? participants : [],
+      participantIds: visibility.context === 'group' ? participantIds : [],
       recurrenceFreq,
       recurrenceEndDate,
       scope,
@@ -153,53 +157,63 @@ export function EventSheet({ mode, initial, isRecurringOccurrence, onSave, onDel
 
           <VisibilityPicker value={visibility} onChange={setVisibility} />
 
-          <div>
-            {participants.length > 0 ? (
-              <div className="mb-2 flex flex-wrap gap-1.5">
-                {participants.map((name) => (
-                  <span
-                    key={name}
-                    className="inline-flex items-center gap-1 rounded-pill bg-surface-muted py-1 pl-1 pr-2 text-[12px] font-semibold text-ink"
-                  >
-                    <Avatar name={name} />
-                    {name}
-                    <button
-                      type="button"
-                      onClick={() => setParticipants((prev) => prev.filter((p) => p !== name))}
-                      aria-label={`Remover ${name}`}
-                      className="ml-0.5 flex h-4 w-4 items-center justify-center text-ink-faint"
+          {visibility.context === 'group' && visibility.groupId ? (
+            <MemberPicker
+              groupId={visibility.groupId}
+              label="Participantes (opcional)"
+              selectedIds={participantIds}
+              onChange={setParticipantIds}
+              hint="Só membros do grupo podem participar de um compromisso de grupo."
+            />
+          ) : (
+            <div>
+              {participants.length > 0 ? (
+                <div className="mb-2 flex flex-wrap gap-1.5">
+                  {participants.map((name) => (
+                    <span
+                      key={name}
+                      className="inline-flex items-center gap-1 rounded-pill bg-surface-muted py-1 pl-1 pr-2 text-[12px] font-semibold text-ink"
                     >
-                      <X size={11} strokeWidth={2.6} />
-                    </button>
-                  </span>
-                ))}
+                      <Avatar name={name} />
+                      {name}
+                      <button
+                        type="button"
+                        onClick={() => setParticipants((prev) => prev.filter((p) => p !== name))}
+                        aria-label={`Remover ${name}`}
+                        className="ml-0.5 flex h-4 w-4 items-center justify-center text-ink-faint"
+                      >
+                        <X size={11} strokeWidth={2.6} />
+                      </button>
+                    </span>
+                  ))}
+                </div>
+              ) : null}
+              <div className="flex items-end gap-2">
+                <div className="flex-1">
+                  <TextField
+                    label="Participantes (opcional)"
+                    placeholder="Nome da pessoa"
+                    value={newParticipant}
+                    onChange={(e) => setNewParticipant(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter') {
+                        e.preventDefault()
+                        handleAddParticipant()
+                      }
+                    }}
+                  />
+                </div>
+                <button
+                  type="button"
+                  onClick={handleAddParticipant}
+                  className="flex h-14 w-11 shrink-0 items-center justify-center rounded-md bg-sky-bg text-sky-fg"
+                  aria-label="Adicionar participante"
+                >
+                  <Plus size={18} strokeWidth={2.4} />
+                </button>
               </div>
-            ) : null}
-            <div className="flex items-end gap-2">
-              <div className="flex-1">
-                <TextField
-                  label="Participantes (opcional)"
-                  placeholder="Nome da pessoa"
-                  value={newParticipant}
-                  onChange={(e) => setNewParticipant(e.target.value)}
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter') {
-                      e.preventDefault()
-                      handleAddParticipant()
-                    }
-                  }}
-                />
-              </div>
-              <button
-                type="button"
-                onClick={handleAddParticipant}
-                className="flex h-14 w-11 shrink-0 items-center justify-center rounded-md bg-sky-bg text-sky-fg"
-                aria-label="Adicionar participante"
-              >
-                <Plus size={18} strokeWidth={2.4} />
-              </button>
             </div>
-          </div>
+          )}
 
           {!showScopeToggle || scope === 'series' ? (
             <div className="flex gap-3">

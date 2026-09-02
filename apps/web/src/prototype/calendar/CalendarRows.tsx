@@ -2,6 +2,7 @@ import { CheckSquare2, MapPin, Repeat } from 'lucide-react'
 import { Avatar } from '../components/Avatar'
 import { FlagChip } from '../components/FlagChip'
 import { VisibilityDot } from '../components/VisibilityDot'
+import { resolveMemberNames } from '../groups/groupsMockData'
 import type { MockTask } from '../tasks/tasksMockData'
 import type { EventOccurrence } from './calendarSelectors'
 
@@ -16,6 +17,9 @@ export function EventOccurrenceRow({ occurrence, onEdit }: { occurrence: EventOc
         <span className="flex items-center gap-1.5">
           <span className="text-[15px] font-semibold text-ink">{event.title}</span>
           {event.participants?.map((name) => <Avatar key={name} name={name} />)}
+          {resolveMemberNames(event.groupId, event.participantIds).map((name) => (
+            <Avatar key={name} name={name} />
+          ))}
         </span>
         {event.location || occurrence.isRecurring ? (
           <div className="mt-1.5 flex flex-wrap items-center gap-1.5">
@@ -39,6 +43,7 @@ export function EventOccurrenceRow({ occurrence, onEdit }: { occurrence: EventOc
 // direto, sem abrir sheet). Integração experimental, sem UC formal ainda
 // (ver nota em CalendarScreen.tsx).
 export function TaskAgendaRow({ task, onToggle }: { task: MockTask; onToggle: () => void }) {
+  const assigneeNames = resolveMemberNames(task.groupId, task.assigneeIds)
   return (
     <div className="flex w-full items-start gap-3 py-3 text-left">
       <button
@@ -54,7 +59,9 @@ export function TaskAgendaRow({ task, onToggle }: { task: MockTask; onToggle: ()
       <span className="flex-1">
         <span className="flex items-center gap-1.5">
           <span className={`text-[15px] font-semibold ${task.done ? 'text-ink-faint line-through' : 'text-ink'}`}>{task.title}</span>
-          {task.assignee ? <Avatar name={task.assignee} /> : null}
+          {assigneeNames.map((name) => (
+            <Avatar key={name} name={name} />
+          ))}
         </span>
         <span className="mt-1.5 flex flex-wrap items-center gap-1.5">
           <FlagChip>Tarefa</FlagChip>

@@ -37,6 +37,7 @@ function toEditInput(values: EventSheetValues): EventEditInput {
     endTime: values.endTime || undefined,
     location: values.location || undefined,
     participants: values.participants.length ? values.participants : undefined,
+    participantIds: values.participantIds.length ? values.participantIds : undefined,
     recurrence: values.recurrenceFreq ? { freq: values.recurrenceFreq, endDate: values.recurrenceEndDate || undefined } : undefined,
   }
 }
@@ -190,6 +191,7 @@ export function CalendarScreen() {
             endTime: '',
             location: '',
             participants: [],
+            participantIds: [],
             recurrenceFreq: '',
             recurrenceEndDate: '',
             scope: 'occurrence',
@@ -213,6 +215,7 @@ export function CalendarScreen() {
             endTime: sheet.occurrence.event.endTime ?? '',
             location: sheet.occurrence.event.location ?? '',
             participants: sheet.occurrence.event.participants ?? [],
+            participantIds: sheet.occurrence.event.participantIds ?? [],
             recurrenceFreq: sheet.occurrence.event.recurrence?.freq ?? '',
             recurrenceEndDate: sheet.occurrence.event.recurrence?.endDate ?? '',
             scope: 'occurrence',

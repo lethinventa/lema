@@ -5,6 +5,7 @@
 // Diferente de tarefas, um compromisso sempre tem data/horário e nunca tem
 // estado de conclusão (UC-CAL-001) — por isso não existe "toggle done" aqui.
 
+import { MATEUS_ID } from '../groups/groupsMockData'
 import type { HomeContext } from '../home/homeMockData'
 import { addDays, addMonths, TODAY_ISO } from './dateUtils'
 
@@ -24,7 +25,13 @@ export interface MockEvent {
   time: string
   endTime?: string
   location?: string
+  // Nome livre (UC-CAL-004: convidar alguém sem acesso prévio já concede
+  // acesso — só faz sentido pra PRIVATE/SHARED, sem uma lista real de
+  // pessoas nesses contextos ainda).
   participants?: string[]
+  // Ids de groupsMockData.ts — usado quando context === 'group', onde o
+  // participante precisa já ser membro do grupo (UC-CAL-004).
+  participantIds?: string[]
   recurrence?: MockEventRecurrence
   // Só existe na raiz da série: datas de ocorrências excluídas ou substituídas
   // por uma versão editada (ver calendarSelectors.ts).
@@ -123,7 +130,7 @@ export const initialEvents: MockEvent[] = [
     date: addDays(TODAY_ISO, 5),
     time: '12:30',
     endTime: '14:00',
-    participants: ['Mateus'],
+    participantIds: [MATEUS_ID],
   },
   {
     id: 'ev9',

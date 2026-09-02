@@ -8,6 +8,7 @@
 
 import type { HomeContext } from '../home/homeMockData'
 import { addDays, TODAY_ISO } from '../calendar/dateUtils'
+import { CURRENT_USER_ID, MATEUS_ID } from '../groups/groupsMockData'
 
 export interface MockTask {
   id: string
@@ -16,7 +17,9 @@ export interface MockTask {
   groupId?: string
   done: boolean
   dueDate?: string // ISO
-  assignee?: string
+  // Responsável (UC-TASK-005) — ids de groupsMockData.ts, só existe quando
+  // context === 'group' (é o único caso com lista real de pessoas hoje).
+  assigneeIds?: string[]
   recurring?: boolean
 }
 
@@ -43,7 +46,7 @@ export const initialTasks: MockTask[] = [
     context: 'group',
     groupId: 'familia-duarte',
     done: false,
-    assignee: 'Mateus',
+    assigneeIds: [MATEUS_ID],
     recurring: true,
   },
   { id: 'tk5', title: 'Marcar consulta do pet', context: 'shared', done: false },
@@ -60,7 +63,7 @@ export const initialTasks: MockTask[] = [
     context: 'group',
     groupId: 'familia-duarte',
     done: true,
-    assignee: 'Lethicia',
+    assigneeIds: [CURRENT_USER_ID],
   },
   { id: 'tk8', title: 'Revisar lista de compras', context: 'group', groupId: 'familia-duarte', done: true },
   {
