@@ -7,30 +7,104 @@ import { TextField } from '../components/TextField'
 import { formatCurrency, parseAmount } from '../finance/accountsMockData'
 import { useOnboarding, type FixedExpenseEntry } from '../state/OnboardingContext'
 
-export function FinancialSetupScreen() {
-  const navigate = useNavigate()
-  const { update } = useOnboarding()
-
-  const [income, setIncome] = useState('')
-  const [savings, setSavings] = useState('')
-  const [expenses, setExpenses] = useState<FixedExpenseEntry[]>([])
+// Lista "nome + valor" com adicionar/remover — mesmo padrão usado tanto pra
+// fontes de renda quanto pra contas fixas, então vira um componente local em
+// vez de duplicar o bloco duas vezes.
+function AmountList({
+  idPrefix,
+  label,
+  namePlaceholder,
+  entries,
+  onAdd,
+  onRemove,
+}: {
+  idPrefix: string
+  label: string
+  namePlaceholder: string
+  entries: FixedExpenseEntry[]
+  onAdd: (name: string, amount: string) => void
+  onRemove: (id: string) => void
+}) {
   const [draftName, setDraftName] = useState('')
   const [draftAmount, setDraftAmount] = useState('')
 
-  function handleAddExpense() {
+  function handleAdd() {
     if (!draftName.trim() || !draftAmount.trim()) return
-    setExpenses((prev) => [...prev, { id: `fe-${Date.now()}`, name: draftName.trim(), amount: parseAmount(draftAmount) }])
+    onAdd(draftName.trim(), draftAmount.trim())
     setDraftName('')
     setDraftAmount('')
   }
 
-  function handleRemoveExpense(id: string) {
-    setExpenses((prev) => prev.filter((e) => e.id !== id))
-  }
+  return (
+    <div>
+      <span className="mb-2 block text-[13px] font-medium text-ink-muted">{label}</span>
+
+      {entries.length > 0 ? (
+        <div className="mb-3 flex flex-col divide-y divide-line rounded-md border border-line bg-surface">
+          {entries.map((entry) => (
+            <div key={entry.id} className="flex items-center justify-between gap-3 px-4 py-3">
+              <span className="text-[14px] font-medium text-ink">{entry.name}</span>
+              <div className="flex items-center gap-2">
+                <span className="text-[14px] font-semibold text-ink-muted">{formatCurrency(entry.amount)}</span>
+                <button
+                  type="button"
+                  onClick={() => onRemove(entry.id)}
+                  aria-label={`Remover ${entry.name}`}
+                  className="flex h-6 w-6 items-center justify-center text-ink-faint"
+                >
+                  <X size={15} strokeWidth={2.2} />
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
+      ) : null}
+
+      <div className="flex items-end gap-2">
+        <div className="flex-1">
+          <TextField
+            id={`${idPrefix}-nome`}
+            label="Nome"
+            placeholder={namePlaceholder}
+            value={draftName}
+            onChange={(e) => setDraftName(e.target.value)}
+          />
+        </div>
+        <div className="w-28">
+          <TextField
+            id={`${idPrefix}-valor`}
+            label="Valor"
+            placeholder="0,00"
+            inputMode="decimal"
+            value={draftAmount}
+            onChange={(e) => setDraftAmount(e.target.value)}
+          />
+        </div>
+        <button
+          type="button"
+          onClick={handleAdd}
+          disabled={!draftName.trim() || !draftAmount.trim()}
+          aria-label={`Adicionar a ${label.toLowerCase()}`}
+          className="flex h-14 w-14 shrink-0 items-center justify-center rounded-md bg-accent text-white transition active:scale-95 disabled:opacity-40"
+        >
+          <Plus size={20} strokeWidth={2.4} />
+        </button>
+      </div>
+    </div>
+  )
+}
+
+export function FinancialSetupScreen() {
+  const navigate = useNavigate()
+  const { update } = useOnboarding()
+
+  const [incomeSources, setIncomeSources] = useState<FixedExpenseEntry[]>([])
+  const [expenses, setExpenses] = useState<FixedExpenseEntry[]>([])
+  const [savings, setSavings] = useState('')
 
   function handleFinish() {
     update({
-      monthlyIncome: parseAmount(income),
+      incomeSources,
       savings: parseAmount(savings),
       fixedExpenses: expenses,
       financialSetupDone: true,
@@ -48,67 +122,25 @@ export function FinancialSetupScreen() {
       subtitle="Leva menos de 2 minutos. Tudo aqui é opcional — dá pra pular qualquer pergunta e configurar depois em Finanças."
       footer={<PrimaryButton onClick={handleFinish}>Concluir</PrimaryButton>}
     >
-      <TextField
-        label="Renda mensal fixa (opcional)"
-        placeholder="Ex.: 4500,00"
-        inputMode="decimal"
-        value={income}
-        onChange={(e) => setIncome(e.target.value)}
+      <AmountList
+        idPrefix="renda"
+        label="Fontes de renda mensal (opcional)"
+        namePlaceholder="Ex.: Salário, Freela"
+        entries={incomeSources}
+        onAdd={(name, amount) =>
+          setIncomeSources((prev) => [...prev, { id: `is-${Date.now()}`, name, amount: parseAmount(amount) }])
+        }
+        onRemove={(id) => setIncomeSources((prev) => prev.filter((e) => e.id !== id))}
       />
 
-      <div>
-        <span className="mb-2 block text-[13px] font-medium text-ink-muted">Contas fixas mensais (opcional)</span>
-
-        {expenses.length > 0 ? (
-          <div className="mb-3 flex flex-col divide-y divide-line rounded-md border border-line bg-surface">
-            {expenses.map((expense) => (
-              <div key={expense.id} className="flex items-center justify-between gap-3 px-4 py-3">
-                <span className="text-[14px] font-medium text-ink">{expense.name}</span>
-                <div className="flex items-center gap-2">
-                  <span className="text-[14px] font-semibold text-ink-muted">{formatCurrency(expense.amount)}</span>
-                  <button
-                    type="button"
-                    onClick={() => handleRemoveExpense(expense.id)}
-                    aria-label={`Remover ${expense.name}`}
-                    className="flex h-6 w-6 items-center justify-center text-ink-faint"
-                  >
-                    <X size={15} strokeWidth={2.2} />
-                  </button>
-                </div>
-              </div>
-            ))}
-          </div>
-        ) : null}
-
-        <div className="flex items-end gap-2">
-          <div className="flex-1">
-            <TextField
-              label="Nome"
-              placeholder="Ex.: Aluguel"
-              value={draftName}
-              onChange={(e) => setDraftName(e.target.value)}
-            />
-          </div>
-          <div className="w-28">
-            <TextField
-              label="Valor"
-              placeholder="0,00"
-              inputMode="decimal"
-              value={draftAmount}
-              onChange={(e) => setDraftAmount(e.target.value)}
-            />
-          </div>
-          <button
-            type="button"
-            onClick={handleAddExpense}
-            disabled={!draftName.trim() || !draftAmount.trim()}
-            aria-label="Adicionar conta fixa"
-            className="flex h-14 w-14 shrink-0 items-center justify-center rounded-md bg-accent text-white transition active:scale-95 disabled:opacity-40"
-          >
-            <Plus size={20} strokeWidth={2.4} />
-          </button>
-        </div>
-      </div>
+      <AmountList
+        idPrefix="conta-fixa"
+        label="Contas fixas mensais (opcional)"
+        namePlaceholder="Ex.: Aluguel"
+        entries={expenses}
+        onAdd={(name, amount) => setExpenses((prev) => [...prev, { id: `fe-${Date.now()}`, name, amount: parseAmount(amount) }])}
+        onRemove={(id) => setExpenses((prev) => prev.filter((e) => e.id !== id))}
+      />
 
       <TextField
         label="Quanto você já tem guardado hoje (opcional)"

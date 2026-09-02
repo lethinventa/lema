@@ -28,7 +28,10 @@ export interface OnboardingData {
   transparency: TransparencyLevel | null
   // Configuração financeira pessoal opcional (ver JRN-001) — sem UC formal
   // ainda, e sem ligação com o estado (também local) das telas de Finanças.
-  monthlyIncome: number
+  // incomeSources é uma lista (não um valor único) porque renda fixa única
+  // não serve pra quem tem múltiplas fontes variáveis (freela, PJ, etc.) —
+  // ver análise crítica de usuária pesada.
+  incomeSources: FixedExpenseEntry[]
   fixedExpenses: FixedExpenseEntry[]
   savings: number
   financialSetupDone: boolean
@@ -48,7 +51,7 @@ const initialData: OnboardingData = {
   hasSharedMoney: null,
   splitRule: null,
   transparency: null,
-  monthlyIncome: 0,
+  incomeSources: [],
   fixedExpenses: [],
   savings: 0,
   financialSetupDone: false,
