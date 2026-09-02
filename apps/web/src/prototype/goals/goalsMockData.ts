@@ -22,6 +22,10 @@ export interface MockGoal {
   custoEstimado?: number
   createdAt: string // ISO — usado pro cálculo de ritmo esperado (UC-GOAL-008)
   parentGoalId?: string // submeta (Goal→Goal, 1 nível — PD-007)
+  // Soft-delete (PD-005/PD-007) — deletar um objetivo-pai trashea as
+  // submetas junto (cascata); GoalAllocation e Transaction vinculadas não
+  // são tocadas, só deixam de aparecer enquanto o objetivo está na lixeira.
+  deletedAt?: string
 }
 
 export const initialGoals: MockGoal[] = [
@@ -122,5 +126,16 @@ export const initialGoals: MockGoal[] = [
     category: 'Casa',
     custoEstimado: 1800,
     createdAt: '2026-07-01',
+  },
+  // Demonstra a lixeira já com conteúdo, sem precisar excluir algo primeiro.
+  {
+    id: 'gl7',
+    title: 'Curso de inglês',
+    context: 'personal',
+    done: false,
+    progress: 15,
+    category: 'Trabalho',
+    createdAt: '2026-02-01',
+    deletedAt: '2026-08-20',
   },
 ]

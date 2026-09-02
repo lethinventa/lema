@@ -26,6 +26,9 @@ export interface MockTask {
   // do Lema"; ver análise crítica). Puramente descritiva: não concede
   // acesso a ninguém, é só um lembrete de contexto pra quem vê a tarefa.
   about?: string
+  // Soft-delete (PD-005) — presente = está na lixeira, restaurável por 30
+  // dias a partir desta data (ISO). Ausente = tarefa ativa normal.
+  deletedAt?: string
 }
 
 export const initialTasks: MockTask[] = [
@@ -96,5 +99,14 @@ export const initialTasks: MockTask[] = [
     done: false,
     dueDate: TODAY_ISO,
     about: 'Minha mãe',
+  },
+  // Demonstra a lixeira já com conteúdo, sem precisar excluir algo primeiro.
+  {
+    id: 'tk12',
+    title: 'Trocar o filtro da água',
+    context: 'group',
+    groupId: 'familia-duarte',
+    done: false,
+    deletedAt: addDays(TODAY_ISO, -20),
   },
 ]

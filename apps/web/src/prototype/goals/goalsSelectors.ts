@@ -16,7 +16,7 @@ export function getSubgoals(goalId: string, allGoals: MockGoal[]) {
 // isso que forma o "Pago" (ver nota em financeMockData.ts). Nunca editado
 // aqui dentro, só em Finanças.
 export function getGoalTransactions(goalId: string, transactions: MockTransaction[]) {
-  return transactions.filter((t) => t.goalId === goalId)
+  return transactions.filter((t) => t.goalId === goalId && !t.deletedAt)
 }
 
 export function getPaidTotal(goalId: string, transactions: MockTransaction[]) {

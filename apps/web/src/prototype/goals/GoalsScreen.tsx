@@ -1,11 +1,13 @@
-import { CheckCircle2, Plus, Target, TriangleAlert } from 'lucide-react'
+import { CheckCircle2, Plus, Target, Trash2, TriangleAlert } from 'lucide-react'
 import { useState } from 'react'
 import { initialCategories } from '../categories/categoriesMockData'
 import { ContextFilterChips, type ContextFilterValue, matchesContext } from '../components/ContextFilterChips'
 import { HomeLayout } from '../components/HomeLayout'
 import { getCategoryStyle } from '../components/palette'
 import { Tile } from '../components/Tile'
+import { TrashSheet } from '../components/TrashSheet'
 import { VisibilityDot } from '../components/VisibilityDot'
+import { mockGroups } from '../home/homeMockData'
 import { formatDate, formatDateLabel, initialAccounts, MOCK_TODAY, parseAmount } from '../finance/accountsMockData'
 import { initialTransactions, type MockTransaction } from '../finance/financeMockData'
 import { TransactionSheet, type TransactionSheetValues } from '../finance/TransactionSheet'
@@ -89,6 +91,7 @@ export function GoalsScreen() {
   const [transactions, setTransactions] = useState<MockTransaction[]>(initialTransactions)
   const [categories, setCategories] = useState<string[]>(initialCategories)
   const [stack, setStack] = useState<SheetEntry[]>([])
+  const [showTrash, setShowTrash] = useState(false)
 
   function handleAddCategory(category: string) {
     setCategories((prev) => (prev.includes(category) ? prev : [...prev, category]))
@@ -167,11 +170,24 @@ export function GoalsScreen() {
     if (top?.kind !== 'goal' || top.mode !== 'edit') return
     const { goalId } = top
     const goal = goals.find((g) => g.id === goalId)
-    const idsToRemove = [goalId, ...getSubgoals(goalId, goals).map((g) => g.id)]
-    setGoals((prev) => prev.filter((g) => !idsToRemove.includes(g.id)))
-    setAllocations((prev) => prev.filter((a) => !idsToRemove.includes(a.goalId)))
+    // Cascata (PD-007): trashear um objetivo-pai leva as submetas junto.
+    // Alocações e transações vinculadas não são tocadas — só somem de vista
+    // enquanto o objetivo está na lixeira, voltam intactas ao restaurar.
+    const idsToTrash = [goalId, ...getSubgoals(goalId, goals).map((g) => g.id)]
+    setGoals((prev) => prev.map((g) => (idsToTrash.includes(g.id) ? { ...g, deletedAt: TODAY_ISO } : g)))
     if (goal?.parentGoalId) popOne()
     else closeAll()
+  }
+
+  function handleRestoreGoal(id: string) {
+    const idsToRestore = [id, ...getSubgoals(id, goals).map((g) => g.id)]
+    setGoals((prev) => prev.map((g) => (idsToRestore.includes(g.id) ? { ...g, deletedAt: undefined } : g)))
+  }
+
+  function handleDeleteGoalForever(id: string) {
+    const idsToRemove = [id, ...getSubgoals(id, goals).map((g) => g.id)]
+    setGoals((prev) => prev.filter((g) => !idsToRemove.includes(g.id)))
+    setAllocations((prev) => prev.filter((a) => !idsToRemove.includes(a.goalId)))
   }
 
   function handleAddAllocation(valor: number, estado: AllocationStatus) {
@@ -208,7 +224,9 @@ export function GoalsScreen() {
     popOne()
   }
 
-  const topLevel = goals.filter((g) => !g.parentGoalId)
+  const activeGoals = goals.filter((g) => !g.deletedAt)
+  const trashedGoals = goals.filter((g) => !g.parentGoalId && g.deletedAt)
+  const topLevel = activeGoals.filter((g) => !g.parentGoalId)
   const visible = topLevel.filter((g) => matchesContext(filter, g))
   const active = visible.filter((g) => !g.done)
   const completed = visible.filter((g) => g.done)
@@ -217,7 +235,7 @@ export function GoalsScreen() {
   const parentEntry = stack.length >= 2 ? stack[stack.length - 2] : undefined
   const parentTitle =
     parentEntry?.kind === 'goal' && parentEntry.mode === 'edit' ? goals.find((g) => g.id === parentEntry.goalId)?.title : undefined
-  const goalOptions = goals.filter((g) => !g.done).map((g) => ({ id: g.id, title: g.title }))
+  const goalOptions = activeGoals.filter((g) => !g.done).map((g) => ({ id: g.id, title: g.title }))
 
   return (
     <HomeLayout>
@@ -229,14 +247,27 @@ export function GoalsScreen() {
               {active.length === 0 ? 'Nenhum objetivo em andamento' : `${active.length} em andamento`}
             </p>
           </div>
-          <button
-            type="button"
-            onClick={() => setStack([{ kind: 'goal', mode: 'create' }])}
-            className="flex h-10 w-10 shrink-0 items-center justify-center rounded-pill bg-accent text-white transition active:scale-90"
-            aria-label="Novo objetivo"
-          >
-            <Plus size={20} strokeWidth={2.4} />
-          </button>
+          <div className="flex shrink-0 items-center gap-2">
+            <button
+              type="button"
+              onClick={() => setShowTrash(true)}
+              className="relative flex h-10 w-10 items-center justify-center rounded-pill text-ink-muted transition active:scale-90"
+              aria-label="Lixeira de objetivos"
+            >
+              <Trash2 size={19} strokeWidth={2.2} />
+              {trashedGoals.length > 0 ? (
+                <span className="absolute right-1.5 top-1.5 h-2 w-2 rounded-pill bg-danger" />
+              ) : null}
+            </button>
+            <button
+              type="button"
+              onClick={() => setStack([{ kind: 'goal', mode: 'create' }])}
+              className="flex h-10 w-10 items-center justify-center rounded-pill bg-accent text-white transition active:scale-90"
+              aria-label="Novo objetivo"
+            >
+              <Plus size={20} strokeWidth={2.4} />
+            </button>
+          </div>
         </div>
 
         <div className="mt-5">
@@ -260,7 +291,7 @@ export function GoalsScreen() {
                 <GoalCard
                   key={goal.id}
                   goal={goal}
-                  progress={getGoalProgress(goal, goals, allocations, transactions)}
+                  progress={getGoalProgress(goal, activeGoals, allocations, transactions)}
                   behindPace={getPaceInfo(goal, allocations, transactions).behindPace}
                   onEdit={() => setStack([{ kind: 'goal', mode: 'edit', goalId: goal.id }])}
                 />
@@ -302,13 +333,13 @@ export function GoalsScreen() {
           isSubgoal={!!editingGoal.parentGoalId}
           allocations={allocations.filter((a) => a.goalId === editingGoal.id)}
           goalTransactions={getGoalTransactions(editingGoal.id, transactions)}
-          subgoals={getSubgoals(editingGoal.id, goals).map((sub) => ({
+          subgoals={getSubgoals(editingGoal.id, activeGoals).map((sub) => ({
             id: sub.id,
             title: sub.title,
-            progress: getGoalProgress(sub, goals, allocations, transactions),
+            progress: getGoalProgress(sub, activeGoals, allocations, transactions),
             custoEstimado: sub.custoEstimado,
           }))}
-          computedProgress={getGoalProgress(editingGoal, goals, allocations, transactions)}
+          computedProgress={getGoalProgress(editingGoal, activeGoals, allocations, transactions)}
           paceInfo={getPaceInfo(editingGoal, allocations, transactions)}
           parentTitle={parentTitle}
           onBack={stack.length > 1 ? popOne : undefined}
@@ -357,6 +388,34 @@ export function GoalsScreen() {
           }}
           onSave={handleCreateLinkedTransaction}
           onClose={popOne}
+        />
+      ) : null}
+
+      {showTrash ? (
+        <TrashSheet
+          title="Lixeira · Objetivos"
+          items={trashedGoals}
+          getId={(g) => g.id}
+          getDeletedAt={(g) => g.deletedAt!}
+          renderItem={(goal) => (
+            <div>
+              <span className="flex items-center gap-1.5">
+                <span className="text-[15px] font-semibold text-ink">{goal.title}</span>
+                {getSubgoals(goal.id, goals).length > 0 ? (
+                  <span className="rounded-sm bg-surface-muted px-1.5 py-0.5 text-[11px] font-bold text-ink-muted">
+                    +{getSubgoals(goal.id, goals).length} submeta{getSubgoals(goal.id, goals).length > 1 ? 's' : ''}
+                  </span>
+                ) : null}
+              </span>
+              <span className="mt-1 block text-[12px] text-ink-faint">
+                {goal.category ? `${goal.category} · ` : ''}
+                {goal.context === 'group' ? mockGroups.find((g) => g.id === goal.groupId)?.name : goal.context === 'shared' ? 'Compartilhado' : 'Pessoal'}
+              </span>
+            </div>
+          )}
+          onRestore={handleRestoreGoal}
+          onDeleteForever={handleDeleteGoalForever}
+          onClose={() => setShowTrash(false)}
         />
       ) : null}
     </HomeLayout>

@@ -1,8 +1,11 @@
-import { CalendarDays, Grid3x3, List, Plus } from 'lucide-react'
+import { CalendarDays, Grid3x3, List, Plus, Repeat, Trash2 } from 'lucide-react'
 import { useState } from 'react'
 import { ContextFilterChips, type ContextFilterValue, matchesContext } from '../components/ContextFilterChips'
+import { FlagChip } from '../components/FlagChip'
 import { HomeLayout } from '../components/HomeLayout'
 import { Tile } from '../components/Tile'
+import { TrashSheet } from '../components/TrashSheet'
+import { mockGroups } from '../home/homeMockData'
 import { initialTasks, type MockTask } from '../tasks/tasksMockData'
 import { CalendarAgendaView } from './CalendarAgendaView'
 import { CalendarMonthView } from './CalendarMonthView'
@@ -17,7 +20,7 @@ import {
   type EventEditInput,
   type EventOccurrence,
 } from './calendarSelectors'
-import { TODAY_ISO } from './dateUtils'
+import { formatRelativeDayLabel, TODAY_ISO } from './dateUtils'
 
 type ViewMode = 'agenda' | 'week' | 'month'
 
@@ -52,8 +55,11 @@ export function CalendarScreen() {
   const [events, setEvents] = useState<MockEvent[]>(initialEvents)
   const [tasks, setTasks] = useState<MockTask[]>(initialTasks)
   const [sheet, setSheet] = useState<SheetState>(null)
+  const [showTrash, setShowTrash] = useState(false)
 
-  const visibleEvents = events.filter((e) => matchesContext(filter, e))
+  const activeEvents = events.filter((e) => !e.deletedAt)
+  const trashedEvents = events.filter((e) => e.deletedAt)
+  const visibleEvents = activeEvents.filter((e) => matchesContext(filter, e))
   const visibleTasks = tasks.filter((t) => matchesContext(filter, t) && t.dueDate)
 
   function handleCreate(values: EventSheetValues) {
@@ -85,13 +91,21 @@ export function CalendarScreen() {
     if (occurrence.isRecurring) {
       setEvents((prev) => (scope === 'series' ? applySeriesDelete(prev, rootId) : applyOccurrenceDelete(prev, rootId, occurrence.date)))
     } else {
-      setEvents((prev) => prev.filter((e) => e.id !== occurrence.event.id))
+      setEvents((prev) => prev.map((e) => (e.id === occurrence.event.id ? { ...e, deletedAt: TODAY_ISO } : e)))
     }
     setSheet(null)
   }
 
   function handleToggleTask(id: string) {
     setTasks((prev) => prev.map((t) => (t.id === id ? { ...t, done: !t.done } : t)))
+  }
+
+  function handleRestoreEvent(id: string) {
+    setEvents((prev) => prev.map((e) => (e.id === id ? { ...e, deletedAt: undefined } : e)))
+  }
+
+  function handleDeleteEventForever(id: string) {
+    setEvents((prev) => prev.filter((e) => e.id !== id && e.seriesId !== id))
   }
 
   const defaultCreateDate = view === 'month' ? selectedDate : view === 'week' ? anchorDate : TODAY_ISO
@@ -106,14 +120,27 @@ export function CalendarScreen() {
               {visibleEvents.length === 0 ? 'Nada na agenda' : `${visibleEvents.length} compromisso${visibleEvents.length > 1 ? 's' : ''}`}
             </p>
           </div>
-          <button
-            type="button"
-            onClick={() => setSheet({ mode: 'create', defaultDate: defaultCreateDate })}
-            className="flex h-10 w-10 shrink-0 items-center justify-center rounded-pill bg-accent text-white transition active:scale-90"
-            aria-label="Novo compromisso"
-          >
-            <Plus size={20} strokeWidth={2.4} />
-          </button>
+          <div className="flex shrink-0 items-center gap-2">
+            <button
+              type="button"
+              onClick={() => setShowTrash(true)}
+              className="relative flex h-10 w-10 items-center justify-center rounded-pill text-ink-muted transition active:scale-90"
+              aria-label="Lixeira de compromissos"
+            >
+              <Trash2 size={19} strokeWidth={2.2} />
+              {trashedEvents.length > 0 ? (
+                <span className="absolute right-1.5 top-1.5 h-2 w-2 rounded-pill bg-danger" />
+              ) : null}
+            </button>
+            <button
+              type="button"
+              onClick={() => setSheet({ mode: 'create', defaultDate: defaultCreateDate })}
+              className="flex h-10 w-10 items-center justify-center rounded-pill bg-accent text-white transition active:scale-90"
+              aria-label="Novo compromisso"
+            >
+              <Plus size={20} strokeWidth={2.4} />
+            </button>
+          </div>
         </div>
 
         <div className="mt-5">
@@ -223,6 +250,30 @@ export function CalendarScreen() {
           onSave={handleEditSave}
           onDelete={handleDelete}
           onClose={() => setSheet(null)}
+        />
+      ) : null}
+
+      {showTrash ? (
+        <TrashSheet
+          title="Lixeira · Calendário"
+          items={trashedEvents}
+          getId={(e) => e.id}
+          getDeletedAt={(e) => e.deletedAt!}
+          renderItem={(event) => (
+            <div>
+              <span className="flex items-center gap-1.5">
+                <span className="text-[15px] font-semibold text-ink">{event.title}</span>
+                {event.recurrence ? <FlagChip icon={Repeat}>Série</FlagChip> : null}
+              </span>
+              <span className="mt-1 block text-[12px] text-ink-faint">
+                {formatRelativeDayLabel(event.date)} · {event.time}
+                {event.context === 'group' ? ` · ${mockGroups.find((g) => g.id === event.groupId)?.name}` : ''}
+              </span>
+            </div>
+          )}
+          onRestore={handleRestoreEvent}
+          onDeleteForever={handleDeleteEventForever}
+          onClose={() => setShowTrash(false)}
         />
       ) : null}
     </HomeLayout>

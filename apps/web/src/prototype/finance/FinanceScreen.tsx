@@ -1,4 +1,4 @@
-import { ChevronLeft, ChevronRight, Landmark, PieChart, Plus, Repeat, Target, TrendingUp, X } from 'lucide-react'
+import { ChevronLeft, ChevronRight, Landmark, PieChart, Plus, Repeat, Target, TrendingUp, Trash2, X } from 'lucide-react'
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { initialCategories } from '../categories/categoriesMockData'
@@ -12,8 +12,10 @@ import { HomeLayout } from '../components/HomeLayout'
 import { getCategoryStyle } from '../components/palette'
 import { SavingsGauge } from '../components/SavingsGauge'
 import { Tile } from '../components/Tile'
+import { TrashSheet } from '../components/TrashSheet'
 import { VisibilityDot } from '../components/VisibilityDot'
 import { initialGoals } from '../goals/goalsMockData'
+import { mockGroups } from '../home/homeMockData'
 import {
   addMonthsIso,
   addMonthsToMonthIso,
@@ -22,6 +24,7 @@ import {
   formatMonthLabel,
   getCurrentMonthIso,
   initialAccounts,
+  MOCK_TODAY,
   parseAmount,
 } from './accountsMockData'
 import { formatCurrency, initialTransactions, type MockTransaction, type TransactionType } from './financeMockData'
@@ -33,6 +36,8 @@ import {
 } from './financeSelectors'
 import { initialRecurrenceRules, type MockRecurrenceRule } from './recurrenceMockData'
 import { TransactionSheet, type TransactionSheetValues } from './TransactionSheet'
+
+const TODAY_ISO = MOCK_TODAY.toISOString().slice(0, 10)
 
 const goalTitleById = new Map(initialGoals.map((g) => [g.id, g.title]))
 
@@ -76,6 +81,7 @@ export function FinanceScreen() {
   const [recurrenceRules, setRecurrenceRules] = useState<MockRecurrenceRule[]>(initialRecurrenceRules)
   const [categories, setCategories] = useState<string[]>(initialCategories)
   const [sheet, setSheet] = useState<{ mode: 'create' } | { mode: 'edit'; txId: string } | null>(null)
+  const [showTrash, setShowTrash] = useState(false)
 
   function handleAddCategory(category: string) {
     setCategories((prev) => (prev.includes(category) ? prev : [...prev, category]))
@@ -206,8 +212,16 @@ export function FinanceScreen() {
 
   function handleDelete() {
     if (sheet?.mode !== 'edit') return
-    setTransactions((prev) => prev.filter((tx) => tx.id !== sheet.txId))
+    setTransactions((prev) => prev.map((tx) => (tx.id === sheet.txId ? { ...tx, deletedAt: TODAY_ISO } : tx)))
     setSheet(null)
+  }
+
+  function handleRestoreTransaction(id: string) {
+    setTransactions((prev) => prev.map((tx) => (tx.id === id ? { ...tx, deletedAt: undefined } : tx)))
+  }
+
+  function handleDeleteTransactionForever(id: string) {
+    setTransactions((prev) => prev.filter((tx) => tx.id !== id))
   }
 
   function handleCancelRule(ruleId: string) {
@@ -221,6 +235,7 @@ export function FinanceScreen() {
   const expenseByCategory = getCategoryBreakdown(visible, 'despesa')
   const rankingData = getCategoryBreakdown(visible, rankingTab)
   const editingTx = sheet?.mode === 'edit' ? transactions.find((tx) => tx.id === sheet.txId) : undefined
+  const trashedTransactions = transactions.filter((tx) => tx.deletedAt)
   const goalOptions = initialGoals.filter((g) => !g.done).map((g) => ({ id: g.id, title: g.title }))
 
   return (
@@ -233,14 +248,27 @@ export function FinanceScreen() {
               {visible.length === 0 ? 'Nenhuma transação no período' : `${visible.length} transaç${visible.length > 1 ? 'ões' : 'ão'} no período`}
             </p>
           </div>
-          <button
-            type="button"
-            onClick={() => setSheet({ mode: 'create' })}
-            className="flex h-10 w-10 shrink-0 items-center justify-center rounded-pill bg-accent text-white transition active:scale-90"
-            aria-label="Nova transação"
-          >
-            <Plus size={20} strokeWidth={2.4} />
-          </button>
+          <div className="flex shrink-0 items-center gap-2">
+            <button
+              type="button"
+              onClick={() => setShowTrash(true)}
+              className="relative flex h-10 w-10 items-center justify-center rounded-pill text-ink-muted transition active:scale-90"
+              aria-label="Lixeira de transações"
+            >
+              <Trash2 size={19} strokeWidth={2.2} />
+              {trashedTransactions.length > 0 ? (
+                <span className="absolute right-1.5 top-1.5 h-2 w-2 rounded-pill bg-danger" />
+              ) : null}
+            </button>
+            <button
+              type="button"
+              onClick={() => setSheet({ mode: 'create' })}
+              className="flex h-10 w-10 items-center justify-center rounded-pill bg-accent text-white transition active:scale-90"
+              aria-label="Nova transação"
+            >
+              <Plus size={20} strokeWidth={2.4} />
+            </button>
+          </div>
         </div>
 
         <div className="mt-5">
@@ -452,6 +480,32 @@ export function FinanceScreen() {
           onSave={handleEditSave}
           onDelete={handleDelete}
           onClose={() => setSheet(null)}
+        />
+      ) : null}
+
+      {showTrash ? (
+        <TrashSheet
+          title="Lixeira · Transações"
+          items={trashedTransactions}
+          getId={(tx) => tx.id}
+          getDeletedAt={(tx) => tx.deletedAt!}
+          renderItem={(tx) => (
+            <div>
+              <span className="flex items-center gap-1.5">
+                <span className="text-[15px] font-semibold text-ink">{tx.title}</span>
+                <span className={`tabular text-[13px] font-bold ${tx.type === 'receita' ? 'text-mint-text' : 'text-ink-muted'}`}>
+                  {tx.type === 'receita' ? '+' : '−'} {formatCurrency(tx.amount)}
+                </span>
+              </span>
+              <span className="mt-1 block text-[12px] text-ink-faint">
+                {tx.category ? `${tx.category} · ` : ''}
+                {tx.context === 'group' ? mockGroups.find((g) => g.id === tx.groupId)?.name : tx.context === 'shared' ? 'Compartilhado' : 'Pessoal'}
+              </span>
+            </div>
+          )}
+          onRestore={handleRestoreTransaction}
+          onDeleteForever={handleDeleteTransactionForever}
+          onClose={() => setShowTrash(false)}
         />
       ) : null}
     </HomeLayout>

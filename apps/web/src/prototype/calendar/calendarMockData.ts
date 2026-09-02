@@ -39,6 +39,11 @@ export interface MockEvent {
   // Presente quando este evento é uma ocorrência específica editada
   // individualmente (materializada) — aponta pra série de origem.
   seriesId?: string
+  // Soft-delete (PD-005) — só existe na raiz (nunca num override). Deletar
+  // só esta ocorrência de uma série não passa por aqui: isso já é modelado
+  // por excludedDates, um conceito diferente ("essa data não acontece"),
+  // não uma exclusão do recurso compromisso em si.
+  deletedAt?: string
 }
 
 const condominioStart = addDays(TODAY_ISO, 3)
@@ -141,5 +146,15 @@ export const initialEvents: MockEvent[] = [
     time: '11:00',
     endTime: '12:00',
     location: 'Clínica São Lucas',
+  },
+  // Demonstra a lixeira já com conteúdo, sem precisar excluir algo primeiro.
+  {
+    id: 'ev10',
+    title: 'Aula de pintura',
+    context: 'personal',
+    date: addDays(TODAY_ISO, 6),
+    time: '18:00',
+    endTime: '19:30',
+    deletedAt: addDays(TODAY_ISO, -15),
   },
 ]

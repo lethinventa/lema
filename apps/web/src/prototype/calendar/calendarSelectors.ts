@@ -4,7 +4,7 @@
 // individualmente), que ficam registradas no evento (ver calendarMockData.ts).
 
 import type { MockTask } from '../tasks/tasksMockData'
-import { addDays, getWeekday } from './dateUtils'
+import { addDays, getWeekday, TODAY_ISO } from './dateUtils'
 import type { MockEvent, MockEventRecurrence } from './calendarMockData'
 
 export interface EventOccurrence {
@@ -124,8 +124,11 @@ export function applyOccurrenceEdit(
   return [...withoutOldOverride, overrideEvent]
 }
 
+// Exclui a série inteira (PD-005: soft-delete, não some de verdade). As
+// exceções (overrides) continuam associadas à raiz — restaurar a série
+// restaura a série como ela estava, exceções incluídas.
 export function applySeriesDelete(events: MockEvent[], rootId: string): MockEvent[] {
-  return events.filter((e) => e.id !== rootId && e.seriesId !== rootId)
+  return events.map((e) => (e.id === rootId ? { ...e, deletedAt: TODAY_ISO } : e))
 }
 
 // Exclui só esta ocorrência: some com o override (se houver) e marca a data

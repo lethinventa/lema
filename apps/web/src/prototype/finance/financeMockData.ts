@@ -2,7 +2,7 @@
 // suficiente pra testar visão consolidada por contexto e registro financeiro.
 //
 // MVP cobre receita e despesa (UC-FIN-001, revisado — ver docs/product/roadmap.md).
-// Orçamentos (UC-FIN-007) e a lixeira (UC-FIN-003) ficam de fora desta rodada.
+// Orçamentos (UC-FIN-007) ficam de fora desta rodada.
 
 import type { HomeContext } from '../home/homeMockData'
 
@@ -35,6 +35,10 @@ export interface MockTransaction {
   // pro saldo da conta de pagamento do cartão (contaPagamentoId); 'credito'
   // entra no ciclo da fatura. Ver financeSelectors.ts.
   paymentMethod?: 'debito' | 'credito'
+  // Soft-delete (PD-005/UC-FIN-003) — presente = na lixeira, restaurável por
+  // 30 dias. Todos os seletores derivados (saldo, fatura, categoria...)
+  // ignoram transações com deletedAt, ver financeSelectors.ts.
+  deletedAt?: string
 }
 
 export const initialTransactions: MockTransaction[] = [
@@ -279,6 +283,18 @@ export const initialTransactions: MockTransaction[] = [
     amount: 68,
     dateLabel: 'Hoje',
     date: '2026-09-15',
+  },
+  // Demonstra a lixeira já com conteúdo, sem precisar excluir algo primeiro.
+  {
+    id: 'tx20',
+    title: 'Pedágio',
+    category: 'Transporte',
+    context: 'personal',
+    type: 'despesa',
+    amount: 18.5,
+    dateLabel: '22/08',
+    date: '2026-08-22',
+    deletedAt: '2026-08-28',
   },
 ]
 

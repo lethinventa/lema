@@ -1,4 +1,4 @@
-import { CheckSquare2, Plus, Repeat } from 'lucide-react'
+import { CheckSquare2, Plus, Repeat, Trash2 } from 'lucide-react'
 import { useState } from 'react'
 import { Avatar } from '../components/Avatar'
 import { ContextFilterChips, type ContextFilterValue, matchesContext } from '../components/ContextFilterChips'
@@ -6,9 +6,11 @@ import { DomainLabel } from '../components/DomainLabel'
 import { FlagChip } from '../components/FlagChip'
 import { HomeLayout } from '../components/HomeLayout'
 import { Tile } from '../components/Tile'
+import { TrashSheet } from '../components/TrashSheet'
 import { VisibilityDot } from '../components/VisibilityDot'
-import { formatRelativeDayLabel } from '../calendar/dateUtils'
+import { formatRelativeDayLabel, TODAY_ISO } from '../calendar/dateUtils'
 import { resolveMemberNames } from '../groups/groupsMockData'
+import { mockGroups } from '../home/homeMockData'
 import { initialTasks, type MockTask } from './tasksMockData'
 import { TaskSheet, type TaskSheetValues } from './TaskSheet'
 
@@ -57,6 +59,7 @@ export function TasksScreen() {
   const [filter, setFilter] = useState<ContextFilterValue>('all')
   const [tasks, setTasks] = useState(initialTasks)
   const [sheet, setSheet] = useState<{ mode: 'create' } | { mode: 'edit'; taskId: string } | null>(null)
+  const [showTrash, setShowTrash] = useState(false)
 
   function toggleTask(id: string) {
     setTasks((prev) => prev.map((task) => (task.id === id ? { ...task, done: !task.done } : task)))
@@ -101,11 +104,21 @@ export function TasksScreen() {
 
   function handleDelete() {
     if (sheet?.mode !== 'edit') return
-    setTasks((prev) => prev.filter((task) => task.id !== sheet.taskId))
+    setTasks((prev) => prev.map((task) => (task.id === sheet.taskId ? { ...task, deletedAt: TODAY_ISO } : task)))
     setSheet(null)
   }
 
-  const visible = tasks.filter((t) => matchesContext(filter, t))
+  function handleRestore(id: string) {
+    setTasks((prev) => prev.map((task) => (task.id === id ? { ...task, deletedAt: undefined } : task)))
+  }
+
+  function handleDeleteForever(id: string) {
+    setTasks((prev) => prev.filter((task) => task.id !== id))
+  }
+
+  const active = tasks.filter((t) => !t.deletedAt)
+  const trashed = tasks.filter((t) => t.deletedAt)
+  const visible = active.filter((t) => matchesContext(filter, t))
   const pending = visible.filter((t) => !t.done)
   const completed = visible.filter((t) => t.done)
   const editingTask = sheet?.mode === 'edit' ? tasks.find((t) => t.id === sheet.taskId) : undefined
@@ -120,14 +133,27 @@ export function TasksScreen() {
               {pending.length === 0 ? 'Tudo em dia por aqui' : `${pending.length} pendente${pending.length > 1 ? 's' : ''}`}
             </p>
           </div>
-          <button
-            type="button"
-            onClick={() => setSheet({ mode: 'create' })}
-            className="flex h-10 w-10 shrink-0 items-center justify-center rounded-pill bg-accent text-white transition active:scale-90"
-            aria-label="Nova tarefa"
-          >
-            <Plus size={20} strokeWidth={2.4} />
-          </button>
+          <div className="flex shrink-0 items-center gap-2">
+            <button
+              type="button"
+              onClick={() => setShowTrash(true)}
+              className="relative flex h-10 w-10 items-center justify-center rounded-pill text-ink-muted transition active:scale-90"
+              aria-label="Lixeira de tarefas"
+            >
+              <Trash2 size={19} strokeWidth={2.2} />
+              {trashed.length > 0 ? (
+                <span className="absolute right-1.5 top-1.5 h-2 w-2 rounded-pill bg-danger" />
+              ) : null}
+            </button>
+            <button
+              type="button"
+              onClick={() => setSheet({ mode: 'create' })}
+              className="flex h-10 w-10 items-center justify-center rounded-pill bg-accent text-white transition active:scale-90"
+              aria-label="Nova tarefa"
+            >
+              <Plus size={20} strokeWidth={2.4} />
+            </button>
+          </div>
         </div>
 
         <div className="mt-5">
@@ -193,6 +219,36 @@ export function TasksScreen() {
           onSave={handleEditSave}
           onDelete={handleDelete}
           onClose={() => setSheet(null)}
+        />
+      ) : null}
+
+      {showTrash ? (
+        <TrashSheet
+          title="Lixeira · Tarefas"
+          items={trashed}
+          getId={(t) => t.id}
+          getDeletedAt={(t) => t.deletedAt!}
+          renderItem={(task) => (
+            <div>
+              <span className="flex items-center gap-1.5">
+                <span className="text-[15px] font-semibold text-ink">{task.title}</span>
+                {resolveMemberNames(task.groupId, task.assigneeIds).map((name) => (
+                  <Avatar key={name} name={name} />
+                ))}
+              </span>
+              <span className="mt-1 flex items-center gap-1.5 text-[12px] text-ink-faint">
+                <VisibilityDot context={task.context} groupId={task.groupId} />
+                {task.context === 'group'
+                  ? mockGroups.find((g) => g.id === task.groupId)?.name
+                  : task.context === 'shared'
+                    ? 'Compartilhado'
+                    : 'Pessoal'}
+              </span>
+            </div>
+          )}
+          onRestore={handleRestore}
+          onDeleteForever={handleDeleteForever}
+          onClose={() => setShowTrash(false)}
         />
       ) : null}
     </HomeLayout>

@@ -8,6 +8,13 @@ import type { MockRecurrenceRule } from './recurrenceMockData'
 const TODAY_ISO = MOCK_TODAY.toISOString().slice(0, 10)
 const CURRENT_MONTH_END_ISO = new Date(MOCK_TODAY.getFullYear(), MOCK_TODAY.getMonth() + 1, 0).toISOString().slice(0, 10)
 
+// Transação na lixeira (PD-005/UC-FIN-003) nunca conta em saldo, fatura,
+// período ou categoria — aplicado uma vez aqui pra não depender de cada tela
+// se lembrar de filtrar antes de chamar os seletores.
+function excludeTrashed(transactions: MockTransaction[]) {
+  return transactions.filter((tx) => !tx.deletedAt)
+}
+
 // Receita soma, despesa subtrai — usado em todo lugar que agrega valor de
 // Transaction, pra não duplicar essa regra em cada seletor.
 export function getSignedAmount(tx: MockTransaction) {
@@ -21,7 +28,7 @@ export function getSignedAmount(tx: MockTransaction) {
 // o lado crédito fica só na fatura até o pagamento ser registrado.
 function getAccountAffectingTransactions(account: MockAccount, transactions: MockTransaction[], accounts: MockAccount[]) {
   const linkedCardIds = accounts.filter((a) => a.type === 'cartao' && a.contaPagamentoId === account.id).map((a) => a.id)
-  return transactions.filter(
+  return excludeTrashed(transactions).filter(
     (tx) => tx.accountId === account.id || (tx.accountId && linkedCardIds.includes(tx.accountId) && tx.paymentMethod === 'debito'),
   )
 }
@@ -51,7 +58,9 @@ export function getProjectedBalance(
   const projectedFromRules = rules
     .filter((rule) => rule.accountId === account.id)
     .filter((rule) => rule.startDate <= CURRENT_MONTH_END_ISO && (!rule.endDate || rule.endDate >= TODAY_ISO))
-    .filter((rule) => !transactions.some((tx) => tx.recurrenceRuleId === rule.id && tx.date.slice(0, 7) === TODAY_ISO.slice(0, 7)))
+    .filter(
+      (rule) => !excludeTrashed(transactions).some((tx) => tx.recurrenceRuleId === rule.id && tx.date.slice(0, 7) === TODAY_ISO.slice(0, 7)),
+    )
     .reduce((sum, rule) => sum + (rule.type === 'receita' ? rule.amount : -rule.amount), 0)
 
   return current + futureMaterialized + projectedFromRules
@@ -66,7 +75,7 @@ export function getVisibleAccountsTotal(accounts: MockAccount[], transactions: M
 // Só as compras no crédito entram no ciclo da fatura — as no débito já
 // saíram direto da conta de pagamento na hora (ver getAccountBalance).
 export function getInvoiceTransactions(invoice: MockInvoice, transactions: MockTransaction[]) {
-  return transactions.filter(
+  return excludeTrashed(transactions).filter(
     (tx) =>
       tx.accountId === invoice.cardId &&
       tx.paymentMethod !== 'debito' &&
@@ -92,7 +101,7 @@ export function getMonthBounds(monthIso: string) {
 
 export function getPeriodTransactions(transactions: MockTransaction[], monthIso: string) {
   const { start, end } = getMonthBounds(monthIso)
-  return transactions.filter((tx) => tx.date >= start && tx.date <= end)
+  return excludeTrashed(transactions).filter((tx) => tx.date >= start && tx.date <= end)
 }
 
 export function getIncomeExpenseTotals(transactions: MockTransaction[]) {
