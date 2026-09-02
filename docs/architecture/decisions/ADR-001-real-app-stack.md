@@ -26,6 +26,7 @@ Todo acesso ao SDK do Supabase e ao Drizzle fica isolado numa camada própria do
 - **Neon (Postgres puro, escala a zero) + Better Auth (auth guardado na própria tabela de domínio)**: daria mais controle e menos lock-in de autenticação, mas exige montar e manter mais peças separadas. Descartado a favor da simplicidade do Supabase, aceitando conscientemente mais acoplamento à plataforma.
 - **tRPC**: daria typesafety end-to-end entre cliente e servidor, mas é redundante enquanto existir só um cliente (a própria web app) — o Nuxt/Nitro já entrega tipagem ponta a ponta sem essa camada extra. Fica para quando existir um segundo cliente real (mobile, bot de WhatsApp, Central do Lar).
 - **pnpm workspaces / Turborepo**: avaliado e descartado — não há hoje um segundo app real consumindo código compartilhado; a extração de código para `packages/` fica adiada até essa necessidade existir de fato.
+- **i18n (`@nuxtjs/i18n`) desde o início**: avaliado e descartado — nenhum documento de produto (`vision.md`, `roadmap.md`, UCs) indica necessidade de suportar mais de um idioma. Diferente das demais infraestruturas adiadas nesta decisão, extrair texto de UI para chave de tradução tem custo recorrente (toda string nova passa a exigir essa indireção), não só custo de setup — por isso a recomendação é manter texto direto em português nos componentes e só extrair se/quando outro idioma virar requisito real, mesmo sabendo que a extração retroativa será um refactor amplo.
 
 ## Consequências
 
