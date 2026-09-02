@@ -1,6 +1,7 @@
 import { CheckCircle2, ChevronLeft, ChevronRight, Plus, Target, Trash2, TriangleAlert, X } from 'lucide-react'
 import { useState } from 'react'
 import { GhostButton, PrimaryButton } from '../components/Buttons'
+import { CategoryPicker } from '../components/CategoryPicker'
 import { TextField } from '../components/TextField'
 import { VisibilityPicker, type VisibilitySelection } from '../components/VisibilityPicker'
 import { formatCurrency } from '../finance/financeMockData'
@@ -28,6 +29,8 @@ interface SubgoalSummary {
 interface GoalSheetProps {
   mode: 'create' | 'edit'
   initial?: GoalSheetValues
+  categoryOptions: string[]
+  onAddCategory: (category: string) => void
   done?: boolean
   isSubgoal?: boolean
   allocations?: MockGoalAllocation[] // só RESERVED/COMMITTED — PAID vem de goalTransactions
@@ -148,6 +151,8 @@ function SubgoalCard({ subgoal, onOpen }: { subgoal: SubgoalSummary; onOpen: () 
 export function GoalSheet({
   mode,
   initial,
+  categoryOptions,
+  onAddCategory,
   done,
   isSubgoal,
   allocations = [],
@@ -221,19 +226,15 @@ export function GoalSheet({
             onChange={(e) => setTitle(e.target.value)}
           />
 
-          <div className="flex gap-3">
-            <div className="flex-1">
-              <TextField
-                label="Categoria (opcional)"
-                placeholder="Ex.: Viagem"
-                value={category}
-                onChange={(e) => setCategory(e.target.value)}
-              />
-            </div>
-            <div className="flex-1">
-              <TextField label="Prazo (opcional)" type="date" value={deadline} onChange={(e) => setDeadline(e.target.value)} />
-            </div>
-          </div>
+          <CategoryPicker
+            label="Categoria (opcional)"
+            categories={categoryOptions}
+            value={category}
+            onChange={setCategory}
+            onAddCategory={onAddCategory}
+          />
+
+          <TextField label="Prazo (opcional)" type="date" value={deadline} onChange={(e) => setDeadline(e.target.value)} />
 
           <VisibilityPicker value={visibility} onChange={setVisibility} />
 

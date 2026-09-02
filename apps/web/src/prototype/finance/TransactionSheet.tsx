@@ -1,6 +1,7 @@
 import { Trash2 } from 'lucide-react'
 import { useState } from 'react'
 import { GhostButton, PrimaryButton } from '../components/Buttons'
+import { CategoryPicker } from '../components/CategoryPicker'
 import { SelectField, TextField } from '../components/TextField'
 import { VisibilityPicker, type VisibilitySelection } from '../components/VisibilityPicker'
 import type { MockAccount } from './accountsMockData'
@@ -33,6 +34,8 @@ interface TransactionSheetProps {
   initial?: TransactionSheetValues
   accountOptions: MockAccount[]
   goalOptions?: GoalOption[]
+  categoryOptions: string[]
+  onAddCategory: (category: string) => void
   onSave: (values: TransactionSheetValues) => void
   onDelete?: () => void
   onClose: () => void
@@ -43,6 +46,8 @@ export function TransactionSheet({
   initial,
   accountOptions,
   goalOptions = [],
+  categoryOptions,
+  onAddCategory,
   onSave,
   onDelete,
   onClose,
@@ -152,24 +157,20 @@ export function TransactionSheet({
             </div>
           </div>
 
-          <div className="flex gap-3">
-            <div className="flex-1">
-              <TextField
-                label="Categoria (opcional)"
-                placeholder="Ex.: Mercado"
-                value={category}
-                onChange={(e) => setCategory(e.target.value)}
-              />
-            </div>
-            <div className="flex-1">
-              <TextField
-                label="Pago por (opcional)"
-                placeholder="Ex.: Mateus"
-                value={payer}
-                onChange={(e) => setPayer(e.target.value)}
-              />
-            </div>
-          </div>
+          <CategoryPicker
+            label="Categoria (opcional)"
+            categories={categoryOptions}
+            value={category}
+            onChange={setCategory}
+            onAddCategory={onAddCategory}
+          />
+
+          <TextField
+            label="Pago por (opcional)"
+            placeholder="Ex.: Mateus"
+            value={payer}
+            onChange={(e) => setPayer(e.target.value)}
+          />
 
           <SelectField
             label="Conta (opcional)"

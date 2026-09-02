@@ -1,6 +1,7 @@
 import { ChevronLeft, ChevronRight, Landmark, PieChart, Plus, Repeat, Target, TrendingUp, X } from 'lucide-react'
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { initialCategories } from '../categories/categoriesMockData'
 import { Avatar } from '../components/Avatar'
 import { CategoryChip } from '../components/CategoryChip'
 import { CategoryRanking } from '../components/CategoryRanking'
@@ -73,7 +74,12 @@ export function FinanceScreen() {
   const [rankingTab, setRankingTab] = useState<TransactionType>('despesa')
   const [transactions, setTransactions] = useState(initialTransactions)
   const [recurrenceRules, setRecurrenceRules] = useState<MockRecurrenceRule[]>(initialRecurrenceRules)
+  const [categories, setCategories] = useState<string[]>(initialCategories)
   const [sheet, setSheet] = useState<{ mode: 'create' } | { mode: 'edit'; txId: string } | null>(null)
+
+  function handleAddCategory(category: string) {
+    setCategories((prev) => (prev.includes(category) ? prev : [...prev, category]))
+  }
 
   function handleCreate(values: TransactionSheetValues) {
     const amount = parseAmount(values.amount)
@@ -413,6 +419,8 @@ export function FinanceScreen() {
           mode="create"
           accountOptions={initialAccounts}
           goalOptions={goalOptions}
+          categoryOptions={categories}
+          onAddCategory={handleAddCategory}
           onSave={handleCreate}
           onClose={() => setSheet(null)}
         />
@@ -423,6 +431,8 @@ export function FinanceScreen() {
           mode="edit"
           accountOptions={initialAccounts}
           goalOptions={goalOptions}
+          categoryOptions={categories}
+          onAddCategory={handleAddCategory}
           initial={{
             title: editingTx.title,
             category: editingTx.category,

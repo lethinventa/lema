@@ -1,5 +1,6 @@
 import { CheckCircle2, Plus, Target, TriangleAlert } from 'lucide-react'
 import { useState } from 'react'
+import { initialCategories } from '../categories/categoriesMockData'
 import { ContextFilterChips, type ContextFilterValue, matchesContext } from '../components/ContextFilterChips'
 import { HomeLayout } from '../components/HomeLayout'
 import { getCategoryStyle } from '../components/palette'
@@ -86,7 +87,12 @@ export function GoalsScreen() {
   const [goals, setGoals] = useState(initialGoals)
   const [allocations, setAllocations] = useState<MockGoalAllocation[]>(initialGoalAllocations)
   const [transactions, setTransactions] = useState<MockTransaction[]>(initialTransactions)
+  const [categories, setCategories] = useState<string[]>(initialCategories)
   const [stack, setStack] = useState<SheetEntry[]>([])
+
+  function handleAddCategory(category: string) {
+    setCategories((prev) => (prev.includes(category) ? prev : [...prev, category]))
+  }
 
   const top = stack[stack.length - 1]
 
@@ -276,6 +282,8 @@ export function GoalsScreen() {
       {top?.kind === 'goal' && top.mode === 'create' ? (
         <GoalSheet
           mode="create"
+          categoryOptions={categories}
+          onAddCategory={handleAddCategory}
           isSubgoal={!!top.parentGoalId}
           parentTitle={parentTitle}
           onBack={stack.length > 1 ? popOne : undefined}
@@ -288,6 +296,8 @@ export function GoalsScreen() {
         <GoalSheet
           key={editingGoal.id}
           mode="edit"
+          categoryOptions={categories}
+          onAddCategory={handleAddCategory}
           done={editingGoal.done}
           isSubgoal={!!editingGoal.parentGoalId}
           allocations={allocations.filter((a) => a.goalId === editingGoal.id)}
@@ -328,6 +338,8 @@ export function GoalsScreen() {
           mode="create"
           accountOptions={initialAccounts}
           goalOptions={goalOptions}
+          categoryOptions={categories}
+          onAddCategory={handleAddCategory}
           initial={{
             title: '',
             category: '',
