@@ -2,22 +2,10 @@ import { Eye } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import { PrimaryButton } from '../components/Buttons'
 import { DomainLabel } from '../components/DomainLabel'
+import { TRANSPARENCY_OPTIONS } from '../components/financeArrangementOptions'
 import { OnboardingScreen } from '../components/OnboardingScreen'
 import { SelectableCard } from '../components/SelectableCard'
-import { useOnboarding, type TransparencyLevel } from '../state/OnboardingContext'
-
-const TRANSPARENCY_OPTIONS: { value: TransparencyLevel; title: string; description: string }[] = [
-  {
-    value: 'full',
-    title: 'Todo o grupo vê',
-    description: 'Qualquer pessoa do grupo vê quem deve quanto a quem.',
-  },
-  {
-    value: 'involved-only',
-    title: 'Só quem está envolvido',
-    description: 'Detalhes de divisão ficam restritos às pessoas de cada despesa.',
-  },
-]
+import { useOnboarding } from '../state/OnboardingContext'
 
 export function GroupFinanceTransparencyScreen() {
   const navigate = useNavigate()

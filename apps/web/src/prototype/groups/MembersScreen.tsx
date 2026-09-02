@@ -1,12 +1,14 @@
-import { Check, Crown, LogOut, Plus, Trash2, UserMinus, X } from 'lucide-react'
+import { ChevronRight, Check, Crown, LogOut, Plus, UserMinus, Wallet, X } from 'lucide-react'
 import { useState } from 'react'
 import { Navigate, useNavigate, useParams } from 'react-router-dom'
 import { BackHeader } from '../components/BackHeader'
 import { GhostButton, PrimaryButton } from '../components/Buttons'
+import { splitRuleLabel, transparencyLabel } from '../components/financeArrangementOptions'
 import { TextField } from '../components/TextField'
 import { Tile } from '../components/Tile'
 import { getInitials, getPersonColor } from '../components/palette'
 import { mockGroups } from '../home/homeMockData'
+import { initialGroupArrangements } from './groupFinanceMockData'
 import {
   CURRENT_USER_ID,
   generateInviteCode,
@@ -85,6 +87,7 @@ export function MembersScreen() {
   const { groupId } = useParams<{ groupId: string }>()
   const navigate = useNavigate()
   const group = mockGroups.find((g) => g.id === groupId)
+  const arrangement = initialGroupArrangements[groupId ?? '']
 
   const [members, setMembers] = useState<GroupMember[]>(() => initialMembersByGroup[groupId ?? ''] ?? [])
   const [invites, setInvites] = useState<PendingInvite[]>(() => initialInvitesByGroup[groupId ?? ''] ?? [])
@@ -163,6 +166,25 @@ export function MembersScreen() {
               />
             ))}
           </div>
+        </Tile>
+
+        <Tile className="mt-3 p-0">
+          <button
+            type="button"
+            onClick={() => navigate(`/perfil/grupos/${group.id}/financas`)}
+            className="flex w-full items-center gap-3 px-4 py-4 text-left"
+          >
+            <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[11px] bg-accent-soft text-accent">
+              <Wallet size={17} strokeWidth={2.4} />
+            </span>
+            <span className="min-w-0 flex-1">
+              <span className="block text-[15px] font-bold text-ink">Configuração financeira</span>
+              <span className="block text-[12px] text-ink-faint">
+                {arrangement ? `${splitRuleLabel(arrangement.splitRule)} · ${transparencyLabel(arrangement.transparency)}` : 'Ainda não configurada'}
+              </span>
+            </span>
+            <ChevronRight size={18} strokeWidth={2.2} className="shrink-0 text-ink-faint" />
+          </button>
         </Tile>
 
         <div className="mt-6">
