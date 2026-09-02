@@ -1,4 +1,4 @@
-import { ChevronRight, LogOut, Shield, Trash2, Users, type LucideIcon } from 'lucide-react'
+import { ChevronRight, LogOut, Plus, Shield, Trash2, Users, type LucideIcon } from 'lucide-react'
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { BackHeader } from '../components/BackHeader'
@@ -82,7 +82,17 @@ export function ProfileHubScreen() {
         </button>
 
         <div className="mt-7">
-          <span className="mb-1 block text-[12px] font-bold uppercase tracking-wide text-ink-faint">Grupos</span>
+          <div className="mb-1 flex items-center justify-between">
+            <span className="text-[12px] font-bold uppercase tracking-wide text-ink-faint">Grupos</span>
+            <button
+              type="button"
+              onClick={() => navigate('/perfil/grupos/novo')}
+              className="flex items-center gap-1 text-[13px] font-semibold text-accent"
+            >
+              <Plus size={14} strokeWidth={2.6} />
+              Criar grupo
+            </button>
+          </div>
           <div className="flex flex-col divide-y divide-line">
             {mockGroups.map((group) => {
               const count = initialMembersByGroup[group.id]?.length ?? 0
