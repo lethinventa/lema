@@ -21,6 +21,11 @@ export interface MockTask {
   // context === 'group' (é o único caso com lista real de pessoas hoje).
   assigneeIds?: string[]
   recurring?: boolean
+  // Tag informativa opcional, só pra tarefas Pessoais — não é uma regra de
+  // visibilidade nova (nenhum UC formal ainda cobre "cuidar de alguém fora
+  // do Lema"; ver análise crítica). Puramente descritiva: não concede
+  // acesso a ninguém, é só um lembrete de contexto pra quem vê a tarefa.
+  about?: string
 }
 
 export const initialTasks: MockTask[] = [
@@ -81,5 +86,15 @@ export const initialTasks: MockTask[] = [
     groupId: 'casa-da-mae',
     done: false,
     recurring: true,
+  },
+  // Pessoal com tag — algo que ela cuida por conta própria, sem formalizar
+  // no grupo "Casa da Mãe" (ver about, acima).
+  {
+    id: 'tk11',
+    title: 'Ligar pra saber como ela passou a noite',
+    context: 'personal',
+    done: false,
+    dueDate: TODAY_ISO,
+    about: 'Minha mãe',
   },
 ]

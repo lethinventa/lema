@@ -11,6 +11,7 @@ export interface TaskSheetValues {
   groupId?: string
   dueDate: string // ISO, opcional (string vazia = sem prazo)
   assigneeIds: string[]
+  about: string
 }
 
 interface TaskSheetProps {
@@ -29,6 +30,7 @@ export function TaskSheet({ mode, initial, onSave, onDelete, onClose }: TaskShee
   })
   const [dueDate, setDueDate] = useState(initial?.dueDate ?? '')
   const [assigneeIds, setAssigneeIds] = useState<string[]>(initial?.assigneeIds ?? [])
+  const [about, setAbout] = useState(initial?.about ?? '')
 
   function handleSave() {
     if (!title.trim()) return
@@ -38,6 +40,7 @@ export function TaskSheet({ mode, initial, onSave, onDelete, onClose }: TaskShee
       groupId: visibility.groupId,
       dueDate,
       assigneeIds: visibility.context === 'group' ? assigneeIds : [],
+      about: visibility.context === 'personal' ? about.trim() : '',
     })
   }
 
@@ -70,6 +73,16 @@ export function TaskSheet({ mode, initial, onSave, onDelete, onClose }: TaskShee
               selectedIds={assigneeIds}
               onChange={setAssigneeIds}
               hint="Quem tem que fazer isso? Pode escolher mais de uma pessoa, ou nenhuma."
+            />
+          ) : null}
+
+          {visibility.context === 'personal' ? (
+            <TextField
+              label="Sobre quem ou o que é isso? (opcional)"
+              placeholder="Ex.: Minha mãe"
+              value={about}
+              onChange={(e) => setAbout(e.target.value)}
+              hint="Só uma lembrança visual pra você — não compartilha nada com ninguém."
             />
           ) : null}
 

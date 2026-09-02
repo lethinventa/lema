@@ -35,7 +35,7 @@ function TaskRow({ task, onToggle, onEdit }: { task: MockTask; onToggle: () => v
               <Avatar key={name} name={name} />
             ))}
           </span>
-          {!task.done && (task.dueDate || task.recurring) ? (
+          {!task.done && (task.dueDate || task.recurring || task.about) ? (
             <div className="mt-1.5 flex flex-wrap items-center gap-1.5">
               {task.dueDate ? (
                 <span className="rounded-sm bg-sky-bg px-1.5 py-0.5 text-[11px] font-bold text-sky-fg">
@@ -43,6 +43,7 @@ function TaskRow({ task, onToggle, onEdit }: { task: MockTask; onToggle: () => v
                 </span>
               ) : null}
               {task.recurring ? <FlagChip icon={Repeat}>Recorrente</FlagChip> : null}
+              {task.about ? <FlagChip>{task.about}</FlagChip> : null}
             </div>
           ) : null}
         </span>
@@ -71,6 +72,7 @@ export function TasksScreen() {
         done: false,
         dueDate: values.dueDate || undefined,
         assigneeIds: values.assigneeIds.length ? values.assigneeIds : undefined,
+        about: values.about || undefined,
       },
       ...prev,
     ])
@@ -89,6 +91,7 @@ export function TasksScreen() {
               groupId: values.groupId,
               dueDate: values.dueDate || undefined,
               assigneeIds: values.assigneeIds.length ? values.assigneeIds : undefined,
+              about: values.about || undefined,
             }
           : task,
       ),
@@ -185,6 +188,7 @@ export function TasksScreen() {
             groupId: editingTask.groupId,
             dueDate: editingTask.dueDate ?? '',
             assigneeIds: editingTask.assigneeIds ?? [],
+            about: editingTask.about ?? '',
           }}
           onSave={handleEditSave}
           onDelete={handleDelete}
