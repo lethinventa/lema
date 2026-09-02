@@ -6,6 +6,7 @@ import { AccountsScreen } from './prototype/finance/AccountsScreen'
 import { CardDetailScreen } from './prototype/finance/CardDetailScreen'
 import { FinanceScreen } from './prototype/finance/FinanceScreen'
 import { GoalsScreen } from './prototype/goals/GoalsScreen'
+import { MembersScreen } from './prototype/groups/MembersScreen'
 import { HomeScreen } from './prototype/home/HomeScreen'
 import { DoneScreen } from './prototype/onboarding/DoneScreen'
 import { FinancialSetupScreen } from './prototype/onboarding/FinancialSetupScreen'
@@ -49,6 +50,7 @@ export default function App() {
           <Route path="/home/financas/contas/:accountId" element={<AccountDetailScreen />} />
           <Route path="/home/financas/cartoes/:accountId" element={<CardDetailScreen />} />
           <Route path="/perfil" element={<ProfileHubScreen />} />
+          <Route path="/perfil/grupos/:groupId" element={<MembersScreen />} />
           <Route path="/perfil/seguranca" element={<SecurityScreen />} />
           <Route path="/perfil/excluir" element={<DeleteAccountScreen />} />
           <Route path="*" element={<Navigate to="/" replace />} />

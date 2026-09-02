@@ -1,20 +1,23 @@
-import { ChevronRight, LogOut, Shield, Trash2, type LucideIcon } from 'lucide-react'
+import { ChevronRight, LogOut, Shield, Trash2, Users, type LucideIcon } from 'lucide-react'
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { BackHeader } from '../components/BackHeader'
 import { getInitials, getPersonColor } from '../components/palette'
-import { mockUser } from '../home/homeMockData'
+import { initialMembersByGroup } from '../groups/groupsMockData'
+import { mockGroups, mockUser } from '../home/homeMockData'
 import { useOnboarding } from '../state/OnboardingContext'
 import { ProfileEditSheet, type ProfileEditValues } from './ProfileEditSheet'
 
 function SettingsRow({
   icon: Icon,
   label,
+  subtitle,
   onClick,
   danger,
 }: {
   icon: LucideIcon
   label: string
+  subtitle?: string
   onClick: () => void
   danger?: boolean
 }) {
@@ -31,7 +34,10 @@ function SettingsRow({
       >
         <Icon size={17} strokeWidth={2.2} />
       </span>
-      <span className={`flex-1 text-[15px] font-semibold ${danger ? 'text-danger' : 'text-ink'}`}>{label}</span>
+      <span className="flex-1">
+        <span className={`block text-[15px] font-semibold ${danger ? 'text-danger' : 'text-ink'}`}>{label}</span>
+        {subtitle ? <span className="mt-0.5 block text-[12px] text-ink-muted">{subtitle}</span> : null}
+      </span>
       <ChevronRight size={18} strokeWidth={2.2} className={danger ? 'text-danger/60' : 'text-ink-faint'} />
     </button>
   )
@@ -74,6 +80,24 @@ export function ProfileHubScreen() {
         >
           Editar perfil
         </button>
+
+        <div className="mt-7">
+          <span className="mb-1 block text-[12px] font-bold uppercase tracking-wide text-ink-faint">Grupos</span>
+          <div className="flex flex-col divide-y divide-line">
+            {mockGroups.map((group) => {
+              const count = initialMembersByGroup[group.id]?.length ?? 0
+              return (
+                <SettingsRow
+                  key={group.id}
+                  icon={Users}
+                  label={group.name}
+                  subtitle={`${count} membro${count > 1 ? 's' : ''}`}
+                  onClick={() => navigate(`/perfil/grupos/${group.id}`)}
+                />
+              )
+            })}
+          </div>
+        </div>
 
         <div className="mt-7">
           <span className="mb-1 block text-[12px] font-bold uppercase tracking-wide text-ink-faint">Conta</span>

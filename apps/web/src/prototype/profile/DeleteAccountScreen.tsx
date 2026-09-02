@@ -3,13 +3,13 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { BackHeader } from '../components/BackHeader'
 import { GhostButton, PrimaryButton } from '../components/Buttons'
-import { findGroupsBlockingDeletion, mockMemberships } from './profileMockData'
+import { findGroupsBlockingDeletion } from '../groups/groupsMockData'
 
 export function DeleteAccountScreen() {
   const navigate = useNavigate()
   const [confirmed, setConfirmed] = useState(false)
 
-  const blockingGroups = findGroupsBlockingDeletion(mockMemberships)
+  const blockingGroups = findGroupsBlockingDeletion()
   const isBlocked = blockingGroups.length > 0
 
   if (confirmed) {
@@ -50,13 +50,21 @@ export function DeleteAccountScreen() {
             </span>
             <p className="mt-2 text-[13px] leading-normal text-ink-muted">
               Você é a única pessoa responsável (OWNER) por{' '}
-              {blockingGroups.map((g) => `"${g.groupName}"`).join(', ')}. Pra manter o grupo com um responsável,
-              promova outro membro a OWNER antes de excluir sua conta.
+              {blockingGroups.map((g) => `"${g.name}"`).join(', ')}. Pra manter o grupo com um responsável, promova
+              outro membro a OWNER antes de excluir sua conta.
             </p>
-            <p className="mt-3 text-[12px] leading-normal text-ink-faint">
-              A tela de Membros do grupo (onde essa promoção acontece) ainda não foi prototipada — por enquanto,
-              essa tela só demonstra a regra de bloqueio (UC-USER-004).
-            </p>
+            <div className="mt-3 flex flex-col gap-1.5">
+              {blockingGroups.map((g) => (
+                <button
+                  key={g.id}
+                  type="button"
+                  onClick={() => navigate(`/perfil/grupos/${g.id}`)}
+                  className="text-left text-[13px] font-semibold text-accent"
+                >
+                  Gerenciar membros de {g.name} →
+                </button>
+              ))}
+            </div>
           </div>
         ) : (
           <div className="rounded-lg border border-danger/30 bg-danger/5 p-4">
