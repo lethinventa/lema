@@ -2,10 +2,10 @@ import { CalendarDays, CheckSquare2, Target, Wallet } from 'lucide-react'
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { ContextFilterChips, type ContextFilterValue, matchesContext } from '../components/ContextFilterChips'
-import { DomainLabel } from '../components/DomainLabel'
 import { HomeLayout } from '../components/HomeLayout'
 import { getInitials, getPersonColor } from '../components/palette'
 import { type QuickAction, QuickActionsRow } from '../components/QuickActionsRow'
+import { SectionHeader } from '../components/SectionHeader'
 import { Tile } from '../components/Tile'
 import { VisibilityDot } from '../components/VisibilityDot'
 import { mockCalendar, mockFinance, mockGoals, mockTasks, mockUser } from './homeMockData'
@@ -14,11 +14,14 @@ function EmptyRow() {
   return <p className="py-2 text-[13px] text-ink-faint">Nada por aqui hoje.</p>
 }
 
+// Labels curtos de propósito (uma palavra, como "Pix"/"Pagar"/"Cartões" no
+// Inter) — em vez de "Nova tarefa"/"Novo compromisso", evita quebra de
+// linha desalinhada entre colunas na largura de 64px do círculo.
 const QUICK_ACTIONS: QuickAction[] = [
-  { label: 'Nova tarefa', icon: CheckSquare2, tone: 'mint', to: '/home/tarefas/nova' },
-  { label: 'Novo compromisso', icon: CalendarDays, tone: 'sky', to: '/home/calendario?novo=1' },
-  { label: 'Nova transação', icon: Wallet, tone: 'peach', to: '/home/financas?novo=1' },
-  { label: 'Novo objetivo', icon: Target, tone: 'goal', to: '/home/objetivos?novo=1' },
+  { label: 'Tarefa', icon: CheckSquare2, tone: 'mint', to: '/home/tarefas/nova' },
+  { label: 'Agenda', icon: CalendarDays, tone: 'sky', to: '/home/calendario?novo=1' },
+  { label: 'Transação', icon: Wallet, tone: 'peach', to: '/home/financas?novo=1' },
+  { label: 'Objetivo', icon: Target, tone: 'goal', to: '/home/objetivos?novo=1' },
 ]
 
 export function HomeScreen() {
@@ -34,6 +37,17 @@ export function HomeScreen() {
   const visibleCalendar = mockCalendar.filter((c) => matchesContext(filter, c))
   const visibleGoals = mockGoals.filter((g) => matchesContext(filter, g))
   const visibleFinance = mockFinance.filter((f) => matchesContext(filter, f))
+  const pendingCount = visibleTasks.filter((t) => !t.done).length
+
+  const pulse =
+    pendingCount === 0 && visibleCalendar.length === 0
+      ? 'Nada urgente por aqui.'
+      : [
+          pendingCount > 0 ? `${pendingCount} tarefa${pendingCount > 1 ? 's' : ''} pendente${pendingCount > 1 ? 's' : ''}` : null,
+          visibleCalendar.length > 0 ? `${visibleCalendar.length} compromisso${visibleCalendar.length > 1 ? 's' : ''}` : null,
+        ]
+          .filter(Boolean)
+          .join(' · ')
 
   return (
     <HomeLayout>
@@ -57,26 +71,26 @@ export function HomeScreen() {
         </div>
 
         <div className="mt-5">
-          <QuickActionsRow actions={QUICK_ACTIONS} />
-        </div>
-
-        <div className="mt-5">
           <ContextFilterChips value={filter} onChange={setFilter} />
         </div>
 
-        <div className="mt-6 grid grid-cols-2 gap-3">
-          {visibleGoals.length === 0 ? (
-            <Tile span={2}>
-              <DomainLabel icon={<Target size={15} strokeWidth={2.4} />} tone="goal">
-                Objetivos
-              </DomainLabel>
-              <EmptyRow />
-            </Tile>
-          ) : (
+        {/* Card "Hoje" — equivalente ao card de saldo do Inter (identidade +
+            ações primárias num único bloco elevado), adaptado: Lema não tem
+            saldo único, então o número que ancora o card é o pulso do dia. */}
+        <Tile className="mt-4 !p-5">
+          <span className="text-[11px] font-extrabold uppercase tracking-wide text-ink-faint">Hoje</span>
+          <p className="mt-1 text-[16px] font-bold text-ink">{pulse}</p>
+          <div className="-mx-5 mt-4 border-t border-line px-5 pt-4">
+            <QuickActionsRow actions={QUICK_ACTIONS} />
+          </div>
+        </Tile>
+
+        <div className="mt-4 flex flex-col gap-4">
+          {visibleGoals.length === 0 ? null : (
             visibleGoals.map((goal) => (
               <div
                 key={goal.id}
-                className="shadow-hero-goal relative col-span-2 overflow-hidden rounded-lg bg-gradient-to-br from-goal to-[#8a1c47] px-5 py-6 text-white"
+                className="shadow-hero-goal relative overflow-hidden rounded-lg bg-gradient-to-br from-goal to-[#8a1c47] px-5 py-6 text-white"
               >
                 <span className="tabular absolute right-5 top-5 rounded-sm bg-mint-bg px-2 py-1 text-[12px] font-extrabold text-mint-fg">
                   {goal.progress}%
@@ -96,10 +110,8 @@ export function HomeScreen() {
             ))
           )}
 
-          <Tile span={2}>
-            <DomainLabel icon={<CheckSquare2 size={15} strokeWidth={2.4} />} tone="mint">
-              Tarefas de hoje
-            </DomainLabel>
+          <Tile>
+            <SectionHeader title="Tarefas de hoje" to="/home/tarefas" />
             {visibleTasks.length === 0 ? (
               <EmptyRow />
             ) : (
@@ -109,7 +121,7 @@ export function HomeScreen() {
                     key={task.id}
                     type="button"
                     onClick={() => toggleTask(task.id)}
-                    className="flex w-full items-center gap-3 py-3 text-left transition active:scale-[0.99]"
+                    className="flex w-full items-center gap-3 py-2.5 text-left transition active:scale-[0.99]"
                   >
                     <span
                       className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-pill border-2 ${
@@ -130,20 +142,18 @@ export function HomeScreen() {
             )}
           </Tile>
 
-          <Tile span={2}>
-            <DomainLabel icon={<CalendarDays size={12} strokeWidth={2.4} />} tone="sky" size="sm">
-              Compromissos
-            </DomainLabel>
+          <Tile>
+            <SectionHeader title="Compromissos" to="/home/calendario" />
             {visibleCalendar.length === 0 ? (
               <EmptyRow />
             ) : (
               <div className="flex flex-col divide-y divide-line">
                 {visibleCalendar.map((item) => (
-                  <div key={item.id} className="flex items-center gap-3 py-2.5">
+                  <div key={item.id} className="flex items-center gap-3 py-2">
                     <span className="tabular shrink-0 rounded-sm bg-sky-bg px-1.5 py-0.5 text-[11px] font-bold text-sky-fg">
                       {item.time}
                     </span>
-                    <span className="flex-1 text-[13px] font-medium text-ink">{item.title}</span>
+                    <span className="flex-1 text-[14px] font-semibold text-ink">{item.title}</span>
                     <VisibilityDot context={item.context} groupId={item.groupId} />
                   </div>
                 ))}
@@ -151,17 +161,15 @@ export function HomeScreen() {
             )}
           </Tile>
 
-          <Tile span={2}>
-            <DomainLabel icon={<Wallet size={12} strokeWidth={2.4} />} tone="peach" size="sm">
-              Finanças
-            </DomainLabel>
+          <Tile>
+            <SectionHeader title="Finanças" to="/home/financas" />
             {visibleFinance.length === 0 ? (
               <EmptyRow />
             ) : (
               <div className="flex flex-col divide-y divide-line">
                 {visibleFinance.map((item) => (
-                  <div key={item.id} className="flex items-center justify-between gap-3 py-2.5">
-                    <span className="flex flex-1 items-center gap-2 text-[13px] font-medium text-ink">
+                  <div key={item.id} className="flex items-center justify-between gap-3 py-2">
+                    <span className="flex flex-1 items-center gap-2 text-[14px] font-semibold text-ink">
                       {item.title}
                       <VisibilityDot context={item.context} groupId={item.groupId} />
                     </span>
