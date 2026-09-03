@@ -3,15 +3,11 @@
     <div class="w-full max-w-sm space-y-6">
       <h1 class="text-center text-xl font-semibold">Entrar no Lema</h1>
 
-      <Form
-        :state="state"
-        :validate="validate"
-        class="space-y-4"
-        @submit="onSubmit"
-      >
-        <FormField label="E-mail" name="email">
+      <form class="space-y-4" @submit="onSubmit">
+        <FormField label="E-mail" name="email" :error="errors.email">
           <Input
-            v-model="state.email"
+            v-model="email"
+            v-bind="emailAttrs"
             type="email"
             placeholder="voce@exemplo.com"
             autocomplete="email"
@@ -19,9 +15,10 @@
           />
         </FormField>
 
-        <FormField label="Senha" name="password">
+        <FormField label="Senha" name="password" :error="errors.password">
           <Input
-            v-model="state.password"
+            v-model="password"
+            v-bind="passwordAttrs"
             type="password"
             autocomplete="current-password"
             class="w-full"
@@ -36,27 +33,41 @@
         />
 
         <Button type="submit" block :loading="loading">Entrar</Button>
-      </Form>
+      </form>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import type { FormError, FormSubmitEvent } from '@nuxt/ui';
+import { toTypedSchema } from '@vee-validate/yup';
+import { useForm } from 'vee-validate';
+import * as yup from 'yup';
 import { useAuthStore } from '~/features/auth';
 
 const { signIn } = useAuthStore();
 
-const state = reactive({ email: '', password: '' });
+const { handleSubmit, defineField, errors } = useForm({
+  validationSchema: toTypedSchema(
+    yup.object({
+      email: yup
+        .string()
+        .required('Informe seu e-mail.')
+        .email('E-mail inválido.'),
+      password: yup.string().required('Informe sua senha.'),
+    }),
+  ),
+});
+
+const [email, emailAttrs] = defineField('email');
+const [password, passwordAttrs] = defineField('password');
+
 const errorMessage = ref('');
 const loading = ref(false);
 
-async function onSubmit(
-  event: FormSubmitEvent<{ email: string; password: string }>,
-) {
+const onSubmit = handleSubmit(async (values) => {
   errorMessage.value = '';
   loading.value = true;
-  const result = await signIn(event.data);
+  const result = await signIn(values);
   loading.value = false;
 
   if (!result.success) {
@@ -65,14 +76,5 @@ async function onSubmit(
   }
 
   await navigateTo('/');
-}
-
-function validate(state: { email?: string; password?: string }): FormError[] {
-  const errors: FormError[] = [];
-  if (!state.email)
-    errors.push({ name: 'email', message: 'Informe seu e-mail.' });
-  if (!state.password)
-    errors.push({ name: 'password', message: 'Informe sua senha.' });
-  return errors;
-}
+});
 </script>
