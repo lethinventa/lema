@@ -1,6 +1,11 @@
 import { createClient } from '@supabase/supabase-js';
 import { requireEnv } from '~/config/env';
 
+// Re-exported so code outside lib/ can reference these types without
+// importing @supabase/supabase-js directly (blocked by eslint, see
+// eslint.config.mjs).
+export type { Session, User } from '@supabase/supabase-js';
+
 let client: ReturnType<typeof createClient> | undefined;
 
 /**

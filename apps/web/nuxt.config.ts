@@ -3,6 +3,9 @@ export default defineNuxtConfig({
   // Nuxt 4 defaults srcDir to `app/`; flattened back to the app root to match
   // the feature-folder layout in docs/architecture/decisions/ADR-002-feature-folder-structure.md
   srcDir: '.',
+  // Client-rendered SPA — no Nuxt SSR. server/api/* (Nitro) is unaffected,
+  // this only controls how pages/ render.
+  ssr: false,
   modules: ['@nuxt/ui', '@nuxt/eslint'],
   css: ['~/assets/css/main.css'],
   compatibilityDate: '2025-07-15',
