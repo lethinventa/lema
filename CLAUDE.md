@@ -27,6 +27,7 @@ Antes de implementar qualquer fluxo ou tela, consulte os UCs, PDs e journeys rel
 - **Nunca adicionar footer `Co-Authored-By` nos commits.**
 - **Priorizar a stepdown rule** (Clean Code, Robert C. Martin) na organização de funções dentro de um arquivo: a função de nível de abstração mais alto vem primeiro, seguida pelas funções de nível imediatamente mais baixo que ela chama, e assim por diante — o arquivo deve poder ser lido de cima para baixo como uma narrativa, descendo um nível de abstração por vez, em vez de exigir pular entre helpers definidos antes de quem os usa.
 - **Só extrair uma `interface`/`type` para um arquivo `types.ts`** (ou qualquer lugar importável) **quando ele já for, ou muito provavelmente for, referenciado por mais de um lugar.** Caso contrário — ex.: o tipo de um parâmetro usado numa única função —, definir inline. Não poluir `types.ts` com tipos de uso único.
+- **Estado global externo do app real** (compartilhado entre componentes/composables, fora do escopo de uma única árvore de componentes — ex.: sessão do usuário autenticado) **usa Pinia** (`defineStore`, Setup Store syntax), não um singleton manual via `ref` em nível de módulo nem outra solução ad-hoc.
 
 ## Estado atual do repositório
 
