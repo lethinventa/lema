@@ -3,40 +3,40 @@
     <div class="w-full max-w-sm space-y-6">
       <h1 class="text-center text-xl font-semibold">Entrar no Lema</h1>
 
-      <UForm
+      <Form
         :state="state"
         :validate="validate"
         class="space-y-4"
         @submit="onSubmit"
       >
-        <UFormField label="E-mail" name="email">
-          <UInput
+        <FormField label="E-mail" name="email">
+          <Input
             v-model="state.email"
             type="email"
             placeholder="voce@exemplo.com"
             autocomplete="email"
             class="w-full"
           />
-        </UFormField>
+        </FormField>
 
-        <UFormField label="Senha" name="password">
-          <UInput
+        <FormField label="Senha" name="password">
+          <Input
             v-model="state.password"
             type="password"
             autocomplete="current-password"
             class="w-full"
           />
-        </UFormField>
+        </FormField>
 
-        <UAlert
+        <Alert
           v-if="errorMessage"
           color="error"
           variant="subtle"
           :title="errorMessage"
         />
 
-        <UButton type="submit" block :loading="loading">Entrar</UButton>
-      </UForm>
+        <Button type="submit" block :loading="loading">Entrar</Button>
+      </Form>
     </div>
   </div>
 </template>

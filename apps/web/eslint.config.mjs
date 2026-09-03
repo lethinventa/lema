@@ -126,6 +126,35 @@ export default withNuxt(
       ],
     },
   },
+  {
+    // Nuxt UI components (auto-imported, so no-restricted-imports can't see
+    // them — there's no import statement) must go through shared/components
+    // instead of being used directly in a feature or page, mitigating
+    // vendor lock-in the same way lib/ does for SDKs. app.vue is exempt: its
+    // single <UApp> call is the Nuxt UI app-level provider (toaster, color
+    // mode, etc.), not a swappable base component like a button or input.
+    files: ['**/*.vue'],
+    ignores: ['shared/components/**', 'app.vue'],
+    rules: {
+      'vue/no-restricted-syntax': [
+        'error',
+        {
+          selector: 'VElement[rawName=/^U[A-Z]/]',
+          message:
+            'Import base UI components from shared/components instead of Nuxt UI directly.',
+        },
+      ],
+    },
+  },
+  {
+    // Wrapper components in shared/components deliberately use generic,
+    // often single-word names (Input.vue, Button.vue...) instead of the
+    // vendor's prefixed ones (UInput, UButton...) — see CLAUDE.md.
+    files: ['shared/components/**'],
+    rules: {
+      'vue/multi-word-component-names': 'off',
+    },
+  },
   // Turns off ESLint's stylistic rules so they don't fight Prettier — must
   // stay last so it overrides anything earlier in the array.
   eslintConfigPrettier,
