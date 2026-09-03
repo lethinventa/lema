@@ -1,4 +1,3 @@
-import type { SignInCredentials, SignInResult } from '~/features/auth/types';
 import type { Session, User } from '~/lib/supabase/client';
 import { useSupabase } from '~/lib/supabase/client';
 
@@ -14,11 +13,16 @@ let readyPromise: Promise<void> | null = null;
 export function useAuthUser() {
   const ready = ensureInitialized();
 
-  async function signIn(credentials: SignInCredentials): Promise<SignInResult> {
+  async function signIn(credentials: {
+    email: string;
+    password: string;
+  }): Promise<{ success: boolean; error?: string }> {
     const supabase = useSupabase();
     const { data, error } = await supabase.auth.signInWithPassword(credentials);
 
     if (error) {
+      // UC-AUTH-002: generic on purpose — never reveals whether the email
+      // or the password was wrong.
       return { success: false, error: 'E-mail ou senha inválidos.' };
     }
 
