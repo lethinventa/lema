@@ -43,9 +43,9 @@
 
 <script setup lang="ts">
 import type { FormError, FormSubmitEvent } from '@nuxt/ui';
-import { useAuthUser } from '~/features/auth';
+import { useAuthStore } from '~/features/auth';
 
-const { signIn } = useAuthUser();
+const { signIn } = useAuthStore();
 
 const state = reactive({ email: '', password: '' });
 const errorMessage = ref('');

@@ -1,1 +1,1 @@
-export { useAuthUser } from './composables/useAuthUser';
+export { useAuthStore } from './composables/useAuthStore';

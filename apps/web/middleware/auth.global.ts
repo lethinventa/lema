@@ -1,15 +1,15 @@
-import { useAuthUser } from '~/features/auth';
+import { useAuthStore } from '~/features/auth';
 
 // UC-AUTH-002: everything except /login requires an authenticated session.
 export default defineNuxtRouteMiddleware(async (to) => {
-  const { ready, isAuthenticated } = useAuthUser();
-  await ready;
+  const auth = useAuthStore();
+  await auth.ready;
 
-  if (!isAuthenticated.value && to.path !== '/login') {
+  if (!auth.isAuthenticated && to.path !== '/login') {
     return navigateTo('/login');
   }
 
-  if (isAuthenticated.value && to.path === '/login') {
+  if (auth.isAuthenticated && to.path === '/login') {
     return navigateTo('/');
   }
 });

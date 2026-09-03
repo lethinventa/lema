@@ -6,7 +6,7 @@ export default defineNuxtConfig({
   // Client-rendered SPA — no Nuxt SSR. server/api/* (Nitro) is unaffected,
   // this only controls how pages/ render.
   ssr: false,
-  modules: ['@nuxt/ui', '@nuxt/eslint'],
+  modules: ['@nuxt/ui', '@nuxt/eslint', '@pinia/nuxt'],
   css: ['~/assets/css/main.css'],
   compatibilityDate: '2025-07-15',
   devtools: { enabled: true },

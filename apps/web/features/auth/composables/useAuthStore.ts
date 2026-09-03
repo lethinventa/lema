@@ -1,23 +1,27 @@
+import { defineStore } from 'pinia';
 import type { Session, User } from '~/lib/supabase/client';
 import { useSupabase } from '~/lib/supabase/client';
-
-const currentUser = ref<User | null>(null);
-
-// Memoized as a promise so route middleware can await the initial check
-// instead of redirecting before it resolves.
-let readyPromise: Promise<void> | null = null;
 
 /**
  * Reactive current session (UC-AUTH-002), shared across the app.
  */
-export function useAuthUser() {
-  const ready = ensureInitialized();
+export const useAuthStore = defineStore('auth', () => {
+  const user = ref<User | null>(null);
+  const isAuthenticated = computed(() => user.value !== null);
+
+  // Hydrates the session persisted by supabase-js (localStorage) and keeps
+  // `user` in sync afterwards. Runs once for the whole app — Pinia only
+  // calls this setup function the first time useAuthStore() is invoked.
+  const supabase = useSupabase();
+  const ready = supabase.auth
+    .getSession()
+    .then(({ data }) => syncSession(data.session));
+  supabase.auth.onAuthStateChange((_event, session) => syncSession(session));
 
   async function signIn(credentials: {
     email: string;
     password: string;
   }): Promise<{ success: boolean; error?: string }> {
-    const supabase = useSupabase();
     const { data, error } = await supabase.auth.signInWithPassword(credentials);
 
     if (error) {
@@ -30,27 +34,9 @@ export function useAuthUser() {
     return { success: true };
   }
 
-  return {
-    ready,
-    user: computed(() => currentUser.value),
-    isAuthenticated: computed(() => currentUser.value !== null),
-    signIn,
-  };
-}
-
-// Runs once for the whole app: hydrates the session persisted by
-// supabase-js (localStorage) and keeps currentUser in sync afterwards.
-function ensureInitialized(): Promise<void> {
-  if (!readyPromise) {
-    const supabase = useSupabase();
-    readyPromise = supabase.auth.getSession().then(({ data }) => {
-      syncSession(data.session);
-    });
-    supabase.auth.onAuthStateChange((_event, session) => syncSession(session));
+  function syncSession(session: Session | null) {
+    user.value = session?.user ?? null;
   }
-  return readyPromise;
-}
 
-function syncSession(session: Session | null) {
-  currentUser.value = session?.user ?? null;
-}
+  return { ready, user, isAuthenticated, signIn };
+});
