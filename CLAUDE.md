@@ -25,6 +25,7 @@ Antes de implementar qualquer fluxo ou tela, consulte os UCs, PDs e journeys rel
 - **Código sempre 100% em inglês** — identificadores, nomes de arquivo, comentários, mensagens de commit de código. Isso vale tanto pro protótipo quanto pro app real; a documentação em `docs/` e este arquivo continuam em português.
 - **Mensagens de commit seguem Conventional Commits** (`tipo(escopo opcional): descrição`, ex.: `feat(auth): add user profile table`).
 - **Nunca adicionar footer `Co-Authored-By` nos commits.**
+- **Priorizar a stepdown rule** (Clean Code, Robert C. Martin) na organização de funções dentro de um arquivo: a função de nível de abstração mais alto vem primeiro, seguida pelas funções de nível imediatamente mais baixo que ela chama, e assim por diante — o arquivo deve poder ser lido de cima para baixo como uma narrativa, descendo um nível de abstração por vez, em vez de exigir pular entre helpers definidos antes de quem os usa.
 
 ## Estado atual do repositório
 
