@@ -1,5 +1,6 @@
 import { CalendarDays, Grid3x3, List, Plus, Repeat, Trash2 } from 'lucide-react'
 import { useState } from 'react'
+import { useSearchParams } from 'react-router-dom'
 import { ContextFilterChips, type ContextFilterValue, matchesContext } from '../components/ContextFilterChips'
 import { FlagChip } from '../components/FlagChip'
 import { HomeLayout } from '../components/HomeLayout'
@@ -48,13 +49,18 @@ function toEditInput(values: EventSheetValues): EventEditInput {
 type SheetState = { mode: 'create'; defaultDate: string } | { mode: 'edit'; occurrence: EventOccurrence } | null
 
 export function CalendarScreen() {
+  const [searchParams] = useSearchParams()
   const [filter, setFilter] = useState<ContextFilterValue>('all')
   const [view, setView] = useState<ViewMode>('agenda')
   const [anchorDate, setAnchorDate] = useState(TODAY_ISO)
   const [selectedDate, setSelectedDate] = useState(TODAY_ISO)
   const [events, setEvents] = useState<MockEvent[]>(initialEvents)
   const [tasks, setTasks] = useState<MockTask[]>(initialTasks)
-  const [sheet, setSheet] = useState<SheetState>(null)
+  // Atalho rápido da Home ("Novo compromisso") entra aqui via ?novo=1, pra
+  // abrir o sheet de criação já na chegada em vez de exigir um segundo toque.
+  const [sheet, setSheet] = useState<SheetState>(
+    searchParams.get('novo') ? { mode: 'create', defaultDate: TODAY_ISO } : null,
+  )
   const [showTrash, setShowTrash] = useState(false)
 
   const activeEvents = events.filter((e) => !e.deletedAt)

@@ -1,5 +1,6 @@
 import { CheckCircle2, Plus, Target, Trash2, TriangleAlert } from 'lucide-react'
 import { useState } from 'react'
+import { useSearchParams } from 'react-router-dom'
 import { initialCategories } from '../categories/categoriesMockData'
 import { ContextFilterChips, type ContextFilterValue, matchesContext } from '../components/ContextFilterChips'
 import { HomeLayout } from '../components/HomeLayout'
@@ -85,12 +86,15 @@ function GoalCard({
 }
 
 export function GoalsScreen() {
+  const [searchParams] = useSearchParams()
   const [filter, setFilter] = useState<ContextFilterValue>('all')
   const [goals, setGoals] = useState(initialGoals)
   const [allocations, setAllocations] = useState<MockGoalAllocation[]>(initialGoalAllocations)
   const [transactions, setTransactions] = useState<MockTransaction[]>(initialTransactions)
   const [categories, setCategories] = useState<string[]>(initialCategories)
-  const [stack, setStack] = useState<SheetEntry[]>([])
+  // Atalho rápido da Home ("Novo objetivo") entra aqui via ?novo=1, pra
+  // abrir o sheet de criação já na chegada em vez de exigir um segundo toque.
+  const [stack, setStack] = useState<SheetEntry[]>(searchParams.get('novo') ? [{ kind: 'goal', mode: 'create' }] : [])
   const [showTrash, setShowTrash] = useState(false)
 
   function handleAddCategory(category: string) {

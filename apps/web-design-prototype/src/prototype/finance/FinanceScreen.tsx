@@ -1,6 +1,6 @@
 import { ChevronLeft, ChevronRight, Landmark, PieChart, Plus, Repeat, Target, TrendingUp, Trash2, X } from 'lucide-react'
 import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 import { initialCategories } from '../categories/categoriesMockData'
 import { Avatar } from '../components/Avatar'
 import { CategoryChip } from '../components/CategoryChip'
@@ -74,13 +74,18 @@ function TransactionRow({ tx, onEdit }: { tx: MockTransaction; onEdit: () => voi
 
 export function FinanceScreen() {
   const navigate = useNavigate()
+  const [searchParams] = useSearchParams()
   const [filter, setFilter] = useState<ContextFilterValue>('all')
   const [month, setMonth] = useState(getCurrentMonthIso())
   const [rankingTab, setRankingTab] = useState<TransactionType>('despesa')
   const [transactions, setTransactions] = useState(initialTransactions)
   const [recurrenceRules, setRecurrenceRules] = useState<MockRecurrenceRule[]>(initialRecurrenceRules)
   const [categories, setCategories] = useState<string[]>(initialCategories)
-  const [sheet, setSheet] = useState<{ mode: 'create' } | { mode: 'edit'; txId: string } | null>(null)
+  // Atalho rápido da Home ("Nova transação") entra aqui via ?novo=1, pra
+  // abrir o sheet de criação já na chegada em vez de exigir um segundo toque.
+  const [sheet, setSheet] = useState<{ mode: 'create' } | { mode: 'edit'; txId: string } | null>(
+    searchParams.get('novo') ? { mode: 'create' } : null,
+  )
   const [showTrash, setShowTrash] = useState(false)
 
   function handleAddCategory(category: string) {

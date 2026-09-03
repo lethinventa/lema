@@ -5,6 +5,7 @@ import { ContextFilterChips, type ContextFilterValue, matchesContext } from '../
 import { DomainLabel } from '../components/DomainLabel'
 import { HomeLayout } from '../components/HomeLayout'
 import { getInitials, getPersonColor } from '../components/palette'
+import { type QuickAction, QuickActionsRow } from '../components/QuickActionsRow'
 import { Tile } from '../components/Tile'
 import { VisibilityDot } from '../components/VisibilityDot'
 import { mockCalendar, mockFinance, mockGoals, mockTasks, mockUser } from './homeMockData'
@@ -12,6 +13,13 @@ import { mockCalendar, mockFinance, mockGoals, mockTasks, mockUser } from './hom
 function EmptyRow() {
   return <p className="py-2 text-[13px] text-ink-faint">Nada por aqui hoje.</p>
 }
+
+const QUICK_ACTIONS: QuickAction[] = [
+  { label: 'Nova tarefa', icon: CheckSquare2, tone: 'mint', to: '/home/tarefas/nova' },
+  { label: 'Novo compromisso', icon: CalendarDays, tone: 'sky', to: '/home/calendario?novo=1' },
+  { label: 'Nova transação', icon: Wallet, tone: 'peach', to: '/home/financas?novo=1' },
+  { label: 'Novo objetivo', icon: Target, tone: 'goal', to: '/home/objetivos?novo=1' },
+]
 
 export function HomeScreen() {
   const navigate = useNavigate()
@@ -32,7 +40,9 @@ export function HomeScreen() {
       <div className="px-6 pb-4 pt-8">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-[22px] font-semibold leading-tight text-ink">Bom dia, {mockUser.firstName}</h1>
+            <h1 className="text-[24px] font-extrabold leading-tight tracking-tight text-ink">
+              Bom dia, {mockUser.firstName}
+            </h1>
             <p className="mt-0.5 text-[13px] text-ink-muted">Segunda-feira, 31 de agosto</p>
           </div>
           <button
@@ -44,6 +54,10 @@ export function HomeScreen() {
           >
             {getInitials(mockUser.firstName)}
           </button>
+        </div>
+
+        <div className="mt-5">
+          <QuickActionsRow actions={QUICK_ACTIONS} />
         </div>
 
         <div className="mt-5">
