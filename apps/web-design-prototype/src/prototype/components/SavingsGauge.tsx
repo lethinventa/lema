@@ -27,7 +27,7 @@ export function SavingsGauge({ income, expense }: SavingsGaugeProps) {
           cy={SIZE / 2}
           r={RADIUS}
           fill="none"
-          stroke={isPositive ? 'var(--color-mint-bg)' : 'var(--color-danger)'}
+          stroke={isPositive ? 'var(--color-mint-text)' : 'var(--color-danger)'}
           strokeWidth={STROKE}
           strokeLinecap="round"
           strokeDasharray={`${dash} ${CIRCUMFERENCE - dash}`}

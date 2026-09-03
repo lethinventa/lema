@@ -3,8 +3,11 @@
 @theme {
   --font-sans: "Onest", ui-sans-serif, system-ui, sans-serif;
 
-  /* Brand palette — vivid, high-saturation system (2026-09-03 direction:
-     accent shifted from purple to blue, per design references). */
+  /* Brand palette (2026-09-03 direction: accent shifted from purple to
+     blue; overall system moved from candy/neon toward a calmer, more
+     elegant read — see the status-tint note below). Accent and the goal
+     hero color stay saturated on purpose (CTA/primary and Objetivos'
+     identity color need to carry weight); badges/status do not. */
   --color-bg: #f8f8f8;
   --color-surface: #ffffff;
   --color-surface-muted: #eeeeee;
@@ -23,24 +26,31 @@
   --color-goal: #c2255c;
   --color-goal-soft: #fbe4ec;
 
-  /* Status only (2026-09-XX revision) — mint/peach/sky/sun are reserved for
-     STATE (success/attention/info/highlight). Never reuse for category,
-     person, or structural flags — that confusion is why this revision
-     happened. See prototype/components/palette.ts for category/person color. */
-  --color-mint-bg: #96ff70;
-  --color-mint-fg: #14150f;
-  /* mint-bg is a lime fill made for badges/rings, not for text — too low
-     contrast as text on a light surface. mint-text is the same "success"
-     meaning at legible contrast (e.g. the % on SavingsGauge). */
-  --color-mint-text: #2f9e44;
-  --color-peach-bg: #fe8744;
-  --color-peach-fg: #14150f;
+  /* Status only (2026-09-03 revision: from candy/neon fills to muted-tint +
+     deep-ink pairs — same "pale bg, saturated fg" language the category
+     palette below already used, now shared app-wide for a calmer, more
+     elegant read; a solid neon circle was the single biggest reason the
+     Home quick actions read as childish, not premium). mint/peach/sky/sun
+     are reserved for STATE (success/attention/info/highlight). Never reuse
+     for category, person, or structural flags — that confusion is why the
+     previous revision happened. See prototype/components/palette.ts for
+     category/person color. */
+  --color-mint-bg: #dceee0;
+  --color-mint-fg: #1f7a45;
+  /* mint-bg is a pale fill made for badges, not a stroke/solid-fill color —
+     too low contrast for a ring or checkbox dot. mint-text is the same
+     "success" meaning at full saturation (e.g. the % on SavingsGauge, a
+     filled checkbox). Kept equal to mint-fg on purpose — one green, two
+     uses. */
+  --color-mint-text: #1f7a45;
+  --color-peach-bg: #f6e4d6;
+  --color-peach-fg: #a15a2c;
   --color-lavender-bg: #2e5bff;
   --color-lavender-fg: #ffffff;
-  --color-sky-bg: #7ee8fc;
-  --color-sky-fg: #14150f;
-  --color-sun-bg: #feff61;
-  --color-sun-fg: #14150f;
+  --color-sky-bg: #e0eaf4;
+  --color-sky-fg: #385e85;
+  --color-sun-bg: #f3ecd8;
+  --color-sun-fg: #8a6a20;
 
   /* Category palette — muted, distinct from the vivid status/accent colors on
      purpose, so a category tag never gets mistaken for a status pill. */
