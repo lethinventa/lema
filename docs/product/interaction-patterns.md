@@ -23,8 +23,6 @@ Referência direta: arquitetura do Wise (tab bar fixa por domínio, cada tab com
 
 **Modal centralizado** (não bottom sheet) para confirmações críticas/destrutivas que exigem atenção total e não devem parecer descartáveis por swipe — ex.: excluir conta de usuário, remover membro do grupo.
 
-**Card inline dispensável** (não é overlay — vive dentro do próprio fluxo, com "Entendi"/"Fechar") para dica ou explicação contextual pontual. Referência: cards "Dicas de Uso" do Inter dentro da tela de Pix. É a forma concreta de resolver o que `information-architecture.md` (seção 7) já registrou como decisão: onboarding didático de `PRIVATE`/`SHARED`/`GROUP` via microcopy contextual, sem tela ou modal dedicado. Ex. no Lema: explicar o que significa tornar uma tarefa `GROUP` na primeira vez que a opção aparece no formulário.
-
 ## Regra prática
 
 Se a resposta a "faz sentido essa tela ter sua própria URL/rota e eu poder voltar pra ela depois" for sim, é página cheia. Se a ação termina ali e não deixa rastro navegável, é sheet.
