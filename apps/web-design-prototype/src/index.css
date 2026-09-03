@@ -3,7 +3,8 @@
 @theme {
   --font-sans: "Onest", ui-sans-serif, system-ui, sans-serif;
 
-  /* Brand palette — vivid, high-saturation system (2026-08-31 direction). */
+  /* Brand palette — vivid, high-saturation system (2026-09-03 direction:
+     accent shifted from purple to blue, per design references). */
   --color-bg: #f8f8f8;
   --color-surface: #ffffff;
   --color-surface-muted: #eeeeee;
@@ -12,8 +13,8 @@
   --color-ink-faint: #a0a0a0;
   --color-dark: #000000;
   --color-line: rgba(0, 0, 0, 0.08);
-  --color-accent: #a000ff;
-  --color-accent-soft: #f2e0ff;
+  --color-accent: #2e5bff;
+  --color-accent-soft: #e1e8ff;
   --color-danger: #c1483a;
 
   /* Domain accent — Objetivos gets its own hero/primary-indicator color,
@@ -34,7 +35,7 @@
   --color-mint-text: #2f9e44;
   --color-peach-bg: #fe8744;
   --color-peach-fg: #14150f;
-  --color-lavender-bg: #a000ff;
+  --color-lavender-bg: #2e5bff;
   --color-lavender-fg: #ffffff;
   --color-sky-bg: #7ee8fc;
   --color-sky-fg: #14150f;
@@ -114,7 +115,7 @@
 
   .shadow-hero {
     box-shadow:
-      0 14px 28px -14px rgba(160, 0, 255, 0.45),
+      0 14px 28px -14px rgba(46, 91, 255, 0.45),
       inset 0 1px 0 rgba(255, 255, 255, 0.16);
   }
 

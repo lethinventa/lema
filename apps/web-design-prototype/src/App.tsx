@@ -25,6 +25,7 @@ import { DeleteAccountScreen } from './prototype/profile/DeleteAccountScreen'
 import { ProfileHubScreen } from './prototype/profile/ProfileHubScreen'
 import { SecurityScreen } from './prototype/profile/SecurityScreen'
 import { OnboardingProvider } from './prototype/state/OnboardingContext'
+import { TaskFormScreen } from './prototype/tasks/TaskFormScreen'
 import { TasksScreen } from './prototype/tasks/TasksScreen'
 
 export default function App() {
@@ -45,6 +46,8 @@ export default function App() {
           <Route path="/onboarding/financeiro-pessoal" element={<FinancialSetupScreen />} />
           <Route path="/home" element={<HomeScreen />} />
           <Route path="/home/tarefas" element={<TasksScreen />} />
+          <Route path="/home/tarefas/nova" element={<TaskFormScreen />} />
+          <Route path="/home/tarefas/:taskId/editar" element={<TaskFormScreen />} />
           <Route path="/home/calendario" element={<CalendarScreen />} />
           <Route path="/home/objetivos" element={<GoalsScreen />} />
           <Route path="/home/financas" element={<FinanceScreen />} />

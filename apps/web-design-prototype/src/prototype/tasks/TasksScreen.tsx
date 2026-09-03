@@ -1,5 +1,6 @@
 import { CheckSquare2, Plus, Repeat, Trash2 } from 'lucide-react'
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { Avatar } from '../components/Avatar'
 import { ContextFilterChips, type ContextFilterValue, matchesContext } from '../components/ContextFilterChips'
 import { DomainLabel } from '../components/DomainLabel'
@@ -8,11 +9,10 @@ import { HomeLayout } from '../components/HomeLayout'
 import { Tile } from '../components/Tile'
 import { TrashSheet } from '../components/TrashSheet'
 import { VisibilityDot } from '../components/VisibilityDot'
-import { formatRelativeDayLabel, TODAY_ISO } from '../calendar/dateUtils'
+import { formatRelativeDayLabel } from '../calendar/dateUtils'
 import { resolveMemberNames } from '../groups/groupsMockData'
 import { mockGroups } from '../home/homeMockData'
 import { initialTasks, type MockTask } from './tasksMockData'
-import { TaskSheet, type TaskSheetValues } from './TaskSheet'
 
 function TaskRow({ task, onToggle, onEdit }: { task: MockTask; onToggle: () => void; onEdit: () => void }) {
   const assigneeNames = resolveMemberNames(task.groupId, task.assigneeIds)
@@ -56,56 +56,13 @@ function TaskRow({ task, onToggle, onEdit }: { task: MockTask; onToggle: () => v
 }
 
 export function TasksScreen() {
+  const navigate = useNavigate()
   const [filter, setFilter] = useState<ContextFilterValue>('all')
   const [tasks, setTasks] = useState(initialTasks)
-  const [sheet, setSheet] = useState<{ mode: 'create' } | { mode: 'edit'; taskId: string } | null>(null)
   const [showTrash, setShowTrash] = useState(false)
 
   function toggleTask(id: string) {
     setTasks((prev) => prev.map((task) => (task.id === id ? { ...task, done: !task.done } : task)))
-  }
-
-  function handleCreate(values: TaskSheetValues) {
-    setTasks((prev) => [
-      {
-        id: `tk-${Date.now()}`,
-        title: values.title,
-        context: values.context,
-        groupId: values.groupId,
-        done: false,
-        dueDate: values.dueDate || undefined,
-        assigneeIds: values.assigneeIds.length ? values.assigneeIds : undefined,
-        about: values.about || undefined,
-      },
-      ...prev,
-    ])
-    setSheet(null)
-  }
-
-  function handleEditSave(values: TaskSheetValues) {
-    if (sheet?.mode !== 'edit') return
-    setTasks((prev) =>
-      prev.map((task) =>
-        task.id === sheet.taskId
-          ? {
-              ...task,
-              title: values.title,
-              context: values.context,
-              groupId: values.groupId,
-              dueDate: values.dueDate || undefined,
-              assigneeIds: values.assigneeIds.length ? values.assigneeIds : undefined,
-              about: values.about || undefined,
-            }
-          : task,
-      ),
-    )
-    setSheet(null)
-  }
-
-  function handleDelete() {
-    if (sheet?.mode !== 'edit') return
-    setTasks((prev) => prev.map((task) => (task.id === sheet.taskId ? { ...task, deletedAt: TODAY_ISO } : task)))
-    setSheet(null)
   }
 
   function handleRestore(id: string) {
@@ -121,7 +78,6 @@ export function TasksScreen() {
   const visible = active.filter((t) => matchesContext(filter, t))
   const pending = visible.filter((t) => !t.done)
   const completed = visible.filter((t) => t.done)
-  const editingTask = sheet?.mode === 'edit' ? tasks.find((t) => t.id === sheet.taskId) : undefined
 
   return (
     <HomeLayout>
@@ -147,7 +103,7 @@ export function TasksScreen() {
             </button>
             <button
               type="button"
-              onClick={() => setSheet({ mode: 'create' })}
+              onClick={() => navigate('/home/tarefas/nova')}
               className="flex h-10 w-10 items-center justify-center rounded-pill bg-accent text-white transition active:scale-90"
               aria-label="Nova tarefa"
             >
@@ -174,7 +130,7 @@ export function TasksScreen() {
                     key={task.id}
                     task={task}
                     onToggle={() => toggleTask(task.id)}
-                    onEdit={() => setSheet({ mode: 'edit', taskId: task.id })}
+                    onEdit={() => navigate(`/home/tarefas/${task.id}/editar`)}
                   />
                 ))}
               </div>
@@ -192,7 +148,7 @@ export function TasksScreen() {
                     key={task.id}
                     task={task}
                     onToggle={() => toggleTask(task.id)}
-                    onEdit={() => setSheet({ mode: 'edit', taskId: task.id })}
+                    onEdit={() => navigate(`/home/tarefas/${task.id}/editar`)}
                   />
                 ))}
               </div>
@@ -200,27 +156,6 @@ export function TasksScreen() {
           ) : null}
         </div>
       </div>
-
-      {sheet?.mode === 'create' ? (
-        <TaskSheet mode="create" onSave={handleCreate} onClose={() => setSheet(null)} />
-      ) : null}
-
-      {sheet?.mode === 'edit' && editingTask ? (
-        <TaskSheet
-          mode="edit"
-          initial={{
-            title: editingTask.title,
-            context: editingTask.context === 'group' ? 'group' : 'personal',
-            groupId: editingTask.groupId,
-            dueDate: editingTask.dueDate ?? '',
-            assigneeIds: editingTask.assigneeIds ?? [],
-            about: editingTask.about ?? '',
-          }}
-          onSave={handleEditSave}
-          onDelete={handleDelete}
-          onClose={() => setSheet(null)}
-        />
-      ) : null}
 
       {showTrash ? (
         <TrashSheet
