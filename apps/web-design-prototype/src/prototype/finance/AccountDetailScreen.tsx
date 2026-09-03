@@ -68,7 +68,7 @@ export function AccountDetailScreen() {
       />
 
       <div className="px-6 pb-4 pt-5">
-        <div className="shadow-hero rounded-lg bg-gradient-to-br from-accent to-[#1638b3] px-5 py-6 text-white">
+        <div className="shadow-hero rounded-[var(--radius-card)] bg-gradient-to-br from-accent to-[#1638b3] px-5 py-6 text-white">
           <div className="flex items-start justify-between gap-4">
             <div>
               <span className="text-[12px] font-semibold uppercase tracking-wide text-white/70">Saldo atual</span>

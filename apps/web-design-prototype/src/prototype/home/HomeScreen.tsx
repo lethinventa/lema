@@ -90,7 +90,7 @@ export function HomeScreen() {
             visibleGoals.map((goal) => (
               <div
                 key={goal.id}
-                className="shadow-hero-goal relative overflow-hidden rounded-lg bg-gradient-to-br from-goal to-[#8a1c47] px-5 py-6 text-white"
+                className="shadow-hero-goal relative overflow-hidden rounded-[var(--radius-card)] bg-gradient-to-br from-goal to-[#8a1c47] px-5 py-6 text-white"
               >
                 <span className="tabular absolute right-5 top-5 rounded-sm bg-mint-bg px-2 py-1 text-[12px] font-extrabold text-mint-fg">
                   {goal.progress}%

@@ -126,7 +126,7 @@ export function AccountsScreen() {
         <ContextFilterChips value={filter} onChange={setFilter} />
 
         <div className="mt-6 grid grid-cols-2 gap-3">
-          <div className="shadow-hero col-span-2 rounded-lg bg-gradient-to-br from-accent to-[#1638b3] px-5 py-6 text-white">
+          <div className="shadow-hero col-span-2 rounded-[var(--radius-card)] bg-gradient-to-br from-accent to-[#1638b3] px-5 py-6 text-white">
             <span className="flex items-center gap-1.5 text-[12px] font-semibold uppercase tracking-wide text-white/70">
               <Landmark size={13} strokeWidth={2.4} />
               Total em contas

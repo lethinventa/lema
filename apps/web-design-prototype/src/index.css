@@ -8,7 +8,7 @@
      elegant read — see the status-tint note below). Accent and the goal
      hero color stay saturated on purpose (CTA/primary and Objetivos'
      identity color need to carry weight); badges/status do not. */
-  --color-bg: #f8f8f8;
+  --color-bg: #eef0f4;
   --color-surface: #ffffff;
   --color-surface-muted: #eeeeee;
   --color-ink: #14150f;
@@ -81,13 +81,18 @@
   --color-person-5: #a83a68;
   --color-person-6: #5b7a3a;
 
-  /* Single consistent control radius (14–16px) per design direction — avoid a large
-     hierarchy of radii and avoid pill shapes on buttons/cards/chips. --radius-pill is
-     kept only for genuinely circular elements (avatars) and the hairline progress track. */
+  /* 2026-09-03: reversed the old "one consistent radius" rule on purpose —
+     Lethicia asked for a from-scratch Inter-like read, and a flat single
+     radius was part of why every surface still looked the same regardless
+     of what it was. Now two tiers: controls (buttons/chips/small badges)
+     stay tight; big surface cards (Tile, hero blocks) get a visibly
+     rounder --radius-card. --radius-pill stays for circular elements
+     (avatars, quick-action circles) and the hairline progress track. */
   --radius-sm: 14px;
   --radius-md: 16px;
   --radius-lg: 16px;
   --radius-xl: 16px;
+  --radius-card: 26px;
   --radius-pill: 999px;
 }
 
@@ -118,9 +123,15 @@
 
 @layer components {
   /* Tinted shadows — never pure gray/black. .shadow-card sits under ordinary
-     surfaces; .shadow-hero sits under accent-colored hero blocks. */
+     surfaces; .shadow-hero sits under accent-colored hero blocks.
+     2026-09-03: deepened + doubled up (was a single 6px/0.16 wash that read
+     as "thin border with extra steps" against the old near-white page bg —
+     the page bg is darker now too, but the card needs to visibly lift off
+     it on its own, not rely on a hairline border to read as a surface). */
   .shadow-card {
-    box-shadow: 0 6px 16px -10px rgba(20, 21, 15, 0.16);
+    box-shadow:
+      0 16px 32px -16px rgba(20, 21, 15, 0.22),
+      0 4px 10px -4px rgba(20, 21, 15, 0.10);
   }
 
   .shadow-hero {
