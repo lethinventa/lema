@@ -23,6 +23,8 @@ Referência direta: arquitetura do Wise (tab bar fixa por domínio, cada tab com
 
 **Modal centralizado** (não bottom sheet) para confirmações críticas/destrutivas que exigem atenção total e não devem parecer descartáveis por swipe — ex.: excluir conta de usuário, remover membro do grupo.
 
+**Card inline dispensável** (não é overlay — vive dentro do próprio fluxo, com "Entendi"/"Fechar") para dica ou explicação contextual pontual. Referência: cards "Dicas de Uso" do Inter dentro da tela de Pix. É a forma concreta de resolver o que `information-architecture.md` (seção 7) já registrou como decisão: onboarding didático de `PRIVATE`/`SHARED`/`GROUP` via microcopy contextual, sem tela ou modal dedicado. Ex. no Lema: explicar o que significa tornar uma tarefa `GROUP` na primeira vez que a opção aparece no formulário.
+
 ## Regra prática
 
 Se a resposta a "faz sentido essa tela ter sua própria URL/rota e eu poder voltar pra ela depois" for sim, é página cheia. Se a ação termina ali e não deixa rastro navegável, é sheet.
@@ -39,6 +41,12 @@ Se a resposta a "faz sentido essa tela ter sua própria URL/rota e eu poder volt
 | Selecionar contexto (Tudo/Pessoal/Grupo/Compartilhado) | Bottom sheet |
 | Confirmar exclusão de tarefa/compromisso (recuperável via lixeira) | Bottom sheet |
 | Excluir conta de usuário, remover membro do grupo | Modal centralizado |
+
+## Referência futura (V2, não MVP): hub de catálogo
+
+O Inter usa uma tab fixa ("Todos") dedicada a listar produtos/atalhos agrupados por categoria (Acesso rápido, Economia e comodidade, Explorar produtos), cada linha abrindo uma página cheia — um padrão de "super app" pra quando o número de domínios não cabe mais numa tab bar de 5 itens.
+
+Não se aplica ao MVP do Lema: `information-architecture.md` já fixa 5 áreas na navegação primária (Home, Tarefas, Calendário, Objetivos, Finanças), com Grupos/Config atrás de acesso secundário — isso é suficiente pro escopo atual. Mas o roadmap prevê crescimento em V2 (Alimentação, Central do Lar, WhatsApp), e quando isso acontecer, esconder tudo atrás do avatar deixa de escalar. Registrado aqui para não ser redescoberto do zero — decisão de adotar ou não fica para quando o V2 for planejado.
 
 ## Questões em aberto
 
