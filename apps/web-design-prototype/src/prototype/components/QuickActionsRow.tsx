@@ -7,20 +7,17 @@ export interface QuickAction {
   to: string
 }
 
-// Fileira de atalhos em círculo (referência: bloco Pix/Pagar/Cartões do
-// Inter) — cada atalho já leva direto ao ponto de criação daquele domínio,
-// não só à área. Layout fixo (justify-between, sem scroll horizontal): a
-// referência não rola, preenche a largura do card; usar 4-5 itens no máximo.
-// Círculo neutro de propósito (não um por domínio) — a versão colorida por
-// tom foi rejeitada explicitamente ("não quero mais esses coloridos"); o
-// próprio Inter usa esse atalho em cinza/preto, não arco-íris.
-// Único lugar do design system onde um controle usa --radius-pill fora de
-// avatar/track (ver nota em index.css); decisão deliberada pra esse padrão.
+// Grid de atalhos em tile quadrado (referência explícita da Lethicia: bloco
+// Missões/Cashback na conta/Comprar pontos do Inter, não o círculo do
+// Pix/Pagar/Cartões — testamos círculo antes e ela preferiu este). Cada
+// atalho já leva direto ao ponto de criação daquele domínio, não só à área.
+// Neutro de propósito, não um tom por domínio ("não quero mais esses
+// coloridos").
 export function QuickActionsRow({ actions }: { actions: QuickAction[] }) {
   const navigate = useNavigate()
 
   return (
-    <div className="flex justify-between gap-2">
+    <div className="flex gap-2">
       {actions.map((action) => {
         const Icon = action.icon
         return (
@@ -28,11 +25,9 @@ export function QuickActionsRow({ actions }: { actions: QuickAction[] }) {
             key={action.label}
             type="button"
             onClick={() => navigate(action.to)}
-            className="flex w-20 shrink-0 flex-col items-center gap-1.5 transition active:scale-95"
+            className="flex flex-1 flex-col items-center gap-1.5 rounded-2xl bg-surface-muted px-2 py-3 transition active:scale-95"
           >
-            <span className="flex h-14 w-14 items-center justify-center rounded-pill bg-surface-muted text-ink">
-              <Icon size={22} strokeWidth={2.2} />
-            </span>
+            <Icon size={20} strokeWidth={2.2} className="text-ink" />
             <span className="w-full text-balance break-words text-center text-[11px] font-bold leading-tight text-ink">
               {action.label}
             </span>

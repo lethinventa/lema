@@ -10,7 +10,7 @@ export function SectionHeader({ title, to }: { title: string; to?: string }) {
   const navigate = useNavigate()
   return (
     <div className="mb-2 flex items-center justify-between">
-      <h2 className="text-[16px] font-extrabold tracking-tight text-ink">{title}</h2>
+      <h2 className="text-[18px] font-extrabold tracking-tight text-ink">{title}</h2>
       {to ? (
         <button
           type="button"

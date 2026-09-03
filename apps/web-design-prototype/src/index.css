@@ -122,14 +122,14 @@
 @layer components {
   /* Tinted shadows — never pure gray/black. .shadow-card sits under ordinary
      surfaces; .shadow-hero sits under accent-colored hero blocks.
-     2026-09-03: deepened + doubled up (was a single 6px/0.16 wash that read
-     as "thin border with extra steps" against the old near-white page bg —
-     the page bg is darker now too, but the card needs to visibly lift off
-     it on its own, not rely on a hairline border to read as a surface). */
+     2026-09-03, third pass: the "deepened" version above overshot — a big
+     dramatic shadow reads as cheap/skeuomorphic, not premium (see
+     mobile-frontend-visual-craft: "avoid heavy shadows", whitespace +
+     surface contrast should do most of the separation work, shadow only a
+     soft assist). Page bg contrast (--color-bg vs --color-surface) plus a
+     quiet shadow is the combination that actually reads as refined. */
   .shadow-card {
-    box-shadow:
-      0 16px 32px -16px rgba(20, 21, 15, 0.22),
-      0 4px 10px -4px rgba(20, 21, 15, 0.10);
+    box-shadow: 0 8px 20px -4px rgba(20, 21, 15, 0.06);
   }
 
   .shadow-hero {

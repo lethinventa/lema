@@ -54,7 +54,7 @@ export function HomeScreen() {
       <div className="px-6 pb-4 pt-8">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-[24px] font-extrabold leading-tight tracking-tight text-ink">
+            <h1 className="text-[28px] font-extrabold leading-tight tracking-tight text-ink">
               Bom dia, {mockUser.firstName}
             </h1>
             <p className="mt-0.5 text-[13px] text-ink-muted">Segunda-feira, 31 de agosto</p>
