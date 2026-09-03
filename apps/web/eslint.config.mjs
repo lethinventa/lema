@@ -84,11 +84,11 @@ export default withNuxt(
     },
   },
   {
-    // Outside lib/: no climbing relative imports, only a feature's public
-    // API may be imported, and vendor SDKs (Supabase, Drizzle) must not be
-    // imported directly.
+    // Outside lib/ and features/: no climbing relative imports, only a
+    // feature's public API may be imported, and vendor SDKs (Supabase,
+    // Drizzle) must not be imported directly.
     files: ALL_FILES,
-    ignores: ['lib/**'],
+    ignores: ['lib/**', 'features/**'],
     rules: {
       'no-restricted-imports': [
         'error',
@@ -96,6 +96,22 @@ export default withNuxt(
           patterns: [noRelativeParentImportPattern, featureIndexOnlyPattern],
           paths: vendorSdkPaths,
         },
+      ],
+    },
+  },
+  {
+    // Inside a feature: featureIndexOnlyPattern is deliberately dropped.
+    // It's a textual match on `**/features/*/**`, so it can't tell "another
+    // file inside this same feature" apart from "code outside the feature
+    // reaching into its internals" — cross-feature isolation is already
+    // fully enforced by import-x/no-restricted-paths above (resolved-path
+    // based, so it knows which feature is which). Without this override, a
+    // composable couldn't import a sibling types.ts one directory up.
+    files: ['features/**'],
+    rules: {
+      'no-restricted-imports': [
+        'error',
+        { patterns: [noRelativeParentImportPattern], paths: vendorSdkPaths },
       ],
     },
   },
