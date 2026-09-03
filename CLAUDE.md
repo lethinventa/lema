@@ -23,6 +23,8 @@ Antes de implementar qualquer fluxo ou tela, consulte os UCs, PDs e journeys rel
 ## Convenções
 
 - **Código sempre 100% em inglês** — identificadores, nomes de arquivo, comentários, mensagens de commit de código. Isso vale tanto pro protótipo quanto pro app real; a documentação em `docs/` e este arquivo continuam em português.
+- **Mensagens de commit seguem Conventional Commits** (`tipo(escopo opcional): descrição`, ex.: `feat(auth): add user profile table`).
+- **Nunca adicionar footer `Co-Authored-By` nos commits.**
 
 ## Estado atual do repositório
 
