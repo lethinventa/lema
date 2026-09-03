@@ -1,19 +1,9 @@
 import type { LucideIcon } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 
-export type QuickActionTone = 'mint' | 'sky' | 'peach' | 'goal'
-
-const TONE_STYLES: Record<QuickActionTone, string> = {
-  mint: 'bg-mint-bg text-mint-fg',
-  sky: 'bg-sky-bg text-sky-fg',
-  peach: 'bg-peach-bg text-peach-fg',
-  goal: 'bg-goal-soft text-goal',
-}
-
 export interface QuickAction {
   label: string
   icon: LucideIcon
-  tone: QuickActionTone
   to: string
 }
 
@@ -21,6 +11,9 @@ export interface QuickAction {
 // Inter) — cada atalho já leva direto ao ponto de criação daquele domínio,
 // não só à área. Layout fixo (justify-between, sem scroll horizontal): a
 // referência não rola, preenche a largura do card; usar 4-5 itens no máximo.
+// Círculo neutro de propósito (não um por domínio) — a versão colorida por
+// tom foi rejeitada explicitamente ("não quero mais esses coloridos"); o
+// próprio Inter usa esse atalho em cinza/preto, não arco-íris.
 // Único lugar do design system onde um controle usa --radius-pill fora de
 // avatar/track (ver nota em index.css); decisão deliberada pra esse padrão.
 export function QuickActionsRow({ actions }: { actions: QuickAction[] }) {
@@ -37,7 +30,7 @@ export function QuickActionsRow({ actions }: { actions: QuickAction[] }) {
             onClick={() => navigate(action.to)}
             className="flex w-20 shrink-0 flex-col items-center gap-1.5 transition active:scale-95"
           >
-            <span className={`flex h-14 w-14 items-center justify-center rounded-pill ${TONE_STYLES[action.tone]}`}>
+            <span className="flex h-14 w-14 items-center justify-center rounded-pill bg-surface-muted text-ink">
               <Icon size={22} strokeWidth={2.2} />
             </span>
             <span className="w-full text-balance break-words text-center text-[11px] font-bold leading-tight text-ink">

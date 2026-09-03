@@ -18,10 +18,10 @@ function EmptyRow() {
 // Inter) — em vez de "Nova tarefa"/"Novo compromisso", evita quebra de
 // linha desalinhada entre colunas na largura de 64px do círculo.
 const QUICK_ACTIONS: QuickAction[] = [
-  { label: 'Tarefa', icon: CheckSquare2, tone: 'mint', to: '/home/tarefas/nova' },
-  { label: 'Agenda', icon: CalendarDays, tone: 'sky', to: '/home/calendario?novo=1' },
-  { label: 'Transação', icon: Wallet, tone: 'peach', to: '/home/financas?novo=1' },
-  { label: 'Objetivo', icon: Target, tone: 'goal', to: '/home/objetivos?novo=1' },
+  { label: 'Tarefa', icon: CheckSquare2, to: '/home/tarefas/nova' },
+  { label: 'Agenda', icon: CalendarDays, to: '/home/calendario?novo=1' },
+  { label: 'Transação', icon: Wallet, to: '/home/financas?novo=1' },
+  { label: 'Objetivo', icon: Target, to: '/home/objetivos?novo=1' },
 ]
 
 export function HomeScreen() {

@@ -26,31 +26,29 @@
   --color-goal: #c2255c;
   --color-goal-soft: #fbe4ec;
 
-  /* Status only (2026-09-03 revision: from candy/neon fills to muted-tint +
-     deep-ink pairs — same "pale bg, saturated fg" language the category
-     palette below already used, now shared app-wide for a calmer, more
-     elegant read; a solid neon circle was the single biggest reason the
-     Home quick actions read as childish, not premium). mint/peach/sky/sun
-     are reserved for STATE (success/attention/info/highlight). Never reuse
-     for category, person, or structural flags — that confusion is why the
-     previous revision happened. See prototype/components/palette.ts for
-     category/person color. */
-  --color-mint-bg: #dceee0;
-  --color-mint-fg: #1f7a45;
-  /* mint-bg is a pale fill made for badges, not a stroke/solid-fill color —
-     too low contrast for a ring or checkbox dot. mint-text is the same
-     "success" meaning at full saturation (e.g. the % on SavingsGauge, a
-     filled checkbox). Kept equal to mint-fg on purpose — one green, two
-     uses. */
+  /* Status (2026-09-03, second revision same day: Lethicia rejected the
+     muted-tint version too — "não quero mais esses coloridos". mint/peach/
+     sky/sun collapse into one neutral gray pair, same as FlagChip's
+     already-neutral style below. Kept as four named tokens (not deleted)
+     so call sites don't need touching and a future badge can reintroduce
+     color deliberately, in one place, if a real need shows up — today
+     there isn't one. mint-text is the one survivor: a genuine functional
+     signal (income figures, success confirmations), not a decorative
+     badge, so it stays a real green. See prototype/components/palette.ts
+     for category/person color, which stays color-differentiated on
+     purpose (category identity is the one place color still carries
+     meaning here). */
+  --color-mint-bg: var(--color-surface-muted);
+  --color-mint-fg: var(--color-ink-muted);
   --color-mint-text: #1f7a45;
-  --color-peach-bg: #f6e4d6;
-  --color-peach-fg: #a15a2c;
+  --color-peach-bg: var(--color-surface-muted);
+  --color-peach-fg: var(--color-ink-muted);
   --color-lavender-bg: #2e5bff;
   --color-lavender-fg: #ffffff;
-  --color-sky-bg: #e0eaf4;
-  --color-sky-fg: #385e85;
-  --color-sun-bg: #f3ecd8;
-  --color-sun-fg: #8a6a20;
+  --color-sky-bg: var(--color-surface-muted);
+  --color-sky-fg: var(--color-ink-muted);
+  --color-sun-bg: var(--color-surface-muted);
+  --color-sun-fg: var(--color-ink-muted);
 
   /* Category palette — muted, distinct from the vivid status/accent colors on
      purpose, so a category tag never gets mistaken for a status pill. */
