@@ -21,14 +21,12 @@ import {
 
 function MemberRow({
   member,
-  isOwner,
   canManage,
   onPromote,
   onDemote,
   onRemove,
 }: {
   member: GroupMember
-  isOwner: boolean
   canManage: boolean
   onPromote: () => void
   onDemote: () => void
@@ -158,7 +156,6 @@ export function MembersScreen() {
               <MemberRow
                 key={member.id}
                 member={member}
-                isOwner={member.role === 'OWNER'}
                 canManage={canManage}
                 onPromote={() => handlePromote(member.id)}
                 onDemote={() => handleDemote(member.id)}
