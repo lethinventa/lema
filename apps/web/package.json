@@ -12,8 +12,7 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "typecheck": "nuxt typecheck",
-    "db:generate": "drizzle-kit generate",
-    "db:migrate": "drizzle-kit migrate",
+    "db:push": "drizzle-kit push",
     "db:studio": "drizzle-kit studio",
     "test": "vitest run",
     "test:watch": "vitest",
@@ -24,12 +23,17 @@
   },
   "dependencies": {
     "@nuxt/ui": "4.11.0",
+    "@pinia/nuxt": "^1.0.2",
     "@supabase/supabase-js": "^2.112.4",
+    "@vee-validate/yup": "^4.15.1",
     "drizzle-orm": "^0.45.2",
     "nuxt": "^4.5.2",
+    "pinia": "^4.0.3",
     "postgres": "^3.4.9",
+    "vee-validate": "^4.15.1",
     "vue": "^3.5.42",
-    "vue-router": "^5.3.0"
+    "vue-router": "^5.3.0",
+    "yup": "^1.7.1"
   },
   "devDependencies": {
     "@nuxt/eslint": "^1.17.0",

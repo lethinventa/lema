@@ -84,11 +84,11 @@ export default withNuxt(
     },
   },
   {
-    // Outside lib/: no climbing relative imports, only a feature's public
-    // API may be imported, and vendor SDKs (Supabase, Drizzle) must not be
-    // imported directly.
+    // Outside lib/ and features/: no climbing relative imports, only a
+    // feature's public API may be imported, and vendor SDKs (Supabase,
+    // Drizzle) must not be imported directly.
     files: ALL_FILES,
-    ignores: ['lib/**'],
+    ignores: ['lib/**', 'features/**'],
     rules: {
       'no-restricted-imports': [
         'error',
@@ -96,6 +96,22 @@ export default withNuxt(
           patterns: [noRelativeParentImportPattern, featureIndexOnlyPattern],
           paths: vendorSdkPaths,
         },
+      ],
+    },
+  },
+  {
+    // Inside a feature: featureIndexOnlyPattern is deliberately dropped.
+    // It's a textual match on `**/features/*/**`, so it can't tell "another
+    // file inside this same feature" apart from "code outside the feature
+    // reaching into its internals" — cross-feature isolation is already
+    // fully enforced by import-x/no-restricted-paths above (resolved-path
+    // based, so it knows which feature is which). Without this override, a
+    // composable couldn't import a sibling types.ts one directory up.
+    files: ['features/**'],
+    rules: {
+      'no-restricted-imports': [
+        'error',
+        { patterns: [noRelativeParentImportPattern], paths: vendorSdkPaths },
       ],
     },
   },
@@ -108,6 +124,35 @@ export default withNuxt(
         'error',
         { patterns: [noRelativeParentImportPattern, featureIndexOnlyPattern] },
       ],
+    },
+  },
+  {
+    // Nuxt UI components (auto-imported, so no-restricted-imports can't see
+    // them — there's no import statement) must go through shared/components
+    // instead of being used directly in a feature or page, mitigating
+    // vendor lock-in the same way lib/ does for SDKs. app.vue is exempt: its
+    // single <UApp> call is the Nuxt UI app-level provider (toaster, color
+    // mode, etc.), not a swappable base component like a button or input.
+    files: ['**/*.vue'],
+    ignores: ['shared/components/**', 'app.vue'],
+    rules: {
+      'vue/no-restricted-syntax': [
+        'error',
+        {
+          selector: 'VElement[rawName=/^U[A-Z]/]',
+          message:
+            'Import base UI components from shared/components instead of Nuxt UI directly.',
+        },
+      ],
+    },
+  },
+  {
+    // Wrapper components in shared/components deliberately use generic,
+    // often single-word names (Input.vue, Button.vue...) instead of the
+    // vendor's prefixed ones (UInput, UButton...) — see CLAUDE.md.
+    files: ['shared/components/**'],
+    rules: {
+      'vue/multi-word-component-names': 'off',
     },
   },
   // Turns off ESLint's stylistic rules so they don't fight Prettier — must

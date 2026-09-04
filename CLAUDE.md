@@ -23,6 +23,13 @@ Antes de implementar qualquer fluxo ou tela, consulte os UCs, PDs e journeys rel
 ## Convenções
 
 - **Código sempre 100% em inglês** — identificadores, nomes de arquivo, comentários, mensagens de commit de código. Isso vale tanto pro protótipo quanto pro app real; a documentação em `docs/` e este arquivo continuam em português.
+- **Mensagens de commit seguem Conventional Commits** (`tipo(escopo opcional): descrição`, ex.: `feat(auth): add user profile table`).
+- **Nunca adicionar footer `Co-Authored-By` nos commits.**
+- **Priorizar a stepdown rule** (Clean Code, Robert C. Martin) na organização de funções dentro de um arquivo: a função de nível de abstração mais alto vem primeiro, seguida pelas funções de nível imediatamente mais baixo que ela chama, e assim por diante — o arquivo deve poder ser lido de cima para baixo como uma narrativa, descendo um nível de abstração por vez, em vez de exigir pular entre helpers definidos antes de quem os usa.
+- **Só extrair uma `interface`/`type` para um arquivo `types.ts`** (ou qualquer lugar importável) **quando ele já for, ou muito provavelmente for, referenciado por mais de um lugar.** Caso contrário — ex.: o tipo de um parâmetro usado numa única função —, definir inline. Não poluir `types.ts` com tipos de uso único.
+- **Estado global externo do app real** (compartilhado entre componentes/composables, fora do escopo de uma única árvore de componentes — ex.: sessão do usuário autenticado) **usa Pinia** (`defineStore`, Setup Store syntax), não um singleton manual via `ref` em nível de módulo nem outra solução ad-hoc.
+- **Componentes de UI base** (inputs, botões, etc.) **sempre importados via `shared/components`**, nunca um componente do Nuxt UI (`UInput`, `UButton`...) direto numa feature ou página — mesmo princípio de `lib/` para SDKs, mitiga vendor lock-in. Um arquivo em `shared/components` pode simplesmente reexportar um componente do Nuxt UI (ex.: `Input.vue` reexportando `UInput`), mas deve renomear para um nome genérico, sem o prefixo `U`.
+- **Validação de formulários usa VeeValidate**, priorizando a Composition API da biblioteca (`useForm`, `defineField`/`useField`) em vez dos componentes `<Form>`/`<Field>` dela. **Yup** é o schema validator (via `@vee-validate/yup`, `toTypedSchema`).
 
 ## Estado atual do repositório
 
