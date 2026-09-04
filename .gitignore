@@ -1,0 +1,3 @@
+# Estado/cache local de ferramentas de IDE (ex.: companion de brainstorming
+# do Claude Code) — nunca deve ser commitado, varia por máquina/sessão.
+.superpowers/
