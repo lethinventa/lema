@@ -23,7 +23,13 @@
      corpo de texto/título. dark-amethyst continua na paleta, só não
      vira a cor do texto — ver --color-ink-muted abaixo pra onde a
      paleta ainda aparece em texto (nenhum lugar, de propósito). */
-  --font-sans: "Nunito", ui-rounded, ui-sans-serif, system-ui, sans-serif;
+  /* 2026-09-03: fonte volta pra Onest — Nunito foi um teste pra bater com
+     a referência arredondada que Lethicia mandou, mas ela quer Onest de
+     volta. Cuidado ao trocar fonte: sempre listar todos os pesos usados
+     (font-bold/extrabold/black = 700/800/900) na URL do Google Fonts em
+     index.html, ou o navegador sintetiza um bold falso — já causou um bug
+     real ("fonte feia") quando o 800 não estava carregado. */
+  --font-sans: "Onest", ui-sans-serif, system-ui, sans-serif;
 
   --color-bg: #f9f9f9; /* bright-snow */
   --color-surface: #ffffff;

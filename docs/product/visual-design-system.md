@@ -38,7 +38,7 @@ Na dúvida: se cor aqui, sem o fundo/forma ao redor, ainda faria sentido? Se sim
 
 ## Tipografia
 
-Fonte: **Nunito** (arredondada, geométrica — bate com a referência visual que Lethicia mandou). Trocada do Onest original.
+Fonte: **Onest**. Chegou a ser trocada pra Nunito (arredondada, testando bater com uma referência visual específica), mas Lethicia pediu Onest de volta — é a fonte definitiva do protótipo.
 
 **Cuidado técnico que já causou bug real**: o link do Google Fonts em `index.html` precisa listar *todos* os pesos usados nas classes Tailwind (`font-bold`=700, `font-extrabold`=800, `font-black`=900). Um peso não listado no `wght@...` da URL faz o navegador sintetizar um "bold falso" (fake bold), que fica visivelmente pior que o peso real — foi confundido uma vez com "fonte feia" quando na verdade era peso 800 nunca carregado. Sempre que uma classe de peso nova for usada, adicionar o peso correspondente na URL do Google Fonts.
 
