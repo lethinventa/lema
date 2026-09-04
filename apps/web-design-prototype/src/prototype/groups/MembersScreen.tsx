@@ -193,7 +193,7 @@ export function MembersScreen() {
             <button
               type="button"
               onClick={() => setInviting(true)}
-              className="flex items-center gap-1 text-[13px] font-semibold text-accent"
+              className="flex items-center gap-1 text-[13px] font-semibold text-ink"
             >
               <Plus size={14} strokeWidth={2.6} />
               Convidar

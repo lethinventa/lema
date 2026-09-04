@@ -135,7 +135,7 @@ export function CategoryPicker({ label, categories, value, onChange, onAddCatego
               <button
                 type="button"
                 onClick={() => setAdding(true)}
-                className="flex w-full items-center gap-2 rounded-sm px-3 py-2.5 text-left text-[14px] font-semibold text-accent transition active:bg-surface-muted"
+                className="flex w-full items-center gap-2 rounded-sm px-3 py-2.5 text-left text-[14px] font-semibold text-ink transition active:bg-surface-muted"
               >
                 <Plus size={15} strokeWidth={2.6} />
                 Nova categoria

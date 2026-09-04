@@ -314,7 +314,7 @@ export function GoalSheet({
                     <button
                       type="button"
                       onClick={onRegisterPayment}
-                      className="mt-2 flex items-center gap-1.5 text-[12.5px] font-bold text-goal"
+                      className="mt-2 flex items-center gap-1.5 text-[12.5px] font-bold text-ink"
                     >
                       <Plus size={13} strokeWidth={2.6} />
                       Registrar transação vinculada
@@ -373,7 +373,7 @@ export function GoalSheet({
 
           {mode === 'edit' && onComplete ? (
             <>
-              <GhostButton onClick={onComplete} className="flex items-center justify-center gap-1.5 text-goal">
+              <GhostButton onClick={onComplete} className="flex items-center justify-center gap-1.5">
                 <CheckCircle2 size={16} strokeWidth={2.2} />
                 Marcar como concluído
               </GhostButton>

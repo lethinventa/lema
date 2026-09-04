@@ -28,7 +28,7 @@ export function DeleteAccountScreen() {
           <button
             type="button"
             onClick={() => navigate('/')}
-            className="mt-2 text-[13px] font-semibold text-accent"
+            className="mt-2 text-[13px] font-semibold text-ink"
           >
             Voltar ao início
           </button>
@@ -59,7 +59,7 @@ export function DeleteAccountScreen() {
                   key={g.id}
                   type="button"
                   onClick={() => navigate(`/perfil/grupos/${g.id}`)}
-                  className="text-left text-[13px] font-semibold text-accent"
+                  className="text-left text-[13px] font-semibold text-ink"
                 >
                   Gerenciar membros de {g.name} →
                 </button>

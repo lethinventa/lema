@@ -181,7 +181,7 @@ export function GroupFinanceScreen() {
           <div className="mb-1 flex items-center justify-between">
             <span className="text-[15px] font-bold text-ink">Exceções por categoria</span>
             {!addingException ? (
-              <button type="button" onClick={() => setAddingException(true)} className="text-[13px] font-semibold text-accent">
+              <button type="button" onClick={() => setAddingException(true)} className="text-[13px] font-semibold text-ink">
                 + Nova
               </button>
             ) : null}

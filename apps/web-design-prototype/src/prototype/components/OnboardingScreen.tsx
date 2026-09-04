@@ -30,7 +30,7 @@ export function OnboardingScreen({
 
       <div className="flex-1 overflow-y-auto px-6 pb-4 pt-6">
         {eyebrow ? (
-          <span className="mb-2 block text-[12px] font-medium uppercase tracking-wide text-accent">
+          <span className="mb-2 block text-[12px] font-medium uppercase tracking-wide text-ink-muted">
             {eyebrow}
           </span>
         ) : null}
