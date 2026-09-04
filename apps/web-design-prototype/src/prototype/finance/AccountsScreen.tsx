@@ -114,7 +114,7 @@ export function AccountsScreen() {
           <button
             type="button"
             onClick={() => setSheetOpen(true)}
-            className="flex h-10 w-10 shrink-0 items-center justify-center rounded-pill bg-accent text-white transition active:scale-90"
+            className="flex h-10 w-10 shrink-0 items-center justify-center rounded-pill bg-accent text-ink transition active:scale-90"
             aria-label="Nova conta"
           >
             <Plus size={20} strokeWidth={2.4} />

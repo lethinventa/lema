@@ -141,7 +141,7 @@ export function CalendarScreen() {
             <button
               type="button"
               onClick={() => setSheet({ mode: 'create', defaultDate: defaultCreateDate })}
-              className="flex h-10 w-10 items-center justify-center rounded-pill bg-accent text-white transition active:scale-90"
+              className="flex h-10 w-10 items-center justify-center rounded-pill bg-accent text-ink transition active:scale-90"
               aria-label="Novo compromisso"
             >
               <Plus size={20} strokeWidth={2.4} />
@@ -160,7 +160,7 @@ export function CalendarScreen() {
               type="button"
               onClick={() => setView(opt.value)}
               className={`flex flex-1 items-center justify-center gap-1.5 rounded-sm border px-3 py-2 text-[12.5px] font-semibold transition active:scale-95 ${
-                view === opt.value ? 'border-accent bg-accent text-white' : 'border-line bg-surface text-ink-muted'
+                view === opt.value ? 'border-accent bg-accent text-ink' : 'border-line bg-surface text-ink-muted'
               }`}
             >
               <opt.icon size={13} strokeWidth={2.4} />

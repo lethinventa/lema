@@ -25,7 +25,7 @@ function TaskRow({ task, onToggle, onEdit }: { task: MockTask; onToggle: () => v
           task.done ? 'border-accent bg-accent' : 'border-line'
         }`}
       >
-        {task.done ? <CheckSquare2 size={13} strokeWidth={3} className="text-white" /> : null}
+        {task.done ? <CheckSquare2 size={13} strokeWidth={3} className="text-ink" /> : null}
       </button>
       <button type="button" onClick={onEdit} className="flex flex-1 items-start justify-between gap-2 text-left">
         <span>
@@ -104,7 +104,7 @@ export function TasksScreen() {
             <button
               type="button"
               onClick={() => navigate('/home/tarefas/nova')}
-              className="flex h-10 w-10 items-center justify-center rounded-pill bg-accent text-white transition active:scale-90"
+              className="flex h-10 w-10 items-center justify-center rounded-pill bg-accent text-ink transition active:scale-90"
               aria-label="Nova tarefa"
             >
               <Plus size={20} strokeWidth={2.4} />

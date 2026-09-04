@@ -22,7 +22,7 @@ function eventColor(context: MockEvent['context']) {
   // Reaproveita o significado já estabelecido pelo VisibilityDot: GROUP usa
   // accent (cor do grupo), PERSONAL/SHARED usam sky — não é uma paleta nova.
   return context === 'group'
-    ? { bg: 'bg-accent', text: 'text-white' }
+    ? { bg: 'bg-accent', text: 'text-ink' }
     : { bg: 'bg-sky-bg', text: 'text-sky-fg' }
 }
 
@@ -88,7 +88,7 @@ export function CalendarWeekView({ events, tasks, anchorDate, onNavigate, onSele
               <span className="text-[10px] font-bold uppercase text-ink-faint">{formatWeekdayShort(iso)}</span>
               <span
                 className={`flex h-6 w-6 items-center justify-center rounded-pill text-[12px] font-bold tabular ${
-                  isToday ? 'bg-accent text-white' : 'text-ink'
+                  isToday ? 'bg-accent text-ink' : 'text-ink'
                 }`}
               >
                 {Number(iso.slice(8, 10))}

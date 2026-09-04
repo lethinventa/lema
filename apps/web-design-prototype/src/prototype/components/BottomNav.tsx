@@ -12,9 +12,12 @@ const TABS = [
 // 2026-09-03: nav bar deixa de ser um pill branco flutuando sobre a página
 // (bg-surface + shadow) e passa a se fundir com o --color-bg — referência
 // mostra a barra sem contorno próprio, só o item ativo com destaque.
+// bg-bg continua obrigatório mesmo "sem contorno": sem fundo opaco, o
+// conteúdo rolando por trás fica visível atrapalhando os ícones (bug real,
+// não só estética — "o menu tá estranho").
 export function BottomNav() {
   return (
-    <nav className="absolute inset-x-0 bottom-0 flex items-center gap-1 px-3 pb-[max(10px,env(safe-area-inset-bottom))] pt-2">
+    <nav className="bg-bg absolute inset-x-0 bottom-0 flex items-center gap-1 px-3 pb-[max(10px,env(safe-area-inset-bottom))] pt-2">
       {TABS.map(({ to, label, icon: Icon, end }) => (
         <NavLink
           key={to}

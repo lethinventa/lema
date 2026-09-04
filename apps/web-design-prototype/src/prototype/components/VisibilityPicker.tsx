@@ -23,7 +23,7 @@ export function VisibilityPicker({ value, onChange, hint }: VisibilityPickerProp
           onClick={() => onChange({ context: 'personal' })}
           className={`rounded-sm border px-3 py-2.5 text-[13px] font-semibold transition active:scale-95 ${
             value.context === 'personal'
-              ? 'border-accent bg-accent text-white'
+              ? 'border-accent bg-accent text-ink'
               : 'border-line bg-surface text-ink-muted'
           }`}
         >
@@ -36,7 +36,7 @@ export function VisibilityPicker({ value, onChange, hint }: VisibilityPickerProp
             onClick={() => onChange({ context: 'group', groupId: group.id })}
             className={`rounded-sm border px-3 py-2.5 text-[13px] font-semibold transition active:scale-95 ${
               value.context === 'group' && value.groupId === group.id
-                ? 'border-accent bg-accent text-white'
+                ? 'border-accent bg-accent text-ink'
                 : 'border-line bg-surface text-ink-muted'
             }`}
           >

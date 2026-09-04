@@ -85,7 +85,7 @@ function AmountList({
           onClick={handleAdd}
           disabled={!draftName.trim() || !draftAmount.trim()}
           aria-label={`Adicionar a ${label.toLowerCase()}`}
-          className="flex h-14 w-14 shrink-0 items-center justify-center rounded-md bg-accent text-white transition active:scale-95 disabled:opacity-40"
+          className="flex h-14 w-14 shrink-0 items-center justify-center rounded-md bg-accent text-ink transition active:scale-95 disabled:opacity-40"
         >
           <Plus size={20} strokeWidth={2.4} />
         </button>

@@ -103,7 +103,7 @@ export function EventSheet({ mode, initial, isRecurringOccurrence, onSave, onDel
                 type="button"
                 onClick={() => setScope('occurrence')}
                 className={`flex-1 rounded-sm border px-3 py-2.5 text-[13px] font-semibold transition active:scale-95 ${
-                  scope === 'occurrence' ? 'border-accent bg-accent text-white' : 'border-line bg-surface text-ink-muted'
+                  scope === 'occurrence' ? 'border-accent bg-accent text-ink' : 'border-line bg-surface text-ink-muted'
                 }`}
               >
                 Esta ocorrência
@@ -112,7 +112,7 @@ export function EventSheet({ mode, initial, isRecurringOccurrence, onSave, onDel
                 type="button"
                 onClick={() => setScope('series')}
                 className={`flex-1 rounded-sm border px-3 py-2.5 text-[13px] font-semibold transition active:scale-95 ${
-                  scope === 'series' ? 'border-accent bg-accent text-white' : 'border-line bg-surface text-ink-muted'
+                  scope === 'series' ? 'border-accent bg-accent text-ink' : 'border-line bg-surface text-ink-muted'
                 }`}
               >
                 Toda a série

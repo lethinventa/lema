@@ -268,7 +268,7 @@ export function FinanceScreen() {
             <button
               type="button"
               onClick={() => setSheet({ mode: 'create' })}
-              className="flex h-10 w-10 items-center justify-center rounded-pill bg-accent text-white transition active:scale-90"
+              className="flex h-10 w-10 items-center justify-center rounded-pill bg-accent text-ink transition active:scale-90"
               aria-label="Nova transação"
             >
               <Plus size={20} strokeWidth={2.4} />

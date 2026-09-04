@@ -5,7 +5,7 @@ type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & { children: ReactNo
 export function PrimaryButton({ children, className = '', ...rest }: ButtonProps) {
   return (
     <button
-      className={`h-14 w-full rounded-md bg-accent px-6 text-[15px] font-medium text-white transition active:scale-[0.98] disabled:opacity-40 ${className}`}
+      className={`h-14 w-full rounded-md bg-accent px-6 text-[15px] font-semibold text-ink transition active:scale-[0.98] disabled:opacity-40 ${className}`}
       {...rest}
     >
       {children}

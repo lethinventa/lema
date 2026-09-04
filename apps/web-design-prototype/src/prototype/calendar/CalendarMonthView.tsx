@@ -86,7 +86,7 @@ export function CalendarMonthView({
               <span
                 className={`flex h-7 w-7 items-center justify-center rounded-pill text-[12px] font-bold tabular ${
                   isSelected
-                    ? 'bg-accent text-white'
+                    ? 'bg-accent text-ink'
                     : isToday
                       ? 'border-2 border-accent text-ink'
                       : inMonth

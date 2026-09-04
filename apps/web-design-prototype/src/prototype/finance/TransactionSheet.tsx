@@ -195,7 +195,7 @@ export function TransactionSheet({
                   onClick={() => setPaymentMethod('credito')}
                   className={`flex-1 rounded-sm border px-3 py-2.5 text-[13px] font-semibold transition active:scale-95 ${
                     effectivePaymentMethod === 'credito'
-                      ? 'border-accent bg-accent text-white'
+                      ? 'border-accent bg-accent text-ink'
                       : 'border-line bg-surface text-ink-muted'
                   }`}
                 >
@@ -207,7 +207,7 @@ export function TransactionSheet({
                   onClick={() => setPaymentMethod('debito')}
                   className={`flex-1 rounded-sm border px-3 py-2.5 text-[13px] font-semibold transition active:scale-95 disabled:opacity-40 ${
                     effectivePaymentMethod === 'debito'
-                      ? 'border-accent bg-accent text-white'
+                      ? 'border-accent bg-accent text-ink'
                       : 'border-line bg-surface text-ink-muted'
                   }`}
                 >

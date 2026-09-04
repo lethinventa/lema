@@ -140,7 +140,7 @@ export function HomeScreen() {
                         task.done ? 'border-accent bg-accent' : 'border-line'
                       }`}
                     >
-                      {task.done ? <CheckSquare2 size={13} strokeWidth={3} className="text-white" /> : null}
+                      {task.done ? <CheckSquare2 size={13} strokeWidth={3} className="text-ink" /> : null}
                     </span>
                     <span
                       className={`flex-1 text-[15px] font-semibold ${task.done ? 'text-ink-faint line-through' : 'text-ink'}`}

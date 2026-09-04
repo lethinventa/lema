@@ -126,7 +126,7 @@ export function CategoryPicker({ label, categories, value, onChange, onAddCatego
                   type="button"
                   onClick={confirmAdd}
                   aria-label="Confirmar nova categoria"
-                  className="flex h-9 w-9 shrink-0 items-center justify-center rounded-sm bg-accent text-white"
+                  className="flex h-9 w-9 shrink-0 items-center justify-center rounded-sm bg-accent text-ink"
                 >
                   <Check size={15} strokeWidth={3} />
                 </button>

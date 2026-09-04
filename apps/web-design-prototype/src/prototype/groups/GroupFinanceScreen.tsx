@@ -236,7 +236,7 @@ export function GroupFinanceScreen() {
                   type="button"
                   onClick={addException}
                   disabled={!draftCategory}
-                  className="flex-1 rounded-sm bg-accent px-3 py-2.5 text-[13px] font-semibold text-white transition active:scale-[0.98] disabled:opacity-40"
+                  className="flex-1 rounded-sm bg-accent px-3 py-2.5 text-[13px] font-semibold text-ink transition active:scale-[0.98] disabled:opacity-40"
                 >
                   Adicionar exceção
                 </button>

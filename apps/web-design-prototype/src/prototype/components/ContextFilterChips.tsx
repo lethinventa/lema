@@ -45,7 +45,7 @@ export function ContextFilterChips({ value, onChange }: ContextFilterChipsProps)
           type="button"
           onClick={() => onChange(chip.value)}
           className={`shrink-0 rounded-pill px-4 py-2 text-[13px] transition active:scale-95 ${
-            value === chip.value ? 'bg-accent font-bold text-white' : 'bg-surface-muted font-medium text-ink-muted'
+            value === chip.value ? 'bg-accent font-bold text-ink' : 'bg-surface-muted font-medium text-ink-muted'
           }`}
         >
           {chip.label}
