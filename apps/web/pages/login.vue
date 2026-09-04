@@ -4,7 +4,7 @@
       <h1 class="text-center text-xl font-semibold">Entrar no Lema</h1>
 
       <form class="space-y-4" @submit="onSubmit">
-        <FormField label="E-mail" name="email" :error="errors.email">
+        <FormField label="E-mail" name="email">
           <Input
             v-model="email"
             v-bind="emailAttrs"
@@ -15,7 +15,7 @@
           />
         </FormField>
 
-        <FormField label="Senha" name="password" :error="errors.password">
+        <FormField label="Senha" name="password">
           <Input
             v-model="password"
             v-bind="passwordAttrs"
@@ -46,7 +46,7 @@ import { useAuthStore } from '~/features/auth';
 
 const { signIn } = useAuthStore();
 
-const { handleSubmit, defineField, errors } = useForm({
+const { handleSubmit, defineField } = useForm({
   validationSchema: toTypedSchema(
     yup.object({
       email: yup
