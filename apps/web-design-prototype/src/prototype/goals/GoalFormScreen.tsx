@@ -1,60 +1,32 @@
-import { CheckCircle2, ChevronLeft, ChevronRight, Plus, Target, Trash2, TriangleAlert, X } from 'lucide-react'
+import { CheckCircle2, ChevronRight, Plus, Target, Trash2, TriangleAlert, X } from 'lucide-react'
 import { useState } from 'react'
+import { Navigate, useNavigate, useParams, useSearchParams } from 'react-router-dom'
+import { BackHeader } from '../components/BackHeader'
 import { GhostButton, PrimaryButton } from '../components/Buttons'
 import { CategoryPicker } from '../components/CategoryPicker'
 import { TextField } from '../components/TextField'
 import { VisibilityPicker, type VisibilitySelection } from '../components/VisibilityPicker'
-import { formatCurrency } from '../finance/financeMockData'
-import type { MockTransaction } from '../finance/financeMockData'
-import type { AllocationStatus, MockGoalAllocation } from './goalAllocationsMockData'
-import type { PaceInfo } from './goalsSelectors'
+import { initialCategories } from '../categories/categoriesMockData'
+import { parseAmount } from '../finance/accountsMockData'
+import { formatCurrency, initialTransactions } from '../finance/financeMockData'
+import { TODAY_ISO } from '../calendar/dateUtils'
+import { type AllocationStatus, initialGoalAllocations, type MockGoalAllocation } from './goalAllocationsMockData'
+import { initialGoals } from './goalsMockData'
+import { getGoalProgress, getGoalTransactions, getPaceInfo, getSubgoals } from './goalsSelectors'
 
-export interface GoalSheetValues {
-  title: string
-  context: 'personal' | 'group'
-  groupId?: string
-  deadline: string // ISO
-  category: string
-  progress: number
-  custoEstimado: string
+// Criar/editar/detalhar objetivo é página cheia, não bottom sheet (ver
+// docs/product/interaction-patterns.md). Era o sheet mais complexo do
+// protótipo (a pilha goal→submeta→transação vinculada de GoalsScreen) — vira
+// navegação de verdade: submeta é só outro objetivo (mesma página, filtrado
+// por parentGoalId), "voltar" do objetivo pai é o BackHeader normal, e
+// "registrar transação vinculada" sai daqui de vez, pra TransactionFormScreen
+// (?objetivo=<goalId>&voltar=<esta página>) — GoalsScreen não precisa mais
+// saber nada sobre o formulário de transação.
+
+function editPath(goalId: string) {
+  return `/home/objetivos/${goalId}/editar`
 }
 
-interface SubgoalSummary {
-  id: string
-  title: string
-  progress: number
-  custoEstimado?: number
-}
-
-interface GoalSheetProps {
-  mode: 'create' | 'edit'
-  initial?: GoalSheetValues
-  categoryOptions: string[]
-  onAddCategory: (category: string) => void
-  done?: boolean
-  isSubgoal?: boolean
-  allocations?: MockGoalAllocation[] // só RESERVED/COMMITTED — PAID vem de goalTransactions
-  goalTransactions?: MockTransaction[]
-  subgoals?: SubgoalSummary[]
-  computedProgress?: number
-  paceInfo?: PaceInfo
-  parentTitle?: string
-  onBack?: () => void
-  onSave: (values: GoalSheetValues) => void
-  onComplete?: () => void
-  onDelete?: () => void
-  onClose: () => void
-  onAddAllocation?: (valor: number, estado: AllocationStatus) => void
-  onRemoveAllocation?: (id: string) => void
-  onOpenSubgoal?: (id: string) => void
-  onAddSubgoal?: () => void
-  onRegisterPayment?: () => void
-}
-
-// Uma seção do bloco financeiro (Reservado ou Contratado): total, itens
-// lançados manualmente e um jeito rápido de adicionar mais um valor — nunca
-// mistura os dois estados na mesma lista, pra não repetir a confusão do
-// formulário único de antes.
 function AllocationBucket({
   label,
   hint,
@@ -125,7 +97,13 @@ function AllocationBucket({
   )
 }
 
-function SubgoalCard({ subgoal, onOpen }: { subgoal: SubgoalSummary; onOpen: () => void }) {
+function SubgoalCard({
+  subgoal,
+  onOpen,
+}: {
+  subgoal: { id: string; title: string; progress: number; custoEstimado?: number }
+  onOpen: () => void
+}) {
   return (
     <button type="button" onClick={onOpen} className="flex w-full items-center gap-3 rounded-md border border-line p-2.5 text-left">
       <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-sm bg-goal-soft text-goal">
@@ -148,91 +126,128 @@ function SubgoalCard({ subgoal, onOpen }: { subgoal: SubgoalSummary; onOpen: () 
   )
 }
 
-export function GoalSheet({
-  mode,
-  initial,
-  categoryOptions,
-  onAddCategory,
-  done,
-  isSubgoal,
-  allocations = [],
-  goalTransactions = [],
-  subgoals = [],
-  computedProgress,
-  paceInfo,
-  parentTitle,
-  onBack,
-  onSave,
-  onComplete,
-  onDelete,
-  onClose,
-  onAddAllocation,
-  onRemoveAllocation,
-  onOpenSubgoal,
-  onAddSubgoal,
-  onRegisterPayment,
-}: GoalSheetProps) {
-  const [title, setTitle] = useState(initial?.title ?? '')
-  const [visibility, setVisibility] = useState<VisibilitySelection>({
-    context: initial?.context ?? 'personal',
-    groupId: initial?.groupId,
-  })
-  const [deadline, setDeadline] = useState(initial?.deadline ?? '')
-  const [category, setCategory] = useState(initial?.category ?? '')
-  const [progress, setProgress] = useState(initial?.progress ?? 0)
-  const [custoEstimado, setCustoEstimado] = useState(initial?.custoEstimado ?? '')
+export function GoalFormScreen() {
+  const { goalId } = useParams<{ goalId: string }>()
+  const [searchParams] = useSearchParams()
+  const navigate = useNavigate()
+  const mode: 'create' | 'edit' = goalId ? 'edit' : 'create'
+  const editingGoal = goalId ? initialGoals.find((g) => g.id === goalId) : undefined
+  const parentGoalId = mode === 'create' ? (searchParams.get('submeta') ?? undefined) : editingGoal?.parentGoalId
+  const parentGoal = parentGoalId ? initialGoals.find((g) => g.id === parentGoalId) : undefined
+  const isSubgoal = !!parentGoalId
+  const backTo = isSubgoal && parentGoalId ? editPath(parentGoalId) : '/home/objetivos'
 
+  const activeGoals = initialGoals.filter((g) => !g.deletedAt)
+  const subgoals =
+    mode === 'edit' && goalId
+      ? getSubgoals(goalId, activeGoals).map((sub) => ({
+          id: sub.id,
+          title: sub.title,
+          progress: getGoalProgress(sub, activeGoals, initialGoalAllocations, initialTransactions),
+          custoEstimado: sub.custoEstimado,
+        }))
+      : []
+  const goalTransactions = mode === 'edit' && goalId ? getGoalTransactions(goalId, initialTransactions) : []
+  const computedProgress = mode === 'edit' && editingGoal ? getGoalProgress(editingGoal, activeGoals, initialGoalAllocations, initialTransactions) : 0
+  const paceInfo = mode === 'edit' && editingGoal ? getPaceInfo(editingGoal, initialGoalAllocations, initialTransactions) : undefined
+
+  const [title, setTitle] = useState(editingGoal?.title ?? '')
+  const [categories, setCategories] = useState<string[]>(initialCategories)
+  const [visibility, setVisibility] = useState<VisibilitySelection>({
+    context: editingGoal?.context === 'group' ? 'group' : parentGoal?.context === 'group' ? 'group' : 'personal',
+    groupId: editingGoal?.groupId ?? parentGoal?.groupId,
+  })
+  const [deadline, setDeadline] = useState(editingGoal?.deadline ?? '')
+  const [category, setCategory] = useState(editingGoal?.category ?? '')
+  const [progress, setProgress] = useState(editingGoal?.progress ?? 0)
+  const [custoEstimado, setCustoEstimado] = useState(editingGoal?.custoEstimado ? editingGoal.custoEstimado.toString().replace('.', ',') : '')
+  const [allocations, setAllocations] = useState<MockGoalAllocation[]>(
+    goalId ? initialGoalAllocations.filter((a) => a.goalId === goalId) : [],
+  )
+
+  if (mode === 'edit' && !editingGoal) {
+    return <Navigate to="/home/objetivos" replace />
+  }
+
+  const done = editingGoal?.done ?? false
   const hasSubgoals = subgoals.length > 0
   const hasCusto = custoEstimado.trim().length > 0
   const reserved = allocations.filter((a) => a.estado === 'RESERVED')
   const committed = allocations.filter((a) => a.estado === 'COMMITTED')
   const paidTotal = goalTransactions.reduce((sum, t) => sum + t.amount, 0)
 
+  function handleAddCategory(newCategory: string) {
+    setCategories((prev) => (prev.includes(newCategory) ? prev : [...prev, newCategory]))
+    if (!initialCategories.includes(newCategory)) initialCategories.push(newCategory)
+  }
+
+  function handleAddAllocation(valor: number, estado: AllocationStatus) {
+    if (!goalId) return
+    const entry: MockGoalAllocation = { id: `ga-${Date.now()}`, goalId, valor, estado }
+    initialGoalAllocations.push(entry)
+    setAllocations((prev) => [...prev, entry])
+  }
+
+  function handleRemoveAllocation(id: string) {
+    const idx = initialGoalAllocations.findIndex((a) => a.id === id)
+    if (idx !== -1) initialGoalAllocations.splice(idx, 1)
+    setAllocations((prev) => prev.filter((a) => a.id !== id))
+  }
+
   function handleSave() {
     if (!title.trim()) return
-    onSave({
+    const shared = {
       title: title.trim(),
       context: visibility.context,
       groupId: visibility.groupId,
-      deadline,
-      category: category.trim(),
+      deadline: deadline || undefined,
+      category: category.trim() || undefined,
       progress,
-      custoEstimado: custoEstimado.trim(),
-    })
+      custoEstimado: custoEstimado.trim() ? parseAmount(custoEstimado) : undefined,
+    }
+
+    const target = goalId ? initialGoals.find((g) => g.id === goalId) : undefined
+    if (target) {
+      Object.assign(target, shared)
+    } else {
+      const newGoal = { id: `gl-${Date.now()}`, done: false, createdAt: TODAY_ISO, parentGoalId, ...shared }
+      initialGoals.push(newGoal)
+    }
+    navigate(backTo)
+  }
+
+  function handleComplete() {
+    const target = goalId ? initialGoals.find((g) => g.id === goalId) : undefined
+    if (!target) return
+    target.done = true
+    target.progress = 100
+    navigate(backTo)
+  }
+
+  function handleDelete() {
+    if (!goalId) return
+    // Cascata (PD-007): trashear um objetivo-pai leva as submetas junto.
+    const idsToTrash = [goalId, ...getSubgoals(goalId, initialGoals).map((g) => g.id)]
+    for (const id of idsToTrash) {
+      const target = initialGoals.find((g) => g.id === id)
+      if (target) target.deletedAt = TODAY_ISO
+    }
+    navigate(backTo)
   }
 
   return (
-    <div className="absolute inset-0 z-20 flex flex-col justify-end">
-      <button type="button" aria-label="Fechar" onClick={onClose} className="absolute inset-0 bg-ink/40" />
-      <div className="relative max-h-[90%] overflow-y-auto rounded-t-lg border-t border-line bg-surface px-6 pb-[max(24px,env(safe-area-inset-bottom))] pt-5">
-        <span className="mx-auto mb-4 block h-1 w-10 rounded-pill bg-line" />
+    <div className="relative flex h-full flex-col">
+      <BackHeader
+        title={mode === 'create' ? (isSubgoal ? 'Nova submeta' : 'Novo objetivo') : title || 'Editar objetivo'}
+        subtitle={isSubgoal && parentGoal ? `Submeta de ${parentGoal.title}` : undefined}
+        to={backTo}
+      />
 
-        {onBack ? (
-          <button type="button" onClick={onBack} className="mb-2 flex items-center gap-1 text-[12.5px] font-semibold text-ink-muted">
-            <ChevronLeft size={14} strokeWidth={2.4} />
-            Voltar para {parentTitle}
-          </button>
-        ) : null}
+      <div className="flex-1 overflow-y-auto px-6 pb-8 pt-4">
+        <div className="flex flex-col gap-4">
+          <TextField label="Título" placeholder="O que você quer alcançar?" value={title} onChange={(e) => setTitle(e.target.value)} />
 
-        <h2 className="text-[17px] font-bold text-ink">
-          {mode === 'create' ? (isSubgoal ? 'Nova submeta' : 'Novo objetivo') : title || 'Editar objetivo'}
-        </h2>
-
-        <div className="mt-4 flex flex-col gap-4">
-          <TextField
-            label="Título"
-            placeholder="O que você quer alcançar?"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-          />
-
-          <CategoryPicker
-            label="Categoria (opcional)"
-            categories={categoryOptions}
-            value={category}
-            onChange={setCategory}
-            onAddCategory={onAddCategory}
-          />
+          <CategoryPicker label="Categoria (opcional)" categories={categories} value={category} onChange={setCategory} onAddCategory={handleAddCategory} />
 
           <TextField label="Prazo (opcional)" type="date" value={deadline} onChange={(e) => setDeadline(e.target.value)} />
 
@@ -271,7 +286,7 @@ export function GoalSheet({
             <div className="rounded-md border border-line p-3">
               <div className="mb-1 flex items-center justify-between">
                 <span className="text-[13px] font-bold text-ink">Progresso financeiro</span>
-                <span className="tabular text-[12px] font-semibold text-ink-muted">{computedProgress ?? 0}% organizado</span>
+                <span className="tabular text-[12px] font-semibold text-ink-muted">{computedProgress}% organizado</span>
               </div>
 
               <div className="flex flex-col divide-y divide-line">
@@ -279,15 +294,15 @@ export function GoalSheet({
                   label="Reservado"
                   hint="Separado, mas ainda não comprometido."
                   items={reserved}
-                  onAdd={(valor) => onAddAllocation?.(valor, 'RESERVED')}
-                  onRemove={(id) => onRemoveAllocation?.(id)}
+                  onAdd={(valor) => handleAddAllocation(valor, 'RESERVED')}
+                  onRemove={handleRemoveAllocation}
                 />
                 <AllocationBucket
                   label="Contratado"
                   hint="Já tem compromisso fechado, mas o dinheiro ainda não saiu."
                   items={committed}
-                  onAdd={(valor) => onAddAllocation?.(valor, 'COMMITTED')}
-                  onRemove={(id) => onRemoveAllocation?.(id)}
+                  onAdd={(valor) => handleAddAllocation(valor, 'COMMITTED')}
+                  onRemove={handleRemoveAllocation}
                 />
 
                 <div className="py-3 last:pb-0">
@@ -310,10 +325,10 @@ export function GoalSheet({
                   ) : (
                     <p className="mt-2 text-[12px] text-ink-faint">Nenhuma transação vinculada ainda.</p>
                   )}
-                  {onRegisterPayment ? (
+                  {goalId ? (
                     <button
                       type="button"
-                      onClick={onRegisterPayment}
+                      onClick={() => navigate(`/home/financas/nova?objetivo=${goalId}&voltar=${encodeURIComponent(editPath(goalId))}`)}
                       className="mt-2 flex items-center gap-1.5 text-[12.5px] font-bold text-ink"
                     >
                       <Plus size={13} strokeWidth={2.6} />
@@ -324,13 +339,9 @@ export function GoalSheet({
               </div>
 
               {paceInfo?.idealPerMonth != null ? (
-                <p className="tabular mt-1 text-[12px] font-semibold text-ink-muted">
-                  Ideal por mês: {formatCurrency(paceInfo.idealPerMonth)}
-                </p>
+                <p className="tabular mt-1 text-[12px] font-semibold text-ink-muted">Ideal por mês: {formatCurrency(paceInfo.idealPerMonth)}</p>
               ) : null}
-              {paceInfo?.deadlinePassed ? (
-                <p className="mt-1 text-[12px] font-semibold text-danger">Prazo vencido — reveja a data.</p>
-              ) : null}
+              {paceInfo?.deadlinePassed ? <p className="mt-1 text-[12px] font-semibold text-danger">Prazo vencido — reveja a data.</p> : null}
               {paceInfo?.behindPace ? (
                 <p className="mt-1 flex items-center gap-1.5 text-[12px] font-semibold text-danger">
                   <TriangleAlert size={13} strokeWidth={2.4} />
@@ -340,13 +351,13 @@ export function GoalSheet({
             </div>
           ) : null}
 
-          {mode === 'edit' && !isSubgoal ? (
+          {mode === 'edit' && !isSubgoal && goalId ? (
             <div className="rounded-md border border-line p-3">
               <div className="mb-2 flex items-center justify-between">
                 <span className="text-[13px] font-bold text-ink">Submetas</span>
                 <button
                   type="button"
-                  onClick={onAddSubgoal}
+                  onClick={() => navigate(`/home/objetivos/novo?submeta=${goalId}`)}
                   className="flex h-7 w-7 items-center justify-center rounded-pill bg-goal-soft text-goal"
                   aria-label="Adicionar submeta"
                 >
@@ -358,38 +369,36 @@ export function GoalSheet({
               ) : (
                 <div className="flex flex-col gap-2">
                   {subgoals.map((sub) => (
-                    <SubgoalCard key={sub.id} subgoal={sub} onOpen={() => onOpenSubgoal?.(sub.id)} />
+                    <SubgoalCard key={sub.id} subgoal={sub} onOpen={() => navigate(editPath(sub.id))} />
                   ))}
                 </div>
               )}
             </div>
           ) : null}
         </div>
+      </div>
 
-        <div className="mt-6 flex flex-col gap-2">
-          <PrimaryButton disabled={title.trim().length === 0} onClick={handleSave}>
-            {mode === 'create' ? (isSubgoal ? 'Criar submeta' : 'Criar objetivo') : 'Salvar alterações'}
-          </PrimaryButton>
+      <div className="flex flex-col gap-2 border-t border-line px-6 py-4 pb-[max(16px,env(safe-area-inset-bottom))]">
+        <PrimaryButton disabled={title.trim().length === 0} onClick={handleSave}>
+          {mode === 'create' ? (isSubgoal ? 'Criar submeta' : 'Criar objetivo') : 'Salvar alterações'}
+        </PrimaryButton>
 
-          {mode === 'edit' && onComplete ? (
-            <>
-              <GhostButton onClick={onComplete} className="flex items-center justify-center gap-1.5">
-                <CheckCircle2 size={16} strokeWidth={2.2} />
-                Marcar como concluído
-              </GhostButton>
-              <p className="-mt-1 text-center text-[11px] text-ink-faint">Concluir um objetivo não pode ser desfeito.</p>
-            </>
-          ) : null}
-
-          {mode === 'edit' && onDelete ? (
-            <GhostButton onClick={onDelete} className="flex items-center justify-center gap-1.5 text-danger">
-              <Trash2 size={16} strokeWidth={2.2} />
-              Excluir objetivo
+        {mode === 'edit' && !done ? (
+          <>
+            <GhostButton onClick={handleComplete} className="flex items-center justify-center gap-1.5">
+              <CheckCircle2 size={16} strokeWidth={2.2} />
+              Marcar como concluído
             </GhostButton>
-          ) : (
-            <GhostButton onClick={onClose}>Cancelar</GhostButton>
-          )}
-        </div>
+            <p className="-mt-1 text-center text-[11px] text-ink-faint">Concluir um objetivo não pode ser desfeito.</p>
+          </>
+        ) : null}
+
+        {mode === 'edit' ? (
+          <GhostButton onClick={handleDelete} className="flex items-center justify-center gap-1.5 text-danger">
+            <Trash2 size={16} strokeWidth={2.2} />
+            Excluir objetivo
+          </GhostButton>
+        ) : null}
       </div>
     </div>
   )

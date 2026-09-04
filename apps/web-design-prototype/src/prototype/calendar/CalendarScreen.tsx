@@ -1,6 +1,6 @@
 import { CalendarDays, Grid3x3, List, Plus, Repeat, Trash2 } from 'lucide-react'
 import { useState } from 'react'
-import { useSearchParams } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import { ContextFilterChips, type ContextFilterValue, matchesContext } from '../components/ContextFilterChips'
 import { FlagChip } from '../components/FlagChip'
 import { HomeLayout } from '../components/HomeLayout'
@@ -11,16 +11,8 @@ import { initialTasks, type MockTask } from '../tasks/tasksMockData'
 import { CalendarAgendaView } from './CalendarAgendaView'
 import { CalendarMonthView } from './CalendarMonthView'
 import { CalendarWeekView } from './CalendarWeekView'
-import { EventSheet, type EventSheetValues } from './EventSheet'
 import { initialEvents, type MockEvent } from './calendarMockData'
-import {
-  applyOccurrenceDelete,
-  applyOccurrenceEdit,
-  applySeriesDelete,
-  applySeriesEdit,
-  type EventEditInput,
-  type EventOccurrence,
-} from './calendarSelectors'
+import type { EventOccurrence } from './calendarSelectors'
 import { formatRelativeDayLabel, TODAY_ISO } from './dateUtils'
 
 type ViewMode = 'agenda' | 'week' | 'month'
@@ -31,76 +23,27 @@ const VIEW_OPTIONS: { value: ViewMode; label: string; icon: typeof List }[] = [
   { value: 'month', label: 'Mês', icon: Grid3x3 },
 ]
 
-function toEditInput(values: EventSheetValues): EventEditInput {
-  return {
-    title: values.title,
-    context: values.context,
-    groupId: values.groupId,
-    date: values.date,
-    time: values.time,
-    endTime: values.endTime || undefined,
-    location: values.location || undefined,
-    participants: values.participants.length ? values.participants : undefined,
-    participantIds: values.participantIds.length ? values.participantIds : undefined,
-    recurrence: values.recurrenceFreq ? { freq: values.recurrenceFreq, endDate: values.recurrenceEndDate || undefined } : undefined,
-  }
+// Página de edição precisa da raiz da série + data pra reconstruir a
+// ocorrência (ver EventFormScreen) — ambos já existem em toda EventOccurrence.
+function editPath(occ: EventOccurrence) {
+  const rootId = occ.event.seriesId ?? occ.event.id
+  return `/home/calendario/${rootId}/editar?data=${occ.date}`
 }
 
-type SheetState = { mode: 'create'; defaultDate: string } | { mode: 'edit'; occurrence: EventOccurrence } | null
-
 export function CalendarScreen() {
-  const [searchParams] = useSearchParams()
+  const navigate = useNavigate()
   const [filter, setFilter] = useState<ContextFilterValue>('all')
   const [view, setView] = useState<ViewMode>('agenda')
   const [anchorDate, setAnchorDate] = useState(TODAY_ISO)
   const [selectedDate, setSelectedDate] = useState(TODAY_ISO)
   const [events, setEvents] = useState<MockEvent[]>(initialEvents)
   const [tasks, setTasks] = useState<MockTask[]>(initialTasks)
-  // Atalho rápido da Home ("Novo compromisso") entra aqui via ?novo=1, pra
-  // abrir o sheet de criação já na chegada em vez de exigir um segundo toque.
-  const [sheet, setSheet] = useState<SheetState>(
-    searchParams.get('novo') ? { mode: 'create', defaultDate: TODAY_ISO } : null,
-  )
   const [showTrash, setShowTrash] = useState(false)
 
   const activeEvents = events.filter((e) => !e.deletedAt)
   const trashedEvents = events.filter((e) => e.deletedAt)
   const visibleEvents = activeEvents.filter((e) => matchesContext(filter, e))
   const visibleTasks = tasks.filter((t) => matchesContext(filter, t) && t.dueDate)
-
-  function handleCreate(values: EventSheetValues) {
-    setEvents((prev) => [...prev, { id: `ev-${Date.now()}`, ...toEditInput(values) }])
-    setSheet(null)
-  }
-
-  function handleEditSave(values: EventSheetValues) {
-    if (sheet?.mode !== 'edit') return
-    const { occurrence } = sheet
-    const rootId = occurrence.event.seriesId ?? occurrence.event.id
-    const input = toEditInput(values)
-
-    if (occurrence.isRecurring) {
-      setEvents((prev) =>
-        values.scope === 'series' ? applySeriesEdit(prev, rootId, input) : applyOccurrenceEdit(prev, rootId, occurrence.date, input),
-      )
-    } else {
-      setEvents((prev) => prev.map((e) => (e.id === occurrence.event.id ? { id: e.id, ...input } : e)))
-    }
-    setSheet(null)
-  }
-
-  function handleDelete(scope: 'occurrence' | 'series') {
-    if (sheet?.mode !== 'edit') return
-    const { occurrence } = sheet
-    const rootId = occurrence.event.seriesId ?? occurrence.event.id
-
-    if (occurrence.isRecurring) {
-      setEvents((prev) => (scope === 'series' ? applySeriesDelete(prev, rootId) : applyOccurrenceDelete(prev, rootId, occurrence.date)))
-    } else {
-      setEvents((prev) => prev.map((e) => (e.id === occurrence.event.id ? { ...e, deletedAt: TODAY_ISO } : e)))
-    }
-    setSheet(null)
-  }
 
   function handleToggleTask(id: string) {
     setTasks((prev) => prev.map((t) => (t.id === id ? { ...t, done: !t.done } : t)))
@@ -140,7 +83,7 @@ export function CalendarScreen() {
             </button>
             <button
               type="button"
-              onClick={() => setSheet({ mode: 'create', defaultDate: defaultCreateDate })}
+              onClick={() => navigate(`/home/calendario/novo?data=${defaultCreateDate}`)}
               className="flex h-10 w-10 items-center justify-center rounded-pill bg-accent text-ink transition active:scale-90"
               aria-label="Novo compromisso"
             >
@@ -174,7 +117,7 @@ export function CalendarScreen() {
             <CalendarAgendaView
               events={visibleEvents}
               tasks={visibleTasks}
-              onSelectOccurrence={(occ) => setSheet({ mode: 'edit', occurrence: occ })}
+              onSelectOccurrence={(occ) => navigate(editPath(occ))}
               onToggleTask={handleToggleTask}
             />
           ) : null}
@@ -186,7 +129,7 @@ export function CalendarScreen() {
                 tasks={visibleTasks}
                 anchorDate={anchorDate}
                 onNavigate={setAnchorDate}
-                onSelectOccurrence={(occ) => setSheet({ mode: 'edit', occurrence: occ })}
+                onSelectOccurrence={(occ) => navigate(editPath(occ))}
                 onToggleTask={handleToggleTask}
               />
             </Tile>
@@ -204,60 +147,13 @@ export function CalendarScreen() {
                   setSelectedDate(next)
                 }}
                 onSelectDate={setSelectedDate}
-                onSelectOccurrence={(occ) => setSheet({ mode: 'edit', occurrence: occ })}
+                onSelectOccurrence={(occ) => navigate(editPath(occ))}
                 onToggleTask={handleToggleTask}
               />
             </Tile>
           ) : null}
         </div>
       </div>
-
-      {sheet?.mode === 'create' ? (
-        <EventSheet
-          mode="create"
-          initial={{
-            title: '',
-            context: 'personal',
-            groupId: undefined,
-            date: sheet.defaultDate,
-            time: '',
-            endTime: '',
-            location: '',
-            participants: [],
-            participantIds: [],
-            recurrenceFreq: '',
-            recurrenceEndDate: '',
-            scope: 'occurrence',
-          }}
-          onSave={handleCreate}
-          onClose={() => setSheet(null)}
-        />
-      ) : null}
-
-      {sheet?.mode === 'edit' ? (
-        <EventSheet
-          key={sheet.occurrence.occurrenceKey}
-          mode="edit"
-          isRecurringOccurrence={sheet.occurrence.isRecurring}
-          initial={{
-            title: sheet.occurrence.event.title,
-            context: sheet.occurrence.event.context === 'group' ? 'group' : 'personal',
-            groupId: sheet.occurrence.event.groupId,
-            date: sheet.occurrence.date,
-            time: sheet.occurrence.event.time,
-            endTime: sheet.occurrence.event.endTime ?? '',
-            location: sheet.occurrence.event.location ?? '',
-            participants: sheet.occurrence.event.participants ?? [],
-            participantIds: sheet.occurrence.event.participantIds ?? [],
-            recurrenceFreq: sheet.occurrence.event.recurrence?.freq ?? '',
-            recurrenceEndDate: sheet.occurrence.event.recurrence?.endDate ?? '',
-            scope: 'occurrence',
-          }}
-          onSave={handleEditSave}
-          onDelete={handleDelete}
-          onClose={() => setSheet(null)}
-        />
-      ) : null}
 
       {showTrash ? (
         <TrashSheet

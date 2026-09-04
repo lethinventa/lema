@@ -1,7 +1,6 @@
 import { ChevronLeft, ChevronRight, Landmark, PieChart, Plus, Repeat, Target, TrendingUp, Trash2, X } from 'lucide-react'
 import { useState } from 'react'
-import { useNavigate, useSearchParams } from 'react-router-dom'
-import { initialCategories } from '../categories/categoriesMockData'
+import { useNavigate } from 'react-router-dom'
 import { Avatar } from '../components/Avatar'
 import { CategoryChip } from '../components/CategoryChip'
 import { CategoryRanking } from '../components/CategoryRanking'
@@ -13,20 +12,9 @@ import { getCategoryStyle } from '../components/palette'
 import { SavingsGauge } from '../components/SavingsGauge'
 import { Tile } from '../components/Tile'
 import { TrashSheet } from '../components/TrashSheet'
-import { VisibilityDot } from '../components/VisibilityDot'
 import { initialGoals } from '../goals/goalsMockData'
 import { mockGroups } from '../home/homeMockData'
-import {
-  addMonthsIso,
-  addMonthsToMonthIso,
-  formatDate,
-  formatDateLabel,
-  formatMonthLabel,
-  getCurrentMonthIso,
-  initialAccounts,
-  MOCK_TODAY,
-  parseAmount,
-} from './accountsMockData'
+import { addMonthsToMonthIso, formatDate, formatMonthLabel, getCurrentMonthIso, initialAccounts } from './accountsMockData'
 import { formatCurrency, initialTransactions, type MockTransaction, type TransactionType } from './financeMockData'
 import {
   getCategoryBreakdown,
@@ -35,9 +23,6 @@ import {
   getVisibleAccountsTotal,
 } from './financeSelectors'
 import { initialRecurrenceRules, type MockRecurrenceRule } from './recurrenceMockData'
-import { TransactionSheet, type TransactionSheetValues } from './TransactionSheet'
-
-const TODAY_ISO = MOCK_TODAY.toISOString().slice(0, 10)
 
 const goalTitleById = new Map(initialGoals.map((g) => [g.id, g.title]))
 
@@ -66,7 +51,6 @@ function TransactionRow({ tx, onEdit }: { tx: MockTransaction; onEdit: () => voi
         <span className={`tabular text-[14.5px] font-bold ${isIncome ? 'text-mint-text' : 'text-ink'}`}>
           {isIncome ? '+' : '−'} {formatCurrency(tx.amount)}
         </span>
-        <VisibilityDot context={tx.context} groupId={tx.groupId} />
       </span>
     </button>
   )
@@ -74,152 +58,12 @@ function TransactionRow({ tx, onEdit }: { tx: MockTransaction; onEdit: () => voi
 
 export function FinanceScreen() {
   const navigate = useNavigate()
-  const [searchParams] = useSearchParams()
   const [filter, setFilter] = useState<ContextFilterValue>('all')
   const [month, setMonth] = useState(getCurrentMonthIso())
   const [rankingTab, setRankingTab] = useState<TransactionType>('despesa')
   const [transactions, setTransactions] = useState(initialTransactions)
   const [recurrenceRules, setRecurrenceRules] = useState<MockRecurrenceRule[]>(initialRecurrenceRules)
-  const [categories, setCategories] = useState<string[]>(initialCategories)
-  // Atalho rápido da Home ("Nova transação") entra aqui via ?novo=1, pra
-  // abrir o sheet de criação já na chegada em vez de exigir um segundo toque.
-  const [sheet, setSheet] = useState<{ mode: 'create' } | { mode: 'edit'; txId: string } | null>(
-    searchParams.get('novo') ? { mode: 'create' } : null,
-  )
   const [showTrash, setShowTrash] = useState(false)
-
-  function handleAddCategory(category: string) {
-    setCategories((prev) => (prev.includes(category) ? prev : [...prev, category]))
-  }
-
-  function handleCreate(values: TransactionSheetValues) {
-    const amount = parseAmount(values.amount)
-    const installmentsCount = Number.parseInt(values.installments, 10)
-
-    if (values.type === 'despesa' && values.accountId && installmentsCount >= 2) {
-      // Parcelamento (UC-FIN-012): gera as N transações de uma vez, uma por
-      // mês, valor dividido — resto ajustado na última parcela.
-      const parcelamentoId = `parc-${Date.now()}`
-      const base = Math.floor((amount / installmentsCount) * 100) / 100
-      let allocated = 0
-      const newTxs: MockTransaction[] = Array.from({ length: installmentsCount }, (_, i) => {
-        const isLast = i === installmentsCount - 1
-        const value = isLast ? Math.round((amount - allocated) * 100) / 100 : base
-        allocated += value
-        const date = addMonthsIso(values.date, i)
-        return {
-          id: `tx-${Date.now()}-${i}`,
-          title: values.title,
-          category: values.category,
-          context: values.context,
-          groupId: values.groupId,
-          type: values.type,
-          amount: value,
-          dateLabel: formatDateLabel(date),
-          date,
-          payer: values.payer || undefined,
-          accountId: values.accountId || undefined,
-          parcelamentoId,
-          numeroParcela: i + 1,
-          totalParcelas: installmentsCount,
-          goalId: values.goalId || undefined,
-          paymentMethod: values.paymentMethod || undefined,
-        }
-      })
-      setTransactions((prev) => [...newTxs, ...prev])
-    } else if (values.recurs) {
-      // Recorrência (UC-FIN-013): cria a regra e materializa só a ocorrência
-      // deste mês — meses futuros ficam projetados, nunca lançados de antemão.
-      const ruleId = `rec-${Date.now()}`
-      setRecurrenceRules((prev) => [
-        ...prev,
-        {
-          id: ruleId,
-          title: values.title,
-          category: values.category,
-          context: values.context,
-          groupId: values.groupId,
-          type: values.type,
-          amount,
-          accountId: values.accountId || undefined,
-          dayOfMonth: Number.parseInt(values.date.slice(8, 10), 10),
-          startDate: values.date,
-          endDate: values.recurUntil || undefined,
-        },
-      ])
-      setTransactions((prev) => [
-        {
-          id: `tx-${Date.now()}`,
-          title: values.title,
-          category: values.category,
-          context: values.context,
-          groupId: values.groupId,
-          type: values.type,
-          amount,
-          dateLabel: formatDateLabel(values.date),
-          date: values.date,
-          payer: values.payer || undefined,
-          accountId: values.accountId || undefined,
-          recurrenceRuleId: ruleId,
-          goalId: values.goalId || undefined,
-          paymentMethod: values.paymentMethod || undefined,
-        },
-        ...prev,
-      ])
-    } else {
-      setTransactions((prev) => [
-        {
-          id: `tx-${Date.now()}`,
-          title: values.title,
-          category: values.category,
-          context: values.context,
-          groupId: values.groupId,
-          type: values.type,
-          amount,
-          dateLabel: formatDateLabel(values.date),
-          date: values.date,
-          payer: values.payer || undefined,
-          accountId: values.accountId || undefined,
-          goalId: values.goalId || undefined,
-          paymentMethod: values.paymentMethod || undefined,
-        },
-        ...prev,
-      ])
-    }
-    setSheet(null)
-  }
-
-  function handleEditSave(values: TransactionSheetValues) {
-    if (sheet?.mode !== 'edit') return
-    setTransactions((prev) =>
-      prev.map((tx) =>
-        tx.id === sheet.txId
-          ? {
-              ...tx,
-              title: values.title,
-              category: values.category,
-              context: values.context,
-              groupId: values.groupId,
-              type: values.type,
-              amount: parseAmount(values.amount),
-              dateLabel: formatDateLabel(values.date),
-              date: values.date,
-              payer: values.payer || undefined,
-              accountId: values.accountId || undefined,
-              goalId: values.goalId || undefined,
-              paymentMethod: values.paymentMethod || undefined,
-            }
-          : tx,
-      ),
-    )
-    setSheet(null)
-  }
-
-  function handleDelete() {
-    if (sheet?.mode !== 'edit') return
-    setTransactions((prev) => prev.map((tx) => (tx.id === sheet.txId ? { ...tx, deletedAt: TODAY_ISO } : tx)))
-    setSheet(null)
-  }
 
   function handleRestoreTransaction(id: string) {
     setTransactions((prev) => prev.map((tx) => (tx.id === id ? { ...tx, deletedAt: undefined } : tx)))
@@ -239,9 +83,7 @@ export function FinanceScreen() {
   const { income, expense } = getIncomeExpenseTotals(visible)
   const expenseByCategory = getCategoryBreakdown(visible, 'despesa')
   const rankingData = getCategoryBreakdown(visible, rankingTab)
-  const editingTx = sheet?.mode === 'edit' ? transactions.find((tx) => tx.id === sheet.txId) : undefined
   const trashedTransactions = transactions.filter((tx) => tx.deletedAt)
-  const goalOptions = initialGoals.filter((g) => !g.done).map((g) => ({ id: g.id, title: g.title }))
 
   return (
     <HomeLayout>
@@ -267,7 +109,7 @@ export function FinanceScreen() {
             </button>
             <button
               type="button"
-              onClick={() => setSheet({ mode: 'create' })}
+              onClick={() => navigate('/home/financas/nova')}
               className="flex h-10 w-10 items-center justify-center rounded-pill bg-accent text-ink transition active:scale-90"
               aria-label="Nova transação"
             >
@@ -439,7 +281,7 @@ export function FinanceScreen() {
             ) : (
               <div className="flex flex-col divide-y divide-line">
                 {visible.map((tx) => (
-                  <TransactionRow key={tx.id} tx={tx} onEdit={() => setSheet({ mode: 'edit', txId: tx.id })} />
+                  <TransactionRow key={tx.id} tx={tx} onEdit={() => navigate(`/home/financas/${tx.id}/editar`)} />
                 ))}
               </div>
             )}
@@ -447,46 +289,6 @@ export function FinanceScreen() {
         </div>
       </div>
 
-      {sheet?.mode === 'create' ? (
-        <TransactionSheet
-          mode="create"
-          accountOptions={initialAccounts}
-          goalOptions={goalOptions}
-          categoryOptions={categories}
-          onAddCategory={handleAddCategory}
-          onSave={handleCreate}
-          onClose={() => setSheet(null)}
-        />
-      ) : null}
-
-      {sheet?.mode === 'edit' && editingTx ? (
-        <TransactionSheet
-          mode="edit"
-          accountOptions={initialAccounts}
-          goalOptions={goalOptions}
-          categoryOptions={categories}
-          onAddCategory={handleAddCategory}
-          initial={{
-            title: editingTx.title,
-            category: editingTx.category,
-            context: editingTx.context === 'group' ? 'group' : 'personal',
-            groupId: editingTx.groupId,
-            type: editingTx.type,
-            amount: editingTx.amount.toString().replace('.', ','),
-            date: editingTx.date,
-            payer: editingTx.payer ?? '',
-            accountId: editingTx.accountId ?? '',
-            installments: '',
-            recurs: false,
-            recurUntil: '',
-            goalId: editingTx.goalId ?? '',
-            paymentMethod: editingTx.paymentMethod ?? '',
-          }}
-          onSave={handleEditSave}
-          onDelete={handleDelete}
-          onClose={() => setSheet(null)}
-        />
-      ) : null}
 
       {showTrash ? (
         <TrashSheet

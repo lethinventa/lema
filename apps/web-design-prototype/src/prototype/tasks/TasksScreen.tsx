@@ -8,7 +8,6 @@ import { FlagChip } from '../components/FlagChip'
 import { HomeLayout } from '../components/HomeLayout'
 import { Tile } from '../components/Tile'
 import { TrashSheet } from '../components/TrashSheet'
-import { VisibilityDot } from '../components/VisibilityDot'
 import { formatRelativeDayLabel } from '../calendar/dateUtils'
 import { resolveMemberNames } from '../groups/groupsMockData'
 import { mockGroups } from '../home/homeMockData'
@@ -49,7 +48,6 @@ function TaskRow({ task, onToggle, onEdit }: { task: MockTask; onToggle: () => v
             </div>
           ) : null}
         </span>
-        <VisibilityDot context={task.context} groupId={task.groupId} className="mt-1.5" />
       </button>
     </div>
   )
@@ -172,7 +170,6 @@ export function TasksScreen() {
                 ))}
               </span>
               <span className="mt-1 flex items-center gap-1.5 text-[12px] text-ink-faint">
-                <VisibilityDot context={task.context} groupId={task.groupId} />
                 {task.context === 'group'
                   ? mockGroups.find((g) => g.id === task.groupId)?.name
                   : task.context === 'shared'

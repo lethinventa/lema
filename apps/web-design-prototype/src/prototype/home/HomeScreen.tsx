@@ -7,7 +7,6 @@ import { getInitials, getPersonColor } from '../components/palette'
 import { type QuickAction, QuickActionsRow } from '../components/QuickActionsRow'
 import { SectionHeader } from '../components/SectionHeader'
 import { Tile } from '../components/Tile'
-import { VisibilityDot } from '../components/VisibilityDot'
 import { mockCalendar, mockFinance, mockGoals, mockTasks, mockUser } from './homeMockData'
 
 function EmptyRow() {
@@ -19,9 +18,9 @@ function EmptyRow() {
 // linha desalinhada entre colunas na largura de 64px do círculo.
 const QUICK_ACTIONS: QuickAction[] = [
   { label: 'Tarefa', icon: CheckSquare2, to: '/home/tarefas/nova' },
-  { label: 'Agenda', icon: CalendarDays, to: '/home/calendario?novo=1' },
-  { label: 'Transação', icon: Wallet, to: '/home/financas?novo=1' },
-  { label: 'Objetivo', icon: Target, to: '/home/objetivos?novo=1' },
+  { label: 'Agenda', icon: CalendarDays, to: '/home/calendario/novo' },
+  { label: 'Transação', icon: Wallet, to: '/home/financas/nova' },
+  { label: 'Objetivo', icon: Target, to: '/home/objetivos/novo' },
 ]
 
 export function HomeScreen() {
@@ -147,7 +146,6 @@ export function HomeScreen() {
                     >
                       {task.title}
                     </span>
-                    <VisibilityDot context={task.context} groupId={task.groupId} />
                   </button>
                 ))}
               </div>
@@ -168,7 +166,6 @@ export function HomeScreen() {
                     <span className="min-w-0 flex-1">
                       <span className="flex items-center gap-1.5">
                         <span className="text-[14px] font-bold text-ink">{item.title}</span>
-                        <VisibilityDot context={item.context} groupId={item.groupId} />
                       </span>
                       {item.location ? <span className="block text-[12px] text-ink-muted">{item.location}</span> : null}
                     </span>
@@ -189,7 +186,6 @@ export function HomeScreen() {
                   <div key={item.id} className="flex items-center justify-between gap-3 py-2">
                     <span className="flex flex-1 items-center gap-2 text-[14px] font-semibold text-ink">
                       {item.title}
-                      <VisibilityDot context={item.context} groupId={item.groupId} />
                     </span>
                     <span className="tabular shrink-0 rounded-sm bg-peach-bg px-1.5 py-0.5 text-[11px] font-bold text-peach-fg">
                       {item.amount}

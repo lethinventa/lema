@@ -7,7 +7,6 @@ import { ContextFilterChips, type ContextFilterValue, matchesContext } from '../
 import { FlagChip } from '../components/FlagChip'
 import { HomeLayout } from '../components/HomeLayout'
 import { Tile } from '../components/Tile'
-import { VisibilityDot } from '../components/VisibilityDot'
 import { AccountSheet, type AccountSheetValues } from './AccountSheet'
 import {
   accountTypeLabels,
@@ -49,7 +48,6 @@ function AccountRow({
       <span className="min-w-0 flex-1">
         <span className="flex items-center gap-1.5">
           <span className="truncate text-[14px] font-semibold text-ink">{account.name}</span>
-          <VisibilityDot context={account.context} groupId={account.groupId} />
         </span>
         <div className="mt-1 flex flex-wrap items-center gap-1.5">
           <span className="text-[11px] font-medium text-ink-faint">{accountTypeLabels[account.type]}</span>

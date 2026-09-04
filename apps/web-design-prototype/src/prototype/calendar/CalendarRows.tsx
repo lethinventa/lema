@@ -1,7 +1,6 @@
 import { CheckSquare2, MapPin, Repeat } from 'lucide-react'
 import { Avatar } from '../components/Avatar'
 import { FlagChip } from '../components/FlagChip'
-import { VisibilityDot } from '../components/VisibilityDot'
 import { resolveMemberNames } from '../groups/groupsMockData'
 import type { MockTask } from '../tasks/tasksMockData'
 import type { EventOccurrence } from './calendarSelectors'
@@ -33,7 +32,6 @@ export function EventOccurrenceRow({ occurrence, onEdit }: { occurrence: EventOc
           </div>
         ) : null}
       </span>
-      <VisibilityDot context={event.context} groupId={event.groupId} className="mt-1.5" />
     </button>
   )
 }
@@ -67,7 +65,6 @@ export function TaskAgendaRow({ task, onToggle }: { task: MockTask; onToggle: ()
           <FlagChip>Tarefa</FlagChip>
         </span>
       </span>
-      <VisibilityDot context={task.context} groupId={task.groupId} className="mt-1.5" />
     </div>
   )
 }

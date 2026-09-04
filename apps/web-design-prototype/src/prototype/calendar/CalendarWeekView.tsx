@@ -19,8 +19,7 @@ const HOUR_HEIGHT = 52
 const GRID_HEIGHT = HOUR_HEIGHT * 24
 
 function eventColor(context: MockEvent['context']) {
-  // Reaproveita o significado já estabelecido pelo VisibilityDot: GROUP usa
-  // accent (cor do grupo), PERSONAL/SHARED usam sky — não é uma paleta nova.
+  // GROUP usa accent (cor do grupo), PERSONAL/SHARED usam sky.
   return context === 'group'
     ? { bg: 'bg-accent', text: 'text-ink' }
     : { bg: 'bg-sky-bg', text: 'text-sky-fg' }

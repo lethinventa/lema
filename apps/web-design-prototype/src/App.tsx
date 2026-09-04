@@ -1,10 +1,13 @@
 import { Navigate, Route, Routes } from 'react-router-dom'
 import { CalendarScreen } from './prototype/calendar/CalendarScreen'
+import { EventFormScreen } from './prototype/calendar/EventFormScreen'
 import { PhoneFrame } from './prototype/components/PhoneFrame'
 import { AccountDetailScreen } from './prototype/finance/AccountDetailScreen'
 import { AccountsScreen } from './prototype/finance/AccountsScreen'
 import { CardDetailScreen } from './prototype/finance/CardDetailScreen'
 import { FinanceScreen } from './prototype/finance/FinanceScreen'
+import { TransactionFormScreen } from './prototype/finance/TransactionFormScreen'
+import { GoalFormScreen } from './prototype/goals/GoalFormScreen'
 import { GoalsScreen } from './prototype/goals/GoalsScreen'
 import { CreateGroupScreen } from './prototype/groups/CreateGroupScreen'
 import { GroupFinanceScreen } from './prototype/groups/GroupFinanceScreen'
@@ -49,8 +52,14 @@ export default function App() {
           <Route path="/home/tarefas/nova" element={<TaskFormScreen />} />
           <Route path="/home/tarefas/:taskId/editar" element={<TaskFormScreen />} />
           <Route path="/home/calendario" element={<CalendarScreen />} />
+          <Route path="/home/calendario/novo" element={<EventFormScreen />} />
+          <Route path="/home/calendario/:eventId/editar" element={<EventFormScreen />} />
           <Route path="/home/objetivos" element={<GoalsScreen />} />
+          <Route path="/home/objetivos/novo" element={<GoalFormScreen />} />
+          <Route path="/home/objetivos/:goalId/editar" element={<GoalFormScreen />} />
           <Route path="/home/financas" element={<FinanceScreen />} />
+          <Route path="/home/financas/nova" element={<TransactionFormScreen />} />
+          <Route path="/home/financas/:txId/editar" element={<TransactionFormScreen />} />
           <Route path="/home/financas/contas" element={<AccountsScreen />} />
           <Route path="/home/financas/contas/:accountId" element={<AccountDetailScreen />} />
           <Route path="/home/financas/cartoes/:accountId" element={<CardDetailScreen />} />
