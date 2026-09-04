@@ -77,10 +77,10 @@ export function HomeScreen() {
         {/* Card "Hoje" — equivalente ao card de saldo do Inter (identidade +
             ações primárias num único bloco elevado), adaptado: Lema não tem
             saldo único, então o número que ancora o card é o pulso do dia. */}
-        <Tile className="mt-4 !p-5">
+        <Tile className="mt-4">
           <span className="text-[11px] font-extrabold uppercase tracking-wide text-ink-faint">Hoje</span>
           <p className="mt-1 text-[16px] font-bold text-ink">{pulse}</p>
-          <div className="-mx-5 mt-4 border-t border-line px-5 pt-4">
+          <div className="mt-4">
             <QuickActionsRow actions={QUICK_ACTIONS} />
           </div>
         </Tile>

@@ -132,17 +132,16 @@
     box-shadow: 0 8px 20px -4px rgba(20, 21, 15, 0.06);
   }
 
+  /* 2026-09-03: opacity cut from 0.45 to 0.22, inset highlight dropped —
+     the glossy inset line + heavy tinted glow read as skeuomorphic, part
+     of the "sombras too much" feedback along with .shadow-card above. */
   .shadow-hero {
-    box-shadow:
-      0 14px 28px -14px rgba(46, 91, 255, 0.45),
-      inset 0 1px 0 rgba(255, 255, 255, 0.16);
+    box-shadow: 0 10px 24px -10px rgba(46, 91, 255, 0.22);
   }
 
   /* Rose-tinted counterpart to .shadow-hero, for Objetivos' own hero color. */
   .shadow-hero-goal {
-    box-shadow:
-      0 14px 28px -14px rgba(194, 37, 92, 0.45),
-      inset 0 1px 0 rgba(255, 255, 255, 0.16);
+    box-shadow: 0 10px 24px -10px rgba(194, 37, 92, 0.22);
   }
 
   .tabular {

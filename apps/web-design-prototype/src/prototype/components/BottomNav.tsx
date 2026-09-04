@@ -11,7 +11,7 @@ const TABS = [
 
 export function BottomNav() {
   return (
-    <nav className="absolute inset-x-4 bottom-[max(16px,env(safe-area-inset-bottom))] flex items-center gap-1 rounded-pill border border-line bg-surface px-2 py-2 shadow-[0_12px_28px_rgba(0,0,0,0.1)]">
+    <nav className="shadow-card absolute inset-x-4 bottom-[max(16px,env(safe-area-inset-bottom))] flex items-center gap-1 rounded-pill bg-surface px-2 py-2">
       {TABS.map(({ to, label, icon: Icon, end }) => (
         <NavLink
           key={to}
