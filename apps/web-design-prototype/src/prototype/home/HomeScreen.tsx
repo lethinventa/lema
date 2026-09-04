@@ -107,7 +107,7 @@ export function HomeScreen() {
                 <span className="tabular absolute right-5 top-5 rounded-pill bg-surface px-2.5 py-1 text-[12px] font-extrabold text-goal">
                   {goal.progress}%
                 </span>
-                <span className="flex items-center gap-1.5 text-[12px] font-semibold uppercase tracking-wide text-goal">
+                <span className="flex items-center gap-1.5 text-[12px] font-semibold uppercase tracking-wide text-ink-muted">
                   <Target size={13} strokeWidth={2.4} />
                   Objetivo em andamento
                 </span>

@@ -17,15 +17,18 @@
          (crescimento/progresso é a mesma ideia nos dois contextos).
        - bright-snow = fundo base da página.
      Mapeamento é uma leitura minha das 5 cores pro sistema de tokens
-     existente — se algum papel específico estiver errado (ex.: ink
-     devia ser preto neutro, não roxo), é ajuste neste bloco, não uma
-     nova paleta do zero. */
+     existente. Ajustado em 2026-09-03: --color-ink volta a ser preto
+     neutro — Lethicia não quer texto colorido, cor fica reservada pra
+     tag/badge (ex.: o "64%", o horário do compromisso), nunca pra
+     corpo de texto/título. dark-amethyst continua na paleta, só não
+     vira a cor do texto — ver --color-ink-muted abaixo pra onde a
+     paleta ainda aparece em texto (nenhum lugar, de propósito). */
   --font-sans: "Nunito", ui-rounded, ui-sans-serif, system-ui, sans-serif;
 
   --color-bg: #f9f9f9; /* bright-snow */
   --color-surface: #ffffff;
   --color-surface-muted: #f2eef8; /* pale lavender tint, deriva de bright-lavender */
-  --color-ink: #3e0b5e; /* dark-amethyst */
+  --color-ink: #14150f; /* preto neutro — nunca roxo, mesmo o texto sendo tudo que a paleta define como "identidade" */
   --color-ink-muted: #6b6b6b;
   --color-ink-faint: #a0a0a0;
   --color-dark: #000000;
