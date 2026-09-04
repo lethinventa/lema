@@ -1,21 +1,14 @@
-import { Plus, Trash2, X } from 'lucide-react'
+import { Plus, X } from 'lucide-react'
 import { useState } from 'react'
 import { Navigate, useNavigate, useParams, useSearchParams } from 'react-router-dom'
 import { Avatar } from '../components/Avatar'
 import { BackHeader } from '../components/BackHeader'
-import { GhostButton, PrimaryButton } from '../components/Buttons'
+import { PrimaryButton } from '../components/Buttons'
 import { MemberPicker } from '../components/MemberPicker'
 import { SelectField, TextField } from '../components/TextField'
 import { VisibilityPicker, type VisibilitySelection } from '../components/VisibilityPicker'
 import { initialEvents, type MockEventRecurrence, type RecurrenceFreq } from './calendarMockData'
-import {
-  applyOccurrenceDelete,
-  applyOccurrenceEdit,
-  applySeriesDelete,
-  applySeriesEdit,
-  getOccurrencesForDate,
-  type EventEditInput,
-} from './calendarSelectors'
+import { applyOccurrenceEdit, applySeriesEdit, getOccurrencesForDate, type EventEditInput } from './calendarSelectors'
 import { TODAY_ISO } from './dateUtils'
 
 const RECURRENCE_LABELS: Record<RecurrenceFreq | '', string> = {
@@ -33,6 +26,9 @@ function replaceEvents(next: ReturnType<typeof applySeriesEdit>) {
 
 // Criar/editar compromisso é página cheia, não bottom sheet (ver
 // docs/product/interaction-patterns.md) — mesmo padrão de TaskFormScreen.
+// Abrir um compromisso existente vai pra EventDetailScreen (visualização);
+// esta tela só existe pelo botão "Editar" de lá, e ao salvar volta pra lá —
+// excluir também ficou na visualização.
 // Ocorrência de série recorrente não tem uma única "linha" no mock — é
 // recalculada a partir de eventId (raiz da série) + data (?data=), via
 // getOccurrencesForDate, igual a como a Agenda/Semana/Mês já encontram
@@ -47,6 +43,7 @@ export function EventFormScreen() {
   const occurrence = eventId
     ? getOccurrencesForDate(initialEvents, occurrenceDate).find((occ) => occ.occurrenceKey === `${eventId}:${occurrenceDate}`)
     : undefined
+  const backTo = mode === 'edit' && eventId ? `/home/calendario/${eventId}?data=${occurrenceDate}` : '/home/calendario'
 
   const [title, setTitle] = useState(occurrence?.event.title ?? '')
   const [visibility, setVisibility] = useState<VisibilitySelection>({
@@ -106,23 +103,12 @@ export function EventFormScreen() {
           : applySeriesEdit(initialEvents, rootId, input),
       )
     }
-    navigate('/home/calendario')
-  }
-
-  function handleDelete() {
-    if (!occurrence) return
-    const rootId = occurrence.event.seriesId ?? occurrence.event.id
-    replaceEvents(
-      showScopeToggle && scope === 'occurrence'
-        ? applyOccurrenceDelete(initialEvents, rootId, occurrence.date)
-        : applySeriesDelete(initialEvents, rootId),
-    )
-    navigate('/home/calendario')
+    navigate(backTo)
   }
 
   return (
     <div className="relative flex h-full flex-col">
-      <BackHeader title={mode === 'create' ? 'Novo compromisso' : 'Editar compromisso'} to="/home/calendario" />
+      <BackHeader title={mode === 'create' ? 'Novo compromisso' : 'Editar compromisso'} to={backTo} />
 
       <div className="flex-1 overflow-y-auto px-6 pb-8 pt-4">
         {showScopeToggle ? (
@@ -269,12 +255,6 @@ export function EventFormScreen() {
         <PrimaryButton disabled={!canSave} onClick={handleSave}>
           {mode === 'create' ? 'Adicionar compromisso' : 'Salvar alterações'}
         </PrimaryButton>
-        {mode === 'edit' ? (
-          <GhostButton onClick={handleDelete} className="flex items-center justify-center gap-1.5 text-danger">
-            <Trash2 size={16} strokeWidth={2.2} />
-            {showScopeToggle ? (scope === 'series' ? 'Excluir toda a série' : 'Excluir esta ocorrência') : 'Excluir compromisso'}
-          </GhostButton>
-        ) : null}
       </div>
     </div>
   )

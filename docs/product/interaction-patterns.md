@@ -40,6 +40,20 @@ Se a resposta a "faz sentido essa tela ter sua própria URL/rota e eu poder volt
 | Confirmar exclusão de tarefa/compromisso (recuperável via lixeira) | Bottom sheet |
 | Excluir conta de usuário, remover membro do grupo | Modal centralizado |
 
+## Visualização vs. edição dentro da página cheia
+
+Toque num item de lista (tarefa, compromisso, transação, objetivo) leva para uma tela de **visualização** — não direto para o formulário de edição. A visualização é a tela padrão de "voltar a acessar depois"; edição é uma ação explícita a partir dela (botão "Editar").
+
+Por quê: o detalhe de um item mistura dois tipos de conteúdo que não deveriam se comportar do mesmo jeito —
+- **campos de formulário** (título, categoria, prazo, visibilidade, valor) — só mudam via "Editar";
+- **estado/conteúdo derivado** (progresso calculado, submetas, transações vinculadas, alocações reservado/contratado/pago, status concluído) — não é um campo de formulário, é informação (ou uma ação pontual, como marcar concluído ou registrar um valor).
+
+Abrir direto no formulário editável apresenta os dois misturados, como se tudo fosse editável — o que é confuso, e no caso de Objetivo (que tem mais conteúdo derivado que qualquer outro domínio) fica pior conforme a tela cresce.
+
+Regra prática: **criar** vai direto pro formulário (não existe "visualizar" algo que ainda não existe). **Abrir um item existente** vai para visualização; "Editar" abre o formulário; salvar/cancelar volta para a visualização, não para a lista.
+
+Ações pontuais que mudam estado sem ser "editar o item" (marcar tarefa feita, adicionar valor reservado/contratado a um objetivo, marcar objetivo como concluído, cancelar uma recorrência) ficam na própria tela de visualização, fora do formulário.
+
 ## Referência futura (V2, não MVP): hub de catálogo
 
 O Inter usa uma tab fixa ("Todos") dedicada a listar produtos/atalhos agrupados por categoria (Acesso rápido, Economia e comodidade, Explorar produtos), cada linha abrindo uma página cheia — um padrão de "super app" pra quando o número de domínios não cabe mais numa tab bar de 5 itens.

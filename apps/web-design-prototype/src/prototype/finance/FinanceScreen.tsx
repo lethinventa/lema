@@ -281,7 +281,7 @@ export function FinanceScreen() {
             ) : (
               <div className="flex flex-col divide-y divide-line">
                 {visible.map((tx) => (
-                  <TransactionRow key={tx.id} tx={tx} onEdit={() => navigate(`/home/financas/${tx.id}/editar`)} />
+                  <TransactionRow key={tx.id} tx={tx} onEdit={() => navigate(`/home/financas/${tx.id}`)} />
                 ))}
               </div>
             )}

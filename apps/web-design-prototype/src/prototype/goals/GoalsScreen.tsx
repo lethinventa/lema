@@ -147,7 +147,7 @@ export function GoalsScreen() {
                   goal={goal}
                   progress={getGoalProgress(goal, activeGoals, initialGoalAllocations, initialTransactions)}
                   behindPace={getPaceInfo(goal, initialGoalAllocations, initialTransactions).behindPace}
-                  onEdit={() => navigate(`/home/objetivos/${goal.id}/editar`)}
+                  onEdit={() => navigate(`/home/objetivos/${goal.id}`)}
                 />
               ))}
               {completed.map((goal) => (
@@ -156,7 +156,7 @@ export function GoalsScreen() {
                   goal={goal}
                   progress={100}
                   behindPace={false}
-                  onEdit={() => navigate(`/home/objetivos/${goal.id}/editar`)}
+                  onEdit={() => navigate(`/home/objetivos/${goal.id}`)}
                 />
               ))}
             </>

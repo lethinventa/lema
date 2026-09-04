@@ -23,11 +23,12 @@ const VIEW_OPTIONS: { value: ViewMode; label: string; icon: typeof List }[] = [
   { value: 'month', label: 'Mês', icon: Grid3x3 },
 ]
 
-// Página de edição precisa da raiz da série + data pra reconstruir a
-// ocorrência (ver EventFormScreen) — ambos já existem em toda EventOccurrence.
-function editPath(occ: EventOccurrence) {
+// Visualização (e edição, a partir dela) precisa da raiz da série + data pra
+// reconstruir a ocorrência (ver EventDetailScreen) — ambos já existem em
+// toda EventOccurrence.
+function detailPath(occ: EventOccurrence) {
   const rootId = occ.event.seriesId ?? occ.event.id
-  return `/home/calendario/${rootId}/editar?data=${occ.date}`
+  return `/home/calendario/${rootId}?data=${occ.date}`
 }
 
 export function CalendarScreen() {
@@ -117,7 +118,7 @@ export function CalendarScreen() {
             <CalendarAgendaView
               events={visibleEvents}
               tasks={visibleTasks}
-              onSelectOccurrence={(occ) => navigate(editPath(occ))}
+              onSelectOccurrence={(occ) => navigate(detailPath(occ))}
               onToggleTask={handleToggleTask}
             />
           ) : null}
@@ -129,7 +130,7 @@ export function CalendarScreen() {
                 tasks={visibleTasks}
                 anchorDate={anchorDate}
                 onNavigate={setAnchorDate}
-                onSelectOccurrence={(occ) => navigate(editPath(occ))}
+                onSelectOccurrence={(occ) => navigate(detailPath(occ))}
                 onToggleTask={handleToggleTask}
               />
             </Tile>
@@ -147,7 +148,7 @@ export function CalendarScreen() {
                   setSelectedDate(next)
                 }}
                 onSelectDate={setSelectedDate}
-                onSelectOccurrence={(occ) => navigate(editPath(occ))}
+                onSelectOccurrence={(occ) => navigate(detailPath(occ))}
                 onToggleTask={handleToggleTask}
               />
             </Tile>

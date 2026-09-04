@@ -13,7 +13,7 @@ import { resolveMemberNames } from '../groups/groupsMockData'
 import { mockGroups } from '../home/homeMockData'
 import { initialTasks, type MockTask } from './tasksMockData'
 
-function TaskRow({ task, onToggle, onEdit }: { task: MockTask; onToggle: () => void; onEdit: () => void }) {
+function TaskRow({ task, onToggle, onOpen }: { task: MockTask; onToggle: () => void; onOpen: () => void }) {
   const assigneeNames = resolveMemberNames(task.groupId, task.assigneeIds)
   return (
     <div className="flex w-full items-start gap-3 py-3 text-left">
@@ -26,7 +26,7 @@ function TaskRow({ task, onToggle, onEdit }: { task: MockTask; onToggle: () => v
       >
         {task.done ? <CheckSquare2 size={13} strokeWidth={3} className="text-ink" /> : null}
       </button>
-      <button type="button" onClick={onEdit} className="flex flex-1 items-start justify-between gap-2 text-left">
+      <button type="button" onClick={onOpen} className="flex flex-1 items-start justify-between gap-2 text-left">
         <span>
           <span className="flex items-center gap-1.5">
             <span className={`text-[15px] font-semibold ${task.done ? 'text-ink-faint line-through' : 'text-ink'}`}>
@@ -128,7 +128,7 @@ export function TasksScreen() {
                     key={task.id}
                     task={task}
                     onToggle={() => toggleTask(task.id)}
-                    onEdit={() => navigate(`/home/tarefas/${task.id}/editar`)}
+                    onOpen={() => navigate(`/home/tarefas/${task.id}`)}
                   />
                 ))}
               </div>
@@ -146,7 +146,7 @@ export function TasksScreen() {
                     key={task.id}
                     task={task}
                     onToggle={() => toggleTask(task.id)}
-                    onEdit={() => navigate(`/home/tarefas/${task.id}/editar`)}
+                    onOpen={() => navigate(`/home/tarefas/${task.id}`)}
                   />
                 ))}
               </div>

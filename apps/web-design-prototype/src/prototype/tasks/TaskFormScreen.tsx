@@ -1,17 +1,18 @@
-import { Trash2 } from 'lucide-react'
 import { useState } from 'react'
 import { Navigate, useNavigate, useParams } from 'react-router-dom'
 import { BackHeader } from '../components/BackHeader'
-import { GhostButton, PrimaryButton } from '../components/Buttons'
+import { PrimaryButton } from '../components/Buttons'
 import { MemberPicker } from '../components/MemberPicker'
 import { TextField } from '../components/TextField'
 import { VisibilityPicker, type VisibilitySelection } from '../components/VisibilityPicker'
-import { TODAY_ISO } from '../calendar/dateUtils'
 import { initialTasks } from './tasksMockData'
 
 // Criar/editar tarefa é página cheia, não bottom sheet (ver
 // docs/product/interaction-patterns.md) — é um formulário com múltiplos
 // campos e passa por um destino próprio (rota), não uma ação efêmera.
+// Abrir uma tarefa existente vai pra TaskDetailScreen (visualização); esta
+// tela só existe pelo botão "Editar" de lá, e ao salvar volta pra lá — não
+// tem mais ação de excluir aqui (isso ficou na visualização).
 //
 // Sem store compartilhado entre telas (ver CLAUDE.md): igual a
 // CreateGroupScreen, o save muta initialTasks diretamente (módulo, não
@@ -21,6 +22,7 @@ export function TaskFormScreen() {
   const navigate = useNavigate()
   const mode: 'create' | 'edit' = taskId ? 'edit' : 'create'
   const editingTask = mode === 'edit' ? initialTasks.find((t) => t.id === taskId) : undefined
+  const backTo = mode === 'edit' && taskId ? `/home/tarefas/${taskId}` : '/home/tarefas'
 
   const [title, setTitle] = useState(editingTask?.title ?? '')
   const [visibility, setVisibility] = useState<VisibilitySelection>({
@@ -51,19 +53,12 @@ export function TaskFormScreen() {
     } else {
       initialTasks.unshift({ id: `tk-${Date.now()}`, done: false, ...shared })
     }
-    navigate('/home/tarefas')
-  }
-
-  function handleDelete() {
-    const target = initialTasks.find((t) => t.id === taskId)
-    if (!target) return
-    target.deletedAt = TODAY_ISO
-    navigate('/home/tarefas')
+    navigate(backTo)
   }
 
   return (
     <div className="relative flex h-full flex-col">
-      <BackHeader title={mode === 'create' ? 'Nova tarefa' : 'Editar tarefa'} to="/home/tarefas" />
+      <BackHeader title={mode === 'create' ? 'Nova tarefa' : 'Editar tarefa'} to={backTo} />
 
       <div className="flex-1 overflow-y-auto px-6 pb-8 pt-4">
         <div className="flex flex-col gap-4">
@@ -104,12 +99,6 @@ export function TaskFormScreen() {
         <PrimaryButton disabled={title.trim().length === 0} onClick={handleSave}>
           {mode === 'create' ? 'Adicionar tarefa' : 'Salvar alterações'}
         </PrimaryButton>
-        {mode === 'edit' ? (
-          <GhostButton onClick={handleDelete} className="flex items-center justify-center gap-1.5 text-danger">
-            <Trash2 size={16} strokeWidth={2.2} />
-            Excluir tarefa
-          </GhostButton>
-        ) : null}
       </div>
     </div>
   )

@@ -1,8 +1,7 @@
-import { Trash2 } from 'lucide-react'
 import { useState } from 'react'
 import { Navigate, useNavigate, useParams, useSearchParams } from 'react-router-dom'
 import { BackHeader } from '../components/BackHeader'
-import { GhostButton, PrimaryButton } from '../components/Buttons'
+import { PrimaryButton } from '../components/Buttons'
 import { CategoryPicker } from '../components/CategoryPicker'
 import { SelectField, TextField } from '../components/TextField'
 import { VisibilityPicker, type VisibilitySelection } from '../components/VisibilityPicker'
@@ -11,24 +10,28 @@ import { initialGoals } from '../goals/goalsMockData'
 import { addMonthsIso, formatDateLabel, initialAccounts, parseAmount } from './accountsMockData'
 import { initialTransactions, type MockTransaction, type TransactionType } from './financeMockData'
 import { initialRecurrenceRules } from './recurrenceMockData'
-import { TODAY_ISO } from '../calendar/dateUtils'
 
 // Criar/editar transação é página cheia, não bottom sheet (ver
 // docs/product/interaction-patterns.md) — mesmo padrão de
 // TaskFormScreen/EventFormScreen. A lógica de parcelamento/recorrência
 // (UC-FIN-012/013) veio direto de FinanceScreen, sem mudança de regra.
+// Abrir uma transação existente vai pra TransactionDetailScreen
+// (visualização); esta tela só existe pelo botão "Editar" de lá, e ao
+// salvar volta pra lá — excluir também ficou na visualização.
 //
 // ?objetivo=<goalId> pré-seleciona o vínculo (chegada a partir de um
-// objetivo, ver GoalSheet) e ?voltar=<path> manda pra lá depois de salvar
-// em vez do destino padrão (Finanças) — assim essa página não precisa
-// saber nada sobre quem a chamou.
+// objetivo, ver GoalDetailScreen) e ?voltar=<path> manda pra lá depois de
+// salvar em vez do destino padrão (Finanças, ou o detalhe da própria
+// transação em edição) — assim essa página não precisa saber nada sobre
+// quem a chamou.
 export function TransactionFormScreen() {
   const { txId } = useParams<{ txId: string }>()
   const [searchParams] = useSearchParams()
   const navigate = useNavigate()
   const editingTx = txId ? initialTransactions.find((tx) => tx.id === txId) : undefined
   const mode: 'create' | 'edit' = txId ? 'edit' : 'create'
-  const returnTo = searchParams.get('voltar') || '/home/financas'
+  const defaultReturnTo = mode === 'edit' && txId ? `/home/financas/${txId}` : '/home/financas'
+  const returnTo = searchParams.get('voltar') || defaultReturnTo
 
   const [title, setTitle] = useState(editingTx?.title ?? '')
   const [category, setCategory] = useState(editingTx?.category ?? '')
@@ -160,13 +163,6 @@ export function TransactionFormScreen() {
         date,
       })
     }
-    navigate(returnTo)
-  }
-
-  function handleDelete() {
-    const target = initialTransactions.find((tx) => tx.id === txId)
-    if (!target) return
-    target.deletedAt = TODAY_ISO
     navigate(returnTo)
   }
 
@@ -338,12 +334,6 @@ export function TransactionFormScreen() {
         <PrimaryButton disabled={!canSave} onClick={handleSave}>
           {mode === 'create' ? (type === 'receita' ? 'Registrar receita' : 'Registrar despesa') : 'Salvar alterações'}
         </PrimaryButton>
-        {mode === 'edit' ? (
-          <GhostButton onClick={handleDelete} className="flex items-center justify-center gap-1.5 text-danger">
-            <Trash2 size={16} strokeWidth={2.2} />
-            Excluir transação
-          </GhostButton>
-        ) : null}
       </div>
     </div>
   )
