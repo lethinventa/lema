@@ -35,6 +35,7 @@ export interface CalendarItem {
   context: HomeContext
   groupId?: string
   time: string
+  location?: string
 }
 
 export interface GoalItem {
@@ -62,8 +63,8 @@ export const mockTasks: TaskItem[] = [
 ]
 
 export const mockCalendar: CalendarItem[] = [
-  { id: 'c1', title: 'Consulta médica', context: 'personal', time: '14:00' },
-  { id: 'c2', title: 'Jantar em família', context: 'group', groupId: 'familia-duarte', time: '20:00' },
+  { id: 'c1', title: 'Consulta médica', context: 'personal', time: '14:00', location: 'Clínica Vida' },
+  { id: 'c2', title: 'Jantar em família', context: 'group', groupId: 'familia-duarte', time: '19:30', location: 'Casa da mãe' },
 ]
 
 export const mockGoals: GoalItem[] = [

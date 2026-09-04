@@ -1,4 +1,4 @@
-import { CalendarDays, CheckSquare2, Target, Wallet } from 'lucide-react'
+import { CalendarDays, CheckSquare2, ChevronRight, Target, Wallet } from 'lucide-react'
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { ContextFilterChips, type ContextFilterValue, matchesContext } from '../components/ContextFilterChips'
@@ -78,8 +78,20 @@ export function HomeScreen() {
             ações primárias num único bloco elevado), adaptado: Lema não tem
             saldo único, então o número que ancora o card é o pulso do dia. */}
         <Tile className="mt-4">
-          <span className="text-[11px] font-extrabold uppercase tracking-wide text-ink-faint">Hoje</span>
-          <p className="mt-1 text-[16px] font-bold text-ink">{pulse}</p>
+          <div className="flex items-start justify-between gap-3">
+            <div>
+              <span className="text-[11px] font-extrabold uppercase tracking-wide text-ink-faint">Hoje</span>
+              <p className="mt-1 text-[16px] font-bold text-ink">{pulse}</p>
+            </div>
+            <button
+              type="button"
+              onClick={() => navigate('/home/tarefas')}
+              aria-label="Ver mais"
+              className="flex h-9 w-9 shrink-0 items-center justify-center rounded-pill bg-surface text-ink transition active:scale-90"
+            >
+              <ChevronRight size={16} strokeWidth={2.6} />
+            </button>
+          </div>
           <div className="mt-4">
             <QuickActionsRow actions={QUICK_ACTIONS} />
           </div>
@@ -90,22 +102,22 @@ export function HomeScreen() {
             visibleGoals.map((goal) => (
               <div
                 key={goal.id}
-                className="shadow-hero-goal relative overflow-hidden rounded-[var(--radius-card)] bg-gradient-to-br from-goal to-[#8a1c47] px-5 py-6 text-white"
+                className="relative overflow-hidden rounded-[var(--radius-card)] bg-goal-soft px-5 py-6 text-ink"
               >
-                <span className="tabular absolute right-5 top-5 rounded-sm bg-mint-bg px-2 py-1 text-[12px] font-extrabold text-mint-fg">
+                <span className="tabular absolute right-5 top-5 rounded-pill bg-surface px-2.5 py-1 text-[12px] font-extrabold text-goal">
                   {goal.progress}%
                 </span>
-                <span className="flex items-center gap-1.5 text-[12px] font-semibold uppercase tracking-wide text-white/70">
+                <span className="flex items-center gap-1.5 text-[12px] font-semibold uppercase tracking-wide text-goal">
                   <Target size={13} strokeWidth={2.4} />
                   Objetivo em andamento
                 </span>
-                <h2 className="mt-2 max-w-[75%] text-[22px] font-extrabold leading-snug text-balance">
+                <h2 className="mt-2 max-w-[75%] text-[22px] font-extrabold leading-snug text-balance text-ink">
                   {goal.title}
                 </h2>
-                <div className="mt-5 h-2 w-full overflow-hidden rounded-pill bg-white/25">
-                  <div className="h-full rounded-pill bg-white" style={{ width: `${goal.progress}%` }} />
+                <div className="mt-5 h-2 w-full overflow-hidden rounded-pill bg-white/60">
+                  <div className="h-full rounded-pill bg-goal" style={{ width: `${goal.progress}%` }} />
                 </div>
-                <span className="tabular mt-2 block text-[13px] font-medium text-white/80">{goal.progressLabel}</span>
+                <span className="tabular mt-2 block text-[13px] font-medium text-ink-muted">{goal.progressLabel}</span>
               </div>
             ))
           )}
@@ -149,12 +161,18 @@ export function HomeScreen() {
             ) : (
               <div className="flex flex-col divide-y divide-line">
                 {visibleCalendar.map((item) => (
-                  <div key={item.id} className="flex items-center gap-3 py-2">
-                    <span className="tabular shrink-0 rounded-sm bg-sky-bg px-1.5 py-0.5 text-[11px] font-bold text-sky-fg">
+                  <div key={item.id} className="flex items-center gap-3 py-2.5">
+                    <span className="tabular shrink-0 rounded-pill bg-accent-soft px-2.5 py-1.5 text-[12px] font-extrabold text-goal">
                       {item.time}
                     </span>
-                    <span className="flex-1 text-[14px] font-semibold text-ink">{item.title}</span>
-                    <VisibilityDot context={item.context} groupId={item.groupId} />
+                    <span className="min-w-0 flex-1">
+                      <span className="flex items-center gap-1.5">
+                        <span className="text-[14px] font-bold text-ink">{item.title}</span>
+                        <VisibilityDot context={item.context} groupId={item.groupId} />
+                      </span>
+                      {item.location ? <span className="block text-[12px] text-ink-muted">{item.location}</span> : null}
+                    </span>
+                    <ChevronRight size={16} strokeWidth={2.4} className="shrink-0 text-ink-faint" />
                   </div>
                 ))}
               </div>

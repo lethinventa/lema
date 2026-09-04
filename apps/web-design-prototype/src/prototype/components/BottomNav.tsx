@@ -9,9 +9,12 @@ const TABS = [
   { to: '/home/financas', label: 'Finanças', icon: Wallet, end: false },
 ] as const
 
+// 2026-09-03: nav bar deixa de ser um pill branco flutuando sobre a página
+// (bg-surface + shadow) e passa a se fundir com o --color-bg — referência
+// mostra a barra sem contorno próprio, só o item ativo com destaque.
 export function BottomNav() {
   return (
-    <nav className="shadow-card absolute inset-x-4 bottom-[max(16px,env(safe-area-inset-bottom))] flex items-center gap-1 rounded-pill bg-surface px-2 py-2">
+    <nav className="absolute inset-x-0 bottom-0 flex items-center gap-1 px-3 pb-[max(10px,env(safe-area-inset-bottom))] pt-2">
       {TABS.map(({ to, label, icon: Icon, end }) => (
         <NavLink
           key={to}
