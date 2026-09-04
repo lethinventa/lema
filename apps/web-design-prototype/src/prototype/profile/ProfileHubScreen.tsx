@@ -3,6 +3,7 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { BackHeader } from '../components/BackHeader'
 import { getInitials, getPersonColor } from '../components/palette'
+import { Tile } from '../components/Tile'
 import { initialMembersByGroup } from '../groups/groupsMockData'
 import { mockGroups, mockUser } from '../home/homeMockData'
 import { useOnboarding } from '../state/OnboardingContext'
@@ -28,8 +29,8 @@ function SettingsRow({
       className="flex w-full items-center gap-3 py-3.5 text-left transition active:scale-[0.99]"
     >
       <span
-        className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-sm ${
-          danger ? 'bg-danger/10 text-danger' : 'bg-surface-muted text-ink-muted'
+        className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-[var(--radius-tile)] ${
+          danger ? 'bg-danger/10 text-danger' : 'bg-surface text-ink-muted'
         }`}
       >
         <Icon size={17} strokeWidth={2.2} />
@@ -61,7 +62,7 @@ export function ProfileHubScreen() {
       <BackHeader title="Perfil e Configurações" to="/home" />
 
       <div className="flex-1 overflow-y-auto px-6 pb-8 pt-4">
-        <div className="flex items-center gap-4 rounded-lg border border-line bg-surface p-4">
+        <Tile className="flex items-center gap-4">
           <span
             className="flex h-16 w-16 shrink-0 items-center justify-center rounded-pill text-[20px] font-extrabold text-white"
             style={{ backgroundColor: getPersonColor(displayName) }}
@@ -72,17 +73,17 @@ export function ProfileHubScreen() {
             <span className="block truncate text-[17px] font-bold text-ink">{displayName}</span>
             <span className="block truncate text-[13px] text-ink-muted">{email}</span>
           </div>
-        </div>
+        </Tile>
         <button
           type="button"
           onClick={() => setEditing(true)}
-          className="mt-2 w-full rounded-md border border-line bg-surface px-4 py-2.5 text-center text-[13px] font-semibold text-ink transition active:scale-[0.99]"
+          className="mt-2 w-full rounded-[var(--radius-tile)] bg-surface-muted px-4 py-2.5 text-center text-[13px] font-semibold text-ink transition active:scale-[0.99]"
         >
           Editar perfil
         </button>
 
         <div className="mt-7">
-          <div className="mb-1 flex items-center justify-between">
+          <div className="mb-2 flex items-center justify-between px-1">
             <span className="text-[12px] font-bold uppercase tracking-wide text-ink-faint">Grupos</span>
             <button
               type="button"
@@ -93,7 +94,7 @@ export function ProfileHubScreen() {
               Criar grupo
             </button>
           </div>
-          <div className="flex flex-col divide-y divide-line">
+          <Tile className="flex flex-col divide-y divide-line !p-3">
             {mockGroups.map((group) => {
               const count = initialMembersByGroup[group.id]?.length ?? 0
               return (
@@ -106,22 +107,22 @@ export function ProfileHubScreen() {
                 />
               )
             })}
-          </div>
+          </Tile>
         </div>
 
         <div className="mt-7">
-          <span className="mb-1 block text-[12px] font-bold uppercase tracking-wide text-ink-faint">Conta</span>
-          <div className="flex flex-col divide-y divide-line">
+          <span className="mb-2 block px-1 text-[12px] font-bold uppercase tracking-wide text-ink-faint">Conta</span>
+          <Tile className="flex flex-col divide-y divide-line !p-3">
             <SettingsRow icon={Shield} label="Segurança" onClick={() => navigate('/perfil/seguranca')} />
             <SettingsRow icon={LogOut} label="Sair" onClick={() => navigate('/')} />
-          </div>
+          </Tile>
         </div>
 
         <div className="mt-7">
-          <span className="mb-1 block text-[12px] font-bold uppercase tracking-wide text-ink-faint">Zona de risco</span>
-          <div className="flex flex-col divide-y divide-line">
+          <span className="mb-2 block px-1 text-[12px] font-bold uppercase tracking-wide text-ink-faint">Zona de risco</span>
+          <Tile className="flex flex-col divide-y divide-line !p-3">
             <SettingsRow icon={Trash2} label="Excluir conta" onClick={() => navigate('/perfil/excluir')} danger />
-          </div>
+          </Tile>
         </div>
       </div>
 

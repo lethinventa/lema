@@ -33,7 +33,12 @@
 
   --color-bg: #f9f9f9; /* bright-snow */
   --color-surface: #ffffff;
-  --color-surface-muted: #f2eef8; /* pale lavender tint, deriva de bright-lavender */
+  /* 2026-09-03: era um lilás pálido (deriva de bright-lavender) — Lethicia
+     não gostou ("não to gostando dos backgrounds nos cards lilás, prefiro
+     cinzinha"). Cinza neutro puro agora; a identidade lavanda continua
+     presente pelo --color-accent (tag/CTA/estado selecionado), só não no
+     fundo dos cards. */
+  --color-surface-muted: #eeeeee;
   --color-ink: #14150f; /* preto neutro — nunca roxo, mesmo o texto sendo tudo que a paleta define como "identidade" */
   --color-ink-muted: #6b6b6b;
   --color-ink-faint: #a0a0a0;
