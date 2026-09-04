@@ -9,8 +9,10 @@ import { CardDetailScreen } from './prototype/finance/CardDetailScreen'
 import { FinanceScreen } from './prototype/finance/FinanceScreen'
 import { TransactionDetailScreen } from './prototype/finance/TransactionDetailScreen'
 import { TransactionFormScreen } from './prototype/finance/TransactionFormScreen'
+import { TransactionsListScreen } from './prototype/finance/TransactionsListScreen'
 import { GoalDetailScreen } from './prototype/goals/GoalDetailScreen'
 import { GoalFormScreen } from './prototype/goals/GoalFormScreen'
+import { GoalsListScreen } from './prototype/goals/GoalsListScreen'
 import { GoalsScreen } from './prototype/goals/GoalsScreen'
 import { CreateGroupScreen } from './prototype/groups/CreateGroupScreen'
 import { GroupFinanceScreen } from './prototype/groups/GroupFinanceScreen'
@@ -61,10 +63,12 @@ export default function App() {
           <Route path="/home/calendario/:eventId" element={<EventDetailScreen />} />
           <Route path="/home/calendario/:eventId/editar" element={<EventFormScreen />} />
           <Route path="/home/objetivos" element={<GoalsScreen />} />
+          <Route path="/home/objetivos/todos" element={<GoalsListScreen />} />
           <Route path="/home/objetivos/novo" element={<GoalFormScreen />} />
           <Route path="/home/objetivos/:goalId" element={<GoalDetailScreen />} />
           <Route path="/home/objetivos/:goalId/editar" element={<GoalFormScreen />} />
           <Route path="/home/financas" element={<FinanceScreen />} />
+          <Route path="/home/financas/todas" element={<TransactionsListScreen />} />
           <Route path="/home/financas/nova" element={<TransactionFormScreen />} />
           <Route path="/home/financas/:txId" element={<TransactionDetailScreen />} />
           <Route path="/home/financas/:txId/editar" element={<TransactionFormScreen />} />

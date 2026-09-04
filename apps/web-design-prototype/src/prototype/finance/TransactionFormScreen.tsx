@@ -40,7 +40,7 @@ export function TransactionFormScreen() {
     context: editingTx?.context === 'group' ? 'group' : 'personal',
     groupId: editingTx?.groupId,
   })
-  const [type, setType] = useState<TransactionType>(editingTx?.type ?? 'despesa')
+  const [type, setType] = useState<TransactionType>(editingTx?.type ?? (searchParams.get('tipo') === 'receita' ? 'receita' : 'despesa'))
   const [amount, setAmount] = useState(editingTx?.amount.toString().replace('.', ',') ?? '')
   const [date, setDate] = useState(editingTx?.date ?? '')
   const [payer, setPayer] = useState(editingTx?.payer ?? '')

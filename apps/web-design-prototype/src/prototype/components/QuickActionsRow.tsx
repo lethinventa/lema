@@ -4,7 +4,8 @@ import { useNavigate } from 'react-router-dom'
 export interface QuickAction {
   label: string
   icon: LucideIcon
-  to: string
+  to?: string
+  onClick?: () => void
 }
 
 // Grid de atalhos em tile quadrado (referência explícita da Lethicia: bloco
@@ -26,7 +27,7 @@ export function QuickActionsRow({ actions }: { actions: QuickAction[] }) {
           <button
             key={action.label}
             type="button"
-            onClick={() => navigate(action.to)}
+            onClick={() => (action.to ? navigate(action.to) : action.onClick?.())}
             className="flex flex-1 flex-col items-center gap-1.5 rounded-[var(--radius-tile)] bg-surface px-2 py-4 transition active:scale-95"
           >
             <Icon size={20} strokeWidth={2.2} className="text-ink" />
