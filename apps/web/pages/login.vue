@@ -4,10 +4,9 @@
       <h1 class="text-center text-xl font-semibold">Entrar no Lema</h1>
 
       <form class="space-y-4" @submit="onSubmit">
-        <FormField label="E-mail" name="email">
+        <FormField v-slot="{ componentField }" label="E-mail" name="email">
           <Input
-            v-model="email"
-            v-bind="emailAttrs"
+            v-bind="componentField"
             type="email"
             placeholder="voce@exemplo.com"
             autocomplete="email"
@@ -15,10 +14,9 @@
           />
         </FormField>
 
-        <FormField label="Senha" name="password">
+        <FormField v-slot="{ componentField }" label="Senha" name="password">
           <Input
-            v-model="password"
-            v-bind="passwordAttrs"
+            v-bind="componentField"
             type="password"
             autocomplete="current-password"
             class="w-full"
@@ -46,7 +44,7 @@ import { useAuthStore } from '~/features/auth';
 
 const { signIn } = useAuthStore();
 
-const { handleSubmit, defineField } = useForm({
+const { handleSubmit } = useForm({
   validationSchema: toTypedSchema(
     yup.object({
       email: yup
@@ -57,9 +55,6 @@ const { handleSubmit, defineField } = useForm({
     }),
   ),
 });
-
-const [email, emailAttrs] = defineField('email');
-const [password, passwordAttrs] = defineField('password');
 
 const errorMessage = ref('');
 const loading = ref(false);
