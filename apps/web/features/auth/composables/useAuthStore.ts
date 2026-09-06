@@ -31,7 +31,7 @@ export const useAuthStore = defineStore('auth', () => {
   async function signIn(credentials: {
     email: string;
     password: string;
-  }): Promise<{ success: boolean; error?: string }> {
+  }): Promise<{ success: boolean; errorMsg?: string }> {
     try {
       const { session } = await signInMutation.mutateAsync(credentials);
       syncSession(session);
@@ -39,7 +39,7 @@ export const useAuthStore = defineStore('auth', () => {
     } catch {
       // UC-AUTH-002: generic on purpose — never reveals whether the email
       // or the password was wrong.
-      return { success: false, error: 'E-mail ou senha inválidos.' };
+      return { success: false, errorMsg: 'E-mail ou senha inválidos.' };
     }
   }
 

@@ -27,7 +27,7 @@ const onSubmit = handleSubmit(async (values) => {
   const result = await signIn(values);
 
   if (!result.success) {
-    errorMessage.value = result.error ?? 'Não foi possível entrar.';
+    errorMessage.value = result.errorMsg ?? 'Não foi possível entrar.';
     return;
   }
 
