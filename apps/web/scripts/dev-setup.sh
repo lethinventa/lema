@@ -2,10 +2,9 @@
 # Brings up a full local Supabase stack (Postgres + Auth + Storage) via
 # Docker Compose (managed internally by the Supabase CLI, see
 # docs/architecture/decisions/ADR-001-real-app-stack.md), then syncs its
-# credentials into .env and applies the Drizzle schema.
+# credentials into .env and pushes the Drizzle schema.
 #
-# Safe to re-run: supabase start / db:generate / db:migrate are all
-# idempotent.
+# Safe to re-run: supabase start / db:push are all idempotent.
 set -euo pipefail
 
 cd "$(dirname "${BASH_SOURCE[0]}")/.."
@@ -52,9 +51,8 @@ set_env_var "NUXT_PUBLIC_SUPABASE_URL" "$(get_status_value API_URL)"
 set_env_var "NUXT_PUBLIC_SUPABASE_ANON_KEY" "$(get_status_value ANON_KEY)"
 set_env_var "NUXT_SUPABASE_SERVICE_ROLE_KEY" "$(get_status_value SERVICE_ROLE_KEY)"
 
-echo "Applying database schema (lib/db/schema.ts)…"
-pnpm db:generate
-pnpm db:migrate
+echo "Pushing database schema (lib/db/schema.ts)…"
+pnpm db:push
 
 echo ""
 echo "Local Supabase stack is up:"

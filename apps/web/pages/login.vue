@@ -1,0 +1,74 @@
+<script setup lang="ts">
+import { toTypedSchema } from '@vee-validate/yup';
+import { useForm } from 'vee-validate';
+import * as yup from 'yup';
+import { useAuthStore } from '~/features/auth';
+
+const authStore = useAuthStore();
+const { signIn } = authStore;
+const { signingIn } = storeToRefs(authStore);
+
+const { handleSubmit } = useForm({
+  validationSchema: toTypedSchema(
+    yup.object({
+      email: yup
+        .string()
+        .required('Informe seu e-mail.')
+        .email('E-mail inválido.'),
+      password: yup.string().required('Informe sua senha.'),
+    }),
+  ),
+});
+
+const errorMessage = ref('');
+
+const onSubmit = handleSubmit(async (values) => {
+  errorMessage.value = '';
+  const result = await signIn(values);
+
+  if (!result.success) {
+    errorMessage.value = result.errorMsg ?? 'Não foi possível entrar.';
+    return;
+  }
+
+  await navigateTo('/');
+});
+</script>
+
+<template>
+  <div class="flex min-h-screen items-center justify-center p-4">
+    <div class="w-full max-w-sm space-y-6">
+      <h1 class="text-center text-xl font-semibold">Entrar no Lema</h1>
+
+      <form class="space-y-4" @submit="onSubmit">
+        <FormField v-slot="{ componentField }" label="E-mail" name="email">
+          <Input
+            v-bind="componentField"
+            type="email"
+            placeholder="voce@exemplo.com"
+            autocomplete="email"
+            class="w-full"
+          />
+        </FormField>
+
+        <FormField v-slot="{ componentField }" label="Senha" name="password">
+          <Input
+            v-bind="componentField"
+            type="password"
+            autocomplete="current-password"
+            class="w-full"
+          />
+        </FormField>
+
+        <Alert
+          v-if="errorMessage"
+          color="error"
+          variant="subtle"
+          :title="errorMessage"
+        />
+
+        <Button type="submit" block :loading="signingIn">Entrar</Button>
+      </form>
+    </div>
+  </div>
+</template>

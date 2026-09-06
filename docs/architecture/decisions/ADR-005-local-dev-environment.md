@@ -12,7 +12,7 @@ Até aqui, `apps/web` só sabia falar com o projeto Supabase de produção/cloud
 
 Ambiente de dev local completo via **Supabase CLI** (pacote `supabase`, devDependency), que por baixo dos panos orquestra os mesmos serviços do Supabase (Postgres, Auth/GoTrue, Storage, Studio, Mailpit) via Docker Compose — não um `docker-compose.yml` escrito à mão. Dois scripts em `apps/web/scripts/`, expostos como `pnpm dev:setup` / `pnpm dev:teardown`:
 
-- **`dev:setup`**: valida que o Docker está rodando; cria `.env` a partir de `.env.example` se não existir; roda `supabase start`; lê `supabase status -o env` e sincroniza `NUXT_DATABASE_URL`, `NUXT_PUBLIC_SUPABASE_URL`, `NUXT_PUBLIC_SUPABASE_ANON_KEY` e `NUXT_SUPABASE_SERVICE_ROLE_KEY` no `.env`; aplica o schema do Drizzle (`db:generate` + `db:migrate`).
+- **`dev:setup`**: valida que o Docker está rodando; cria `.env` a partir de `.env.example` se não existir; roda `supabase start`; lê `supabase status -o env` e sincroniza `NUXT_DATABASE_URL`, `NUXT_PUBLIC_SUPABASE_URL`, `NUXT_PUBLIC_SUPABASE_ANON_KEY` e `NUXT_SUPABASE_SERVICE_ROLE_KEY` no `.env`; aplica o schema do Drizzle via `db:push` (ver "Atualização" abaixo — não gera migration).
 - **`dev:teardown`**: `supabase stop`.
 - **`dev:up`**: `dev:setup` seguido de `pnpm dev` — um comando só pra quem quer infra + app de uma vez. Continua existindo `dev:setup` e `dev` separados de propósito: reiniciar só o servidor Nuxt (loop comum durante o desenvolvimento) não precisa re-checar Docker/Supabase toda vez.
 
@@ -27,7 +27,6 @@ Ambiente de dev local completo via **Supabase CLI** (pacote `supabase`, devDepen
 ## Consequências
 
 - `.env` deixa de ser só "cole as chaves do projeto cloud aqui" — depois de `dev:setup`, ele aponta pro Supabase local por padrão. Pra rodar contra o projeto cloud (ex.: testar algo antes de deploy), as 4 variáveis precisam ser trocadas manualmente pelas do projeto real.
-- `lib/db/migrations/meta/_journal.json` (vazio, sem entries) fica versionado mesmo sem nenhuma migration real ainda — ver nota de implementação abaixo, é necessário pra `drizzle-kit migrate` não travar.
 - Quem for rodar `dev:setup` pela primeira vez baixa ~10 imagens Docker (Postgres, GoTrue, PostgREST, Storage, Studio, Kong, Vector, Mailpit etc.) — alguns GB, só na primeira vez.
 - E-mails de auth (confirmação de cadastro, magic link) não saem de verdade em dev local — caem no Mailpit (`http://127.0.0.1:54324`), que serve de caixa de entrada fake pra esses fluxos.
 
@@ -35,6 +34,14 @@ Ambiente de dev local completo via **Supabase CLI** (pacote `supabase`, devDepen
 
 Validado de ponta a ponta neste ambiente (Docker real, `supabase start` de fato baixando as imagens e subindo os serviços, `curl` confirmando REST/Auth/Studio respondendo, `dev:setup` rodado duas vezes seguidas pra confirmar idempotência).
 
-Achado não óbvio: `drizzle-kit migrate` **trava indefinidamente** (não dá erro, só fica pendurado) se `lib/db/migrations/meta/_journal.json` não existir — mesmo com o banco disponível e sem nenhuma migration pra aplicar. `drizzle-kit generate` cria esse arquivo mesmo quando não há nenhuma tabela no schema ainda ("0 tables… nothing to migrate"). Por isso `dev:setup` sempre roda `db:generate` antes de `db:migrate`, nessa ordem, e o `_journal.json` vazio fica commitado — sem isso, um clone novo do repo travaria no primeiro `dev:setup`.
-
 `supabase status -o env` imprime uma linha por variável no formato `CHAVE="valor"` (não `export CHAVE=valor`) — o parsing no script depende desse formato exato.
+
+## Atualização — migrations trocadas por `db:push`
+
+Enquanto o schema estiver mudando rápido (fase atual, sem deploy real ainda), `dev:setup` usa `drizzle-kit push` em vez de `generate` + `migrate`: aplica o diff de `lib/db/schema.ts` direto no banco local, sem gerar arquivo de migration. Motivo: gerar uma migration a cada ajuste de coluna nesta fase inicial só acumula arquivos que não representam nenhum histórico útil ainda.
+
+Isso também tornou obsoleto o achado original sobre `lib/db/migrations/meta/_journal.json` (removido do repo): `drizzle-kit migrate` travava indefinidamente sem esse arquivo, mas `db:push` não depende de pasta de migrations nenhuma.
+
+`drizzle.config.ts` ganhou `schemaFilter: ['public']`, pra `push`/`generate` nunca tentar gerenciar `auth.*` (schema do Supabase Auth, fora do nosso controle).
+
+Trade-off aceito por ora: sem histórico de migration, sem capacidade de rollback via arquivo, mudanças de schema só existem como o estado atual de `schema.ts`. Reverter para `generate` + `migrate` antes do primeiro deploy real ou de qualquer ambiente compartilhado com dados que importam.
