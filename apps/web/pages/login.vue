@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { toTypedSchema } from '@vee-validate/yup';
+import { toTypedSchema } from '@vee-validate/zod';
 import { useForm } from 'vee-validate';
-import * as yup from 'yup';
+import { z } from 'zod';
 import { useAuthStore } from '~/features/auth';
 
 const authStore = useAuthStore();
@@ -10,12 +10,17 @@ const { signingIn } = storeToRefs(authStore);
 
 const { handleSubmit } = useForm({
   validationSchema: toTypedSchema(
-    yup.object({
-      email: yup
-        .string()
-        .required('Informe seu e-mail.')
+    z.object({
+      // { error } also covers a missing/undefined field (e.g. untouched
+      // input on submit) — .min(1, ...) alone only customizes the message
+      // for a present-but-empty string, not a missing one.
+      email: z
+        .string({ error: 'Informe seu e-mail.' })
+        .min(1, 'Informe seu e-mail.')
         .email('E-mail inválido.'),
-      password: yup.string().required('Informe sua senha.'),
+      password: z
+        .string({ error: 'Informe sua senha.' })
+        .min(1, 'Informe sua senha.'),
     }),
   ),
 });

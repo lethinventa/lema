@@ -1,16 +1,15 @@
+import { z } from 'zod';
 import { createGroup } from '~/features/groups';
+
+const createGroupSchema = z.object({
+  name: z.string().trim().min(1, 'O nome do grupo é obrigatório.'),
+});
 
 export default defineEventHandler(async (event) => {
   const user = await requireAuthUser(event);
-
-  const body = await readBody(event);
-  const name = typeof body?.name === 'string' ? body.name : '';
-
-  const result = await createGroup(user.id, { name });
-  if (!result.success) {
-    throw createError({ statusCode: 400, statusMessage: result.errorMsg });
-  }
+  const input = await parseBody(event, createGroupSchema);
+  const group = await createGroup(user.id, input);
 
   setResponseStatus(event, 201);
-  return result.group;
+  return group;
 });

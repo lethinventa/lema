@@ -12,7 +12,7 @@ O app real (ver `ADR-001-real-app-stack.md`) precisa de uma organização de pas
 
 Pasta `features/` na raiz do app, uma subpasta por domínio (`auth`, `tasks`, `finance`, `goals`, `calendar`, `groups`), cada uma com `components/`, `composables/`, `utils/`, `server/` (lógica chamada pelas rotas finas do Nitro) e um `index.ts` que é a única porta de entrada para código fora da feature.
 
-Dentro de `server/`, a lógica de negócio fica em um arquivo `<nome>.service.ts` por domínio (ex.: `group.service.ts`), não um arquivo por função (ex.: `createGroup.ts`) — ver `CLAUDE.md`. Acesso ao Drizzle fica isolado em `<nome>.repository.ts`; o service chama o repository, nunca `useDb()`/schema diretamente (regra 5 abaixo).
+Dentro de `server/`, a lógica de negócio fica em um arquivo `<nome>.service.ts` por domínio (ex.: `group.service.ts`), não um arquivo por função (ex.: `createGroup.ts`) — ver `CLAUDE.md`. Um método de `service.ts` não valida payload em runtime, o tipo do parâmetro já é o contrato: validar com Zod (via `parseBody`, `apps/web/server/utils/validation.ts`) é responsabilidade do próprio arquivo de rota em `server/api/`, antes de chamar o service. Acesso ao Drizzle fica isolado em `<nome>.repository.ts`; o service chama o repository, nunca `useDb()`/schema diretamente (regra 5 abaixo).
 
 ```
 apps/web/

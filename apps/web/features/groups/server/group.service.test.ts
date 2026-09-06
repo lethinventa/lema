@@ -17,29 +17,22 @@ describe('createGroup', () => {
   });
 
   it('creates the group and registers the creator as OWNER', async () => {
-    const result = await createGroup(ownerId, { name: 'Family' });
-    expect(result.success).toBe(true);
-    if (!result.success) throw new Error('expected success');
+    const group = await createGroup(ownerId, { name: 'Family' });
 
     try {
       const groupRow = await useDb().query.groups.findFirst({
-        where: (g, { eq }) => eq(g.id, result.group.id),
+        where: (g, { eq }) => eq(g.id, group.id),
       });
       expect(groupRow?.name).toBe('Family');
 
       const membershipRow = await useDb().query.groupMemberships.findFirst({
         where: (m, { and, eq }) =>
-          and(eq(m.groupId, result.group.id), eq(m.userId, ownerId)),
+          and(eq(m.groupId, group.id), eq(m.userId, ownerId)),
       });
       expect(membershipRow?.role).toBe('OWNER');
     } finally {
-      await useDb().delete(groups).where(eq(groups.id, result.group.id));
+      await useDb().delete(groups).where(eq(groups.id, group.id));
     }
-  });
-
-  it('rejects an empty name', async () => {
-    const result = await createGroup(ownerId, { name: '   ' });
-    expect(result).toEqual({ success: false, errorMsg: expect.any(String) });
   });
 });
 
