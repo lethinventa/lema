@@ -30,6 +30,7 @@ Antes de implementar qualquer fluxo ou tela, consulte os UCs, PDs e journeys rel
 - **Estado global externo do app real** (compartilhado entre componentes/composables, fora do escopo de uma única árvore de componentes — ex.: sessão do usuário autenticado) **usa Pinia** (`defineStore`, Setup Store syntax), não um singleton manual via `ref` em nível de módulo nem outra solução ad-hoc.
 - **Componentes de UI base** (inputs, botões, etc.) **sempre importados via `shared/components`**, nunca um componente do Nuxt UI (`UInput`, `UButton`...) direto numa feature ou página — mesmo princípio de `lib/` para SDKs, mitiga vendor lock-in. Um arquivo em `shared/components` pode simplesmente reexportar um componente do Nuxt UI (ex.: `Input.vue` reexportando `UInput`), mas deve renomear para um nome genérico, sem o prefixo `U`.
 - **Validação de formulários usa VeeValidate**, priorizando a Composition API da biblioteca (`useForm`, `defineField`/`useField`) em vez dos componentes `<Form>`/`<Field>` dela. **Yup** é o schema validator (via `@vee-validate/yup`, `toTypedSchema`).
+- **Blocos de um `.vue` sempre na ordem `<script>` → `<template>` → `<style>`**, enforced via `vue/block-order` no ESLint.
 
 ## Estado atual do repositório
 
