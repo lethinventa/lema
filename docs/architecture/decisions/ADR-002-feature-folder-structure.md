@@ -12,6 +12,8 @@ O app real (ver `ADR-001-real-app-stack.md`) precisa de uma organização de pas
 
 Pasta `features/` na raiz do app, uma subpasta por domínio (`auth`, `tasks`, `finance`, `goals`, `calendar`, `groups`), cada uma com `components/`, `composables/`, `utils/`, `server/` (lógica chamada pelas rotas finas do Nitro) e um `index.ts` que é a única porta de entrada para código fora da feature.
 
+Dentro de `server/`, a lógica de negócio fica em um arquivo `<nome>.service.ts` por domínio (ex.: `group.service.ts`), não um arquivo por função (ex.: `createGroup.ts`) — ver `CLAUDE.md`.
+
 ```
 apps/web/
 ├── config/        # config geral da app, validação de env

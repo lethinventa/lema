@@ -1,1 +1,1 @@
-export { createGroup } from './server/createGroup';
+export { createGroup } from './server/group.service';

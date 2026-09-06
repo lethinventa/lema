@@ -32,6 +32,7 @@ Antes de implementar qualquer fluxo ou tela, consulte os UCs, PDs e journeys rel
 - **Validação de formulários usa VeeValidate**, priorizando a Composition API da biblioteca (`useForm`, `defineField`/`useField`) em vez dos componentes `<Form>`/`<Field>` dela. **Yup** é o schema validator (via `@vee-validate/yup`, `toTypedSchema`).
 - **Blocos de um `.vue` sempre na ordem `<script>` → `<template>` → `<style>`**, enforced via `vue/block-order` no ESLint.
 - **Erros como valores para condições que o chamador precisa checar** (ex.: credenciais inválidas num login) — a função retorna algo como `{ success: boolean; errorMsg?: string }` em vez de dar `throw`. Reservar `throw`/exceptions para estados realmente excepcionais (bug, falha de rede não tratada), não para resultados rotineiros de uma operação. Ver `signIn` em `apps/web/features/auth/composables/useAuthStore.ts` como referência.
+- **Lógica de negócio de uma feature (`features/<nome>/server/`) sempre em um arquivo `<nome>.service.ts`** (ex.: `group.service.ts`), nunca um arquivo por função (ex.: `createGroup.ts`) nem lógica solta em outro lugar dentro de `server/`. Ver `apps/web/features/groups/server/group.service.ts` como referência.
 
 ## Estado atual do repositório
 
