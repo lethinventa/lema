@@ -1,3 +1,4 @@
+import { useMutation } from '@tanstack/vue-query';
 import { defineStore } from 'pinia';
 import type { Session, User } from '~/lib/supabase/client';
 import { useSupabase } from '~/lib/supabase/client';
@@ -18,25 +19,39 @@ export const useAuthStore = defineStore('auth', () => {
     .then(({ data }) => syncSession(data.session));
   supabase.auth.onAuthStateChange((_event, session) => syncSession(session));
 
+  const signInMutation = useMutation({
+    mutationFn: async (credentials: { email: string; password: string }) => {
+      const { data, error } =
+        await supabase.auth.signInWithPassword(credentials);
+      if (error) throw error;
+      return data;
+    },
+  });
+
   async function signIn(credentials: {
     email: string;
     password: string;
   }): Promise<{ success: boolean; error?: string }> {
-    const { data, error } = await supabase.auth.signInWithPassword(credentials);
-
-    if (error) {
+    try {
+      const { session } = await signInMutation.mutateAsync(credentials);
+      syncSession(session);
+      return { success: true };
+    } catch {
       // UC-AUTH-002: generic on purpose — never reveals whether the email
       // or the password was wrong.
       return { success: false, error: 'E-mail ou senha inválidos.' };
     }
-
-    syncSession(data.session);
-    return { success: true };
   }
 
   function syncSession(session: Session | null) {
     user.value = session?.user ?? null;
   }
 
-  return { ready, user, isAuthenticated, signIn };
+  return {
+    ready,
+    user,
+    isAuthenticated,
+    signIn,
+    signingIn: signInMutation.isPending,
+  };
 });

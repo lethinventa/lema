@@ -1,3 +1,40 @@
+<script setup lang="ts">
+import { toTypedSchema } from '@vee-validate/yup';
+import { useForm } from 'vee-validate';
+import * as yup from 'yup';
+import { useAuthStore } from '~/features/auth';
+
+const authStore = useAuthStore();
+const { signIn } = authStore;
+const { signingIn } = storeToRefs(authStore);
+
+const { handleSubmit } = useForm({
+  validationSchema: toTypedSchema(
+    yup.object({
+      email: yup
+        .string()
+        .required('Informe seu e-mail.')
+        .email('E-mail inválido.'),
+      password: yup.string().required('Informe sua senha.'),
+    }),
+  ),
+});
+
+const errorMessage = ref('');
+
+const onSubmit = handleSubmit(async (values) => {
+  errorMessage.value = '';
+  const result = await signIn(values);
+
+  if (!result.success) {
+    errorMessage.value = result.error ?? 'Não foi possível entrar.';
+    return;
+  }
+
+  await navigateTo('/');
+});
+</script>
+
 <template>
   <div class="flex min-h-screen items-center justify-center p-4">
     <div class="w-full max-w-sm space-y-6">
@@ -30,46 +67,8 @@
           :title="errorMessage"
         />
 
-        <Button type="submit" block :loading="loading">Entrar</Button>
+        <Button type="submit" block :loading="signingIn">Entrar</Button>
       </form>
     </div>
   </div>
 </template>
-
-<script setup lang="ts">
-import { toTypedSchema } from '@vee-validate/yup';
-import { useForm } from 'vee-validate';
-import * as yup from 'yup';
-import { useAuthStore } from '~/features/auth';
-
-const { signIn } = useAuthStore();
-
-const { handleSubmit } = useForm({
-  validationSchema: toTypedSchema(
-    yup.object({
-      email: yup
-        .string()
-        .required('Informe seu e-mail.')
-        .email('E-mail inválido.'),
-      password: yup.string().required('Informe sua senha.'),
-    }),
-  ),
-});
-
-const errorMessage = ref('');
-const loading = ref(false);
-
-const onSubmit = handleSubmit(async (values) => {
-  errorMessage.value = '';
-  loading.value = true;
-  const result = await signIn(values);
-  loading.value = false;
-
-  if (!result.success) {
-    errorMessage.value = result.error ?? 'Não foi possível entrar.';
-    return;
-  }
-
-  await navigateTo('/');
-});
-</script>
