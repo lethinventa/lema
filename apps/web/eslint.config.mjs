@@ -155,6 +155,13 @@ export default withNuxt(
       'vue/multi-word-component-names': 'off',
     },
   },
+  {
+    // Top-level SFC blocks always in the same order — see CLAUDE.md.
+    files: ['**/*.vue'],
+    rules: {
+      'vue/block-order': ['error', { order: ['script', 'template', 'style'] }],
+    },
+  },
   // Turns off ESLint's stylistic rules so they don't fight Prettier — must
   // stay last so it overrides anything earlier in the array.
   eslintConfigPrettier,

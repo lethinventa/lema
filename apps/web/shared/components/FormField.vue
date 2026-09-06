@@ -1,11 +1,3 @@
-<template>
-  <UFormField :name="name" :error="errorMessage">
-    <template v-for="(_, slotName) in $slots" #[slotName]="slotProps">
-      <slot :name="slotName" v-bind="{ ...slotProps, componentField }" />
-    </template>
-  </UFormField>
-</template>
-
 <script setup lang="ts">
 import { useField } from 'vee-validate';
 import { computed } from 'vue';
@@ -32,3 +24,11 @@ const componentField = computed(() => ({
   name: props.name,
 }));
 </script>
+
+<template>
+  <UFormField :name="name" :error="errorMessage">
+    <template v-for="(_, slotName) in $slots" #[slotName]="slotProps">
+      <slot :name="slotName" v-bind="{ ...slotProps, componentField }" />
+    </template>
+  </UFormField>
+</template>
