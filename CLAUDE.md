@@ -31,6 +31,7 @@ Antes de implementar qualquer fluxo ou tela, consulte os UCs, PDs e journeys rel
 - **Componentes de UI base** (inputs, botões, etc.) **sempre importados via `shared/components`**, nunca um componente do Nuxt UI (`UInput`, `UButton`...) direto numa feature ou página — mesmo princípio de `lib/` para SDKs, mitiga vendor lock-in. Um arquivo em `shared/components` pode simplesmente reexportar um componente do Nuxt UI (ex.: `Input.vue` reexportando `UInput`), mas deve renomear para um nome genérico, sem o prefixo `U`.
 - **Validação de formulários usa VeeValidate**, priorizando a Composition API da biblioteca (`useForm`, `defineField`/`useField`) em vez dos componentes `<Form>`/`<Field>` dela. **Yup** é o schema validator (via `@vee-validate/yup`, `toTypedSchema`).
 - **Blocos de um `.vue` sempre na ordem `<script>` → `<template>` → `<style>`**, enforced via `vue/block-order` no ESLint.
+- **Erros como valores para condições que o chamador precisa checar** (ex.: credenciais inválidas num login) — a função retorna algo como `{ success: boolean; errorMsg?: string }` em vez de dar `throw`. Reservar `throw`/exceptions para estados realmente excepcionais (bug, falha de rede não tratada), não para resultados rotineiros de uma operação. Ver `signIn` em `apps/web/features/auth/composables/useAuthStore.ts` como referência.
 
 ## Estado atual do repositório
 
