@@ -1,6 +1,10 @@
 import { createClient } from '@supabase/supabase-js';
 import { requireEnv } from '~/config/env';
 
+// Re-exported so code outside lib/ (server/utils/auth.ts) can type
+// getUser()'s result without importing @supabase/supabase-js directly.
+export type { User } from '@supabase/supabase-js';
+
 /**
  * Server-only Supabase client using the service role key — bypasses row
  * level security, so it must never be exposed to the client. Create a new
