@@ -38,6 +38,12 @@ const vendorSdkPaths = [
   { name: 'drizzle-orm', message: 'Import via lib/db instead.' },
 ];
 
+const dbAccessPattern = {
+  group: ['**/lib/db/*'],
+  message:
+    'DB access must go through a *.repository.ts file — services call repositories, not Drizzle directly.',
+};
+
 // The rule's schema rejects an empty `zones` array, so it's turned off
 // entirely until at least one feature directory actually exists — see
 // ADR-002-feature-folder-structure.md. Built as a standalone typed value
@@ -112,6 +118,27 @@ export default withNuxt(
       'no-restricted-imports': [
         'error',
         { patterns: [noRelativeParentImportPattern], paths: vendorSdkPaths },
+      ],
+    },
+  },
+  {
+    // Only *.repository.ts files may talk to the DB layer (useDb()/schema
+    // tables) — services call repositories instead, never Drizzle directly
+    // (CLAUDE.md, ADR-002). Test files are exempt: they legitimately need
+    // direct DB access for fixtures/assertions/cleanup, which isn't part of
+    // the app's own service->repository call chain this rule protects.
+    files: ['features/*/server/**'],
+    ignores: [
+      'features/*/server/**/*.repository.ts',
+      'features/*/server/**/*.test.ts',
+    ],
+    rules: {
+      'no-restricted-imports': [
+        'error',
+        {
+          patterns: [noRelativeParentImportPattern, dbAccessPattern],
+          paths: vendorSdkPaths,
+        },
       ],
     },
   },

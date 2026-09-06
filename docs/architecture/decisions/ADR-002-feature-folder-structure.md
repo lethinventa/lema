@@ -12,7 +12,7 @@ O app real (ver `ADR-001-real-app-stack.md`) precisa de uma organização de pas
 
 Pasta `features/` na raiz do app, uma subpasta por domínio (`auth`, `tasks`, `finance`, `goals`, `calendar`, `groups`), cada uma com `components/`, `composables/`, `utils/`, `server/` (lógica chamada pelas rotas finas do Nitro) e um `index.ts` que é a única porta de entrada para código fora da feature.
 
-Dentro de `server/`, a lógica de negócio fica em um arquivo `<nome>.service.ts` por domínio (ex.: `group.service.ts`), não um arquivo por função (ex.: `createGroup.ts`) — ver `CLAUDE.md`.
+Dentro de `server/`, a lógica de negócio fica em um arquivo `<nome>.service.ts` por domínio (ex.: `group.service.ts`), não um arquivo por função (ex.: `createGroup.ts`) — ver `CLAUDE.md`. Acesso ao Drizzle fica isolado em `<nome>.repository.ts`; o service chama o repository, nunca `useDb()`/schema diretamente (regra 5 abaixo).
 
 ```
 apps/web/
@@ -27,12 +27,13 @@ apps/web/
 
 `utils/` guarda função pura, sem dependência de Vue/Nuxt (sem `ref`, `computed`, `useState`, lifecycle) — diferente de `composables/`, que é reativo por natureza. Essa separação existe tanto dentro de cada feature (ex.: cálculo de divisão de despesa em `finance/utils/`) quanto em `shared/utils/` (formatação de moeda, data, validadores genéricos), seguindo a mesma simetria já usada para `components/`/`composables/`. A vantagem prática: função pura é testável isoladamente sem montar nada, e reutilizável fora de contexto de componente (ex.: dentro de uma rota do Nitro, onde Vue nem existe).
 
-Quatro regras de import, todas enforçadas via ESLint — não apenas documentadas como convenção:
+Cinco regras de import, todas enforçadas via ESLint — não apenas documentadas como convenção:
 
 1. Uma feature não importa arquivos internos de outra feature (`import-x/no-restricted-paths`, com as zonas geradas dinamicamente a partir do conteúdo de `features/`, para que uma feature nova já fique coberta automaticamente).
 2. Código fora de uma feature só pode importar o `index.ts` dela (API pública), nunca um arquivo interno (`no-restricted-imports` com padrão de exclusão).
 3. Nenhum código fora de `lib/` importa `@supabase/supabase-js` ou `drizzle-orm` diretamente (mesma regra do item 2, escopo diferente).
 4. Import relativo que sobe de diretório (`../`) é bloqueado — usar o alias nativo `~/` do Nuxt em vez disso (`import-x/no-relative-parent-imports`). Nenhum alias customizado foi criado; o `~/` já resolve o problema de imports relativos longos sem configuração adicional.
+5. Dentro de `features/<nome>/server/`, nenhum arquivo além de `*.repository.ts` importa `~/lib/db/*` (`no-restricted-imports` com padrão de exclusão, mesmo mecanismo do item 3, escopo mais restrito). Arquivos `*.test.ts` são isentos.
 
 ## Alternativas consideradas
 

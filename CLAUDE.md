@@ -33,6 +33,7 @@ Antes de implementar qualquer fluxo ou tela, consulte os UCs, PDs e journeys rel
 - **Blocos de um `.vue` sempre na ordem `<script>` → `<template>` → `<style>`**, enforced via `vue/block-order` no ESLint.
 - **Erros como valores para condições que o chamador precisa checar** (ex.: credenciais inválidas num login) — a função retorna algo como `{ success: boolean; errorMsg?: string }` em vez de dar `throw`. Reservar `throw`/exceptions para estados realmente excepcionais (bug, falha de rede não tratada), não para resultados rotineiros de uma operação. Ver `signIn` em `apps/web/features/auth/composables/useAuthStore.ts` como referência.
 - **Lógica de negócio de uma feature (`features/<nome>/server/`) sempre em um arquivo `<nome>.service.ts`** (ex.: `group.service.ts`), nunca um arquivo por função (ex.: `createGroup.ts`) nem lógica solta em outro lugar dentro de `server/`. Ver `apps/web/features/groups/server/group.service.ts` como referência.
+- **Acesso ao banco de dados (Drizzle) sempre através de um arquivo `<nome>.repository.ts`** dentro de `features/<nome>/server/`, nunca diretamente de um `service.ts` — o service chama o repository, o repository chama `useDb()`/schema. Enforced via ESLint (`no-restricted-imports` bane `~/lib/db/*` fora de `*.repository.ts` dentro de `server/`; arquivos `*.test.ts` são isentos, já que testes legitimamente precisam de acesso direto ao banco para fixtures/assertions). Ver `apps/web/features/groups/server/group.repository.ts` como referência.
 
 ## Estado atual do repositório
 
