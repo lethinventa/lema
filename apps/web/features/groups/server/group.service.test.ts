@@ -1,6 +1,7 @@
+import { eq } from 'drizzle-orm';
 import { randomUUID } from 'node:crypto';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
-import { eq, useDb } from '~/lib/db/client';
+import { useDb } from '~/lib/db/client';
 import { groups, users } from '~/lib/db/schema';
 import { useSupabaseAdmin } from '~/lib/supabase/server';
 import { createGroup } from './group.service';

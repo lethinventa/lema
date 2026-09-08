@@ -3,12 +3,6 @@ import postgres from 'postgres';
 import { requireEnv } from '~/config/env';
 import * as schema from './schema';
 
-// Re-exported so code outside lib/ can build where-clauses without
-// importing drizzle-orm directly (see eslint.config.mjs vendor-SDK rule).
-// Prefer db.query.<table>.findFirst({ where: (t, {eq}) => ... }) where
-// possible, which doesn't need this — only a bare .delete().where(...) does.
-export { eq } from 'drizzle-orm';
-
 let client: ReturnType<typeof drizzle<typeof schema>> | undefined;
 
 /**

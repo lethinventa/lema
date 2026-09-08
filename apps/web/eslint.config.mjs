@@ -92,9 +92,10 @@ export default withNuxt(
   {
     // Outside lib/ and features/: no climbing relative imports, only a
     // feature's public API may be imported, and vendor SDKs (Supabase,
-    // Drizzle) must not be imported directly.
+    // Drizzle) must not be imported directly. Test files are exempt from
+    // the vendor-SDK part below (see the two blocks that follow this one).
     files: ALL_FILES,
-    ignores: ['lib/**', 'features/**'],
+    ignores: ['lib/**', 'features/**', '**/*.test.ts'],
     rules: {
       'no-restricted-imports': [
         'error',
@@ -102,6 +103,20 @@ export default withNuxt(
           patterns: [noRelativeParentImportPattern, featureIndexOnlyPattern],
           paths: vendorSdkPaths,
         },
+      ],
+    },
+  },
+  {
+    // Same as above, restated for *.test.ts files outside lib/ and
+    // features/: they legitimately need real vendor clients for fixtures/
+    // assertions/cleanup (same reasoning as their exemption from
+    // dbAccessPattern further below), so vendorSdkPaths is dropped here.
+    files: ['**/*.test.ts'],
+    ignores: ['lib/**', 'features/**'],
+    rules: {
+      'no-restricted-imports': [
+        'error',
+        { patterns: [noRelativeParentImportPattern, featureIndexOnlyPattern] },
       ],
     },
   },
@@ -114,10 +129,24 @@ export default withNuxt(
     // based, so it knows which feature is which). Without this override, a
     // composable couldn't import a sibling types.ts one directory up.
     files: ['features/**'],
+    ignores: ['**/*.test.ts'],
     rules: {
       'no-restricted-imports': [
         'error',
         { patterns: [noRelativeParentImportPattern], paths: vendorSdkPaths },
+      ],
+    },
+  },
+  {
+    // Same as above, restated for *.test.ts files inside a feature — vendor
+    // SDKs allowed for the same fixture/assertion/cleanup reasons as the
+    // block above, featureIndexOnlyPattern still dropped for the same
+    // same-feature-import reason.
+    files: ['features/**/*.test.ts'],
+    rules: {
+      'no-restricted-imports': [
+        'error',
+        { patterns: [noRelativeParentImportPattern] },
       ],
     },
   },
