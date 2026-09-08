@@ -1,7 +1,12 @@
 import { useDb } from '~/lib/db/client';
 import { groupMemberships, groups } from '~/lib/db/schema';
 
-export type Group = typeof groups.$inferSelect;
+export interface Group {
+  id: string;
+  name: string;
+  createdAt: Date;
+  updatedAt: Date;
+}
 
 /**
  * Inserts a group and its creator's OWNER membership as a single atomic
@@ -14,17 +19,18 @@ export async function insertGroupWithOwner(
 ): Promise<Group> {
   const db = useDb();
   return db.transaction(async (tx) => {
+    // A single-row `.values({ name })` insert (no ON CONFLICT) always
+    // returns exactly one row; the `| undefined` here is only
+    // noUncheckedIndexedAccess on the array destructure, not a real
+    // possibility, so no runtime check is warranted.
     const [createdGroup] = await tx.insert(groups).values({ name }).returning();
-    if (!createdGroup) {
-      throw new Error('Insert into groups returned no row.');
-    }
 
     await tx.insert(groupMemberships).values({
-      groupId: createdGroup.id,
+      groupId: createdGroup!.id,
       userId: ownerId,
       role: 'OWNER',
     });
 
-    return createdGroup;
+    return createdGroup!;
   });
 }

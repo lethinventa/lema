@@ -1,11 +1,14 @@
 import type { H3Event } from 'h3';
-import type { User } from '~/lib/supabase/server';
 import { useSupabaseAdmin } from '~/lib/supabase/server';
+
+export interface AuthUser {
+  id: string;
+}
 
 /**
  * Verifies the bearer token the SPA sends (supabase-js session lives in
  * localStorage, not a cookie — there's no other way for a Nitro route to
- * know who's calling) and returns the Supabase user it belongs to.
+ * know who's calling) and returns the user it belongs to.
  *
  * Throws on a missing/invalid token rather than returning a value: an
  * unauthenticated request is an infrastructure access-control failure, not
@@ -13,7 +16,7 @@ import { useSupabaseAdmin } from '~/lib/supabase/server';
  * requireEnv (config/env.ts) throwing on a missing env var, not the
  * "errors as values" category createGroup's validation falls into.
  */
-export async function requireAuthUser(event: H3Event): Promise<User> {
+export async function requireAuthUser(event: H3Event): Promise<AuthUser> {
   const header = getHeader(event, 'authorization');
   const token = header?.startsWith('Bearer ') ? header.slice(7) : undefined;
 
@@ -32,5 +35,5 @@ export async function requireAuthUser(event: H3Event): Promise<User> {
     });
   }
 
-  return data.user;
+  return { id: data.user.id };
 }
