@@ -1,12 +1,6 @@
+import type { Group } from '~/features/groups/types';
 import { useDb } from '~/lib/db/client';
 import { groupMemberships, groups } from '~/lib/db/schema';
-
-export interface Group {
-  id: string;
-  name: string;
-  createdAt: Date;
-  updatedAt: Date;
-}
 
 /**
  * Inserts a group and its creator's OWNER membership as a single atomic

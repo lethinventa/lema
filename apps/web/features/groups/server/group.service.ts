@@ -1,4 +1,4 @@
-import type { Group } from './group.repository';
+import type { Group } from '~/features/groups/types';
 import { insertGroupWithOwner } from './group.repository';
 
 /**
