@@ -50,6 +50,12 @@ const dbAccessPattern = {
 // (rather than conditionally spread into the withNuxt(...) call below)
 // because spreading loses TypeScript's contextual typing for the rule
 // tuple, widening 'error' to `string` and breaking the schema.
+//
+// A feature may import another feature's index.ts (its public API — see
+// featureIndexOnlyPattern below, which is what enforces "index.ts only" for
+// code outside any feature) but never another feature's internal files;
+// only its own internals are unrestricted. Hence `except` allows the
+// feature's own directory in full, plus every *other* feature's index.
 /** @type {import('eslint').Linter.RuleEntry} */
 const noRestrictedPathsRule =
   features.length > 0
@@ -59,7 +65,12 @@ const noRestrictedPathsRule =
           zones: features.map((feature) => ({
             target: `./features/${feature}`,
             from: './features',
-            except: [`./${feature}`],
+            except: [
+              `./${feature}`,
+              ...features
+                .filter((other) => other !== feature)
+                .map((other) => `./${other}/index.ts`),
+            ],
           })),
         },
       ]

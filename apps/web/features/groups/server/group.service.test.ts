@@ -1,9 +1,9 @@
 import { randomUUID } from 'node:crypto';
 import { describe, expect, it } from 'vitest';
+import { usersFactory } from '~/features/users';
 import { useDb } from '~/lib/db/client';
 import { useSupabaseAdmin } from '~/lib/supabase/server';
 import { createGroup } from './group.service';
-import { usersFactory } from './users.factory';
 
 describe('createGroup', () => {
   it('creates the group and registers the creator as OWNER', async () => {
