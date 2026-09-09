@@ -156,9 +156,13 @@ export default withNuxt(
     // (CLAUDE.md, ADR-002). Test files are exempt: they legitimately need
     // direct DB access for fixtures/assertions/cleanup, which isn't part of
     // the app's own service->repository call chain this rule protects.
+    // *.factory.ts files are exempt for the same reason as *.repository.ts:
+    // defineFactory() needs the actual schema Table objects to build fixture
+    // data, which is what this rule otherwise reserves for repositories.
     files: ['features/*/server/**'],
     ignores: [
       'features/*/server/**/*.repository.ts',
+      'features/*/server/**/*.factory.ts',
       'features/*/server/**/*.test.ts',
     ],
     rules: {
