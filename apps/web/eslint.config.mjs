@@ -38,12 +38,24 @@ const vendorSdkPaths = [
   { name: 'drizzle-orm', message: 'Import via lib/db instead.' },
 ];
 
+const dbAccessPattern = {
+  group: ['**/lib/db/*'],
+  message:
+    'DB access must go through a *.repository.ts file — services call repositories, not Drizzle directly.',
+};
+
 // The rule's schema rejects an empty `zones` array, so it's turned off
 // entirely until at least one feature directory actually exists — see
 // ADR-002-feature-folder-structure.md. Built as a standalone typed value
 // (rather than conditionally spread into the withNuxt(...) call below)
 // because spreading loses TypeScript's contextual typing for the rule
 // tuple, widening 'error' to `string` and breaking the schema.
+//
+// A feature may import another feature's index.ts (its public API — see
+// featureIndexOnlyPattern below, which is what enforces "index.ts only" for
+// code outside any feature) but never another feature's internal files;
+// only its own internals are unrestricted. Hence `except` allows the
+// feature's own directory in full, plus every *other* feature's index.
 /** @type {import('eslint').Linter.RuleEntry} */
 const noRestrictedPathsRule =
   features.length > 0
@@ -53,7 +65,12 @@ const noRestrictedPathsRule =
           zones: features.map((feature) => ({
             target: `./features/${feature}`,
             from: './features',
-            except: [`./${feature}`],
+            except: [
+              `./${feature}`,
+              ...features
+                .filter((other) => other !== feature)
+                .map((other) => `./${other}/index.ts`),
+            ],
           })),
         },
       ]
@@ -86,9 +103,10 @@ export default withNuxt(
   {
     // Outside lib/ and features/: no climbing relative imports, only a
     // feature's public API may be imported, and vendor SDKs (Supabase,
-    // Drizzle) must not be imported directly.
+    // Drizzle) must not be imported directly. Test files are exempt from
+    // the vendor-SDK part below (see the two blocks that follow this one).
     files: ALL_FILES,
-    ignores: ['lib/**', 'features/**'],
+    ignores: ['lib/**', 'features/**', '**/*.test.ts'],
     rules: {
       'no-restricted-imports': [
         'error',
@@ -96,6 +114,20 @@ export default withNuxt(
           patterns: [noRelativeParentImportPattern, featureIndexOnlyPattern],
           paths: vendorSdkPaths,
         },
+      ],
+    },
+  },
+  {
+    // Same as above, restated for *.test.ts files outside lib/ and
+    // features/: they legitimately need real vendor clients for fixtures/
+    // assertions/cleanup (same reasoning as their exemption from
+    // dbAccessPattern further below), so vendorSdkPaths is dropped here.
+    files: ['**/*.test.ts'],
+    ignores: ['lib/**', 'features/**'],
+    rules: {
+      'no-restricted-imports': [
+        'error',
+        { patterns: [noRelativeParentImportPattern, featureIndexOnlyPattern] },
       ],
     },
   },
@@ -108,10 +140,49 @@ export default withNuxt(
     // based, so it knows which feature is which). Without this override, a
     // composable couldn't import a sibling types.ts one directory up.
     files: ['features/**'],
+    ignores: ['**/*.test.ts'],
     rules: {
       'no-restricted-imports': [
         'error',
         { patterns: [noRelativeParentImportPattern], paths: vendorSdkPaths },
+      ],
+    },
+  },
+  {
+    // Same as above, restated for *.test.ts files inside a feature — vendor
+    // SDKs allowed for the same fixture/assertion/cleanup reasons as the
+    // block above, featureIndexOnlyPattern still dropped for the same
+    // same-feature-import reason.
+    files: ['features/**/*.test.ts'],
+    rules: {
+      'no-restricted-imports': [
+        'error',
+        { patterns: [noRelativeParentImportPattern] },
+      ],
+    },
+  },
+  {
+    // Only *.repository.ts files may talk to the DB layer (useDb()/schema
+    // tables) — services call repositories instead, never Drizzle directly
+    // (CLAUDE.md, ADR-002). Test files are exempt: they legitimately need
+    // direct DB access for fixtures/assertions/cleanup, which isn't part of
+    // the app's own service->repository call chain this rule protects.
+    // *.factory.ts files are exempt for the same reason as *.repository.ts:
+    // defineFactory() needs the actual schema Table objects to build fixture
+    // data, which is what this rule otherwise reserves for repositories.
+    files: ['features/*/server/**'],
+    ignores: [
+      'features/*/server/**/*.repository.ts',
+      'features/*/server/**/*.factory.ts',
+      'features/*/server/**/*.test.ts',
+    ],
+    rules: {
+      'no-restricted-imports': [
+        'error',
+        {
+          patterns: [noRelativeParentImportPattern, dbAccessPattern],
+          paths: vendorSdkPaths,
+        },
       ],
     },
   },

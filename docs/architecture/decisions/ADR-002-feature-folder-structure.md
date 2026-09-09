@@ -12,6 +12,8 @@ O app real (ver `ADR-001-real-app-stack.md`) precisa de uma organização de pas
 
 Pasta `features/` na raiz do app, uma subpasta por domínio (`auth`, `tasks`, `finance`, `goals`, `calendar`, `groups`), cada uma com `components/`, `composables/`, `utils/`, `server/` (lógica chamada pelas rotas finas do Nitro) e um `index.ts` que é a única porta de entrada para código fora da feature.
 
+Dentro de `server/`, a lógica de negócio fica em um arquivo `<nome>.service.ts` por domínio (ex.: `group.service.ts`), não um arquivo por função (ex.: `createGroup.ts`) — ver `CLAUDE.md`. Um método de `service.ts` não valida payload em runtime, o tipo do parâmetro já é o contrato: validar com Zod (via `parseBody`, `apps/web/server/utils/validation.ts`) é responsabilidade do próprio arquivo de rota em `server/api/`, antes de chamar o service. Acesso ao Drizzle fica isolado em `<nome>.repository.ts`; o service chama o repository, nunca `useDb()`/schema diretamente (regra 5 abaixo). O tipo de entidade retornado por esse par service/repository (ex.: `Group`) fica em `types.ts` na raiz da feature, não definido inline no repository nem como alias de `typeof <tabela>.$inferSelect` — ele é reexportado pelo `index.ts` da feature para o frontend consumir.
+
 ```
 apps/web/
 ├── config/        # config geral da app, validação de env
@@ -25,12 +27,13 @@ apps/web/
 
 `utils/` guarda função pura, sem dependência de Vue/Nuxt (sem `ref`, `computed`, `useState`, lifecycle) — diferente de `composables/`, que é reativo por natureza. Essa separação existe tanto dentro de cada feature (ex.: cálculo de divisão de despesa em `finance/utils/`) quanto em `shared/utils/` (formatação de moeda, data, validadores genéricos), seguindo a mesma simetria já usada para `components/`/`composables/`. A vantagem prática: função pura é testável isoladamente sem montar nada, e reutilizável fora de contexto de componente (ex.: dentro de uma rota do Nitro, onde Vue nem existe).
 
-Quatro regras de import, todas enforçadas via ESLint — não apenas documentadas como convenção:
+Cinco regras de import, todas enforçadas via ESLint — não apenas documentadas como convenção:
 
-1. Uma feature não importa arquivos internos de outra feature (`import-x/no-restricted-paths`, com as zonas geradas dinamicamente a partir do conteúdo de `features/`, para que uma feature nova já fique coberta automaticamente).
+1. Uma feature não importa arquivos internos de outra feature — só o `index.ts` dela (`import-x/no-restricted-paths`, com as zonas geradas dinamicamente a partir do conteúdo de `features/`, para que uma feature nova já fique coberta automaticamente; cada zona libera o próprio diretório da feature por inteiro, mais o `index.ts` — e só ele — de cada uma das demais).
 2. Código fora de uma feature só pode importar o `index.ts` dela (API pública), nunca um arquivo interno (`no-restricted-imports` com padrão de exclusão).
 3. Nenhum código fora de `lib/` importa `@supabase/supabase-js` ou `drizzle-orm` diretamente (mesma regra do item 2, escopo diferente).
 4. Import relativo que sobe de diretório (`../`) é bloqueado — usar o alias nativo `~/` do Nuxt em vez disso (`import-x/no-relative-parent-imports`). Nenhum alias customizado foi criado; o `~/` já resolve o problema de imports relativos longos sem configuração adicional.
+5. Dentro de `features/<nome>/server/`, nenhum arquivo além de `*.repository.ts` importa `~/lib/db/*` (`no-restricted-imports` com padrão de exclusão, mesmo mecanismo do item 3, escopo mais restrito). Arquivos `*.test.ts` são isentos.
 
 ## Alternativas consideradas
 
@@ -53,3 +56,4 @@ A validação real revelou detalhes não óbvios, registrados aqui para não pre
 - O alias `~/` só existe no `.nuxt/tsconfig.json` **gerado** pelo Nuxt — o `tsconfig.json` na raiz do app é apenas um stub de project references (`files: [], references: [...]`), sem os `paths`. Regras do `eslint-plugin-import-x` que precisam resolver o alias (`no-restricted-paths`) precisam apontar o resolver explicitamente para `.nuxt/tsconfig.json` (`eslint-import-resolver-typescript`, opção `project`).
 - `settings` do ESLint (incluindo qual resolver de import está ativo) não é escopado por regra — é por arquivo. Duas configs diferentes de resolver aplicadas ao mesmo conjunto de arquivos não coexistem; a última declarada vence para todas as regras daquele arquivo. Por isso a regra de "sem import relativo que sobe diretório" não usa `import-x/no-relative-parent-imports` (que depende de resolver e passaria a marcar até imports por alias como se fossem relativos, já que compara caminho resolvido, não o texto do import) — em vez disso é um `no-restricted-imports` com `regex: '^\\.\\./'`, que opera sobre o texto do import e não precisa de resolução nenhuma.
 - A regra `import-x/no-restricted-paths` rejeita `zones: []` (array vazio) no schema. Como `features/` está vazio até a primeira feature ser criada, a regra fica como `'off'` (em vez de ser omitida) enquanto não existir nenhuma feature, e vira `['error', { zones: [...] }]` automaticamente assim que a primeira for criada — o valor mora numa variável própria, não é espalhado (`...cond ? [...] : []`) dentro da chamada de `withNuxt(...)`, porque isso faz o TypeScript perder a tipagem contextual da tupla da regra (`'error'` alarga para `string`) e quebra `nuxt typecheck`.
+- Quando `from` de uma zona não é glob (nosso caso: `'./features'`), cada entrada de `except` é resolvida como caminho absoluto e comparada por prefixo (`path.relative` não pode começar com `..`) contra o caminho já resolvido do import — que já vem com extensão de arquivo (`.ts`). Uma exceção como `./users/index` (sem extensão) portanto **nunca** dá match contra o import resolvido (`.../features/users/index.ts`): `path.relative` entre os dois não bate no prefixo, já que "index" e "index.ts" são segmentos finais diferentes. A exceção precisa incluir a extensão (`./users/index.ts`) para de fato liberar o `index.ts` de outra feature.
