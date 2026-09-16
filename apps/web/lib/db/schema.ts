@@ -96,10 +96,10 @@ export const invitationStatusEnum = pgEnum('invitation_status', [
   'CANCELLED',
 ]);
 
-// UC-GROUP-002. The invited person is identified by email, not userId: they
-// may not have a Lema account yet (UC-AUTH-001) — the account only gets
-// linked to the group when the invite is accepted (UC-GROUP-003), via the
-// shareable link's token, not via matching the account's email.
+// UC-GROUP-002. The invited person is identified by userId, not email —
+// inviting someone with no Lema account is not a valid operation (review
+// decision on PR #6, narrowing the UC's "person not registered yet"
+// variation out of this slice rather than resolving an email to an account).
 export const invitations = pgTable(
   'invitations',
   {
@@ -107,13 +107,18 @@ export const invitations = pgTable(
     groupId: uuid('group_id')
       .notNull()
       .references(() => groups.id, { onDelete: 'cascade' }),
-    invitedEmail: text('invited_email').notNull(),
+    invitedUserId: uuid('invited_user_id')
+      .notNull()
+      .references(() => users.id, { onDelete: 'cascade' }),
     invitedByUserId: uuid('invited_by_user_id')
       .notNull()
       .references(() => users.id, { onDelete: 'cascade' }),
     status: invitationStatusEnum('status').notNull().default('PENDING'),
     token: uuid('token').notNull().defaultRandom().unique(),
     expiresAt: timestamp('expires_at', { withTimezone: true }).notNull(),
+    // Set only when status transitions to ACCEPTED — distinguishes an
+    // acceptance from any other row update, which updatedAt alone can't.
+    acceptedAt: timestamp('accepted_at', { withTimezone: true }),
     createdAt: timestamp('created_at', { withTimezone: true })
       .notNull()
       .defaultNow(),
@@ -127,8 +132,8 @@ export const invitations = pgTable(
     // partial unique index (matched by insertInvitation's onConflictDoNothing
     // in group.repository.ts) rather than a read-then-write check in
     // application code, same philosophy as group_memberships' composite PK.
-    uniqueIndex('invitations_pending_group_email_idx')
-      .on(table.groupId, table.invitedEmail)
+    uniqueIndex('invitations_pending_group_invited_user_idx')
+      .on(table.groupId, table.invitedUserId)
       .where(sql`${table.status} = 'PENDING'`),
   ],
 );

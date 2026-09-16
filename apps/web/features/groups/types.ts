@@ -11,11 +11,12 @@ export type InvitationStatus =
 export interface Invitation {
   id: string;
   groupId: string;
-  invitedEmail: string;
+  invitedUserId: string;
   invitedByUserId: string;
   status: InvitationStatus;
   token: string;
   expiresAt: Date;
+  acceptedAt: Date | null;
   createdAt: Date;
   updatedAt: Date;
 }

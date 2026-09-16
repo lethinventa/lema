@@ -2,7 +2,7 @@ import { z } from 'zod';
 import { inviteMember } from '~/features/groups';
 
 const inviteMemberSchema = z.object({
-  email: z.string().trim().toLowerCase().email('E-mail inválido.'),
+  userId: z.string().uuid('ID de usuário inválido.'),
 });
 
 export default defineEventHandler(async (event) => {
