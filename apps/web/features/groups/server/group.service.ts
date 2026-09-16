@@ -1,5 +1,11 @@
-import type { Group } from '~/features/groups/types';
-import { insertGroupWithOwner } from './group.repository';
+import type { Group, Invitation } from '~/features/groups/types';
+import {
+  insertGroupWithOwner,
+  insertInvitation,
+  isGroupMember,
+} from './group.repository';
+
+const INVITATION_EXPIRATION_MS = 7 * 24 * 60 * 60 * 1000;
 
 /**
  * UC-GROUP-001: creates a group and registers the creator as its OWNER.
@@ -14,4 +20,46 @@ export async function createGroup(
   input: { name: string },
 ): Promise<Group> {
   return insertGroupWithOwner(input.name, ownerId);
+}
+
+export type InviteMemberResult =
+  | { success: true; invitation: Invitation }
+  | { success: false; errorMsg: string };
+
+/**
+ * UC-GROUP-002: registers a PENDING invitation for `input.email` to join
+ * `groupId`. Any MEMBER (not just OWNER) can invite, per PD-001. Expiration
+ * is hardcoded to one week and there's no resend mechanism yet — those are
+ * open questions in the UC, deliberately deferred rather than decided here.
+ * Delivering the invite (email/WhatsApp/in-app notification) is out of
+ * scope for this slice: the caller gets the invitation back, including its
+ * shareable token, and is responsible for the channel.
+ */
+export async function inviteMember(
+  invitedByUserId: string,
+  groupId: string,
+  input: { email: string },
+): Promise<InviteMemberResult> {
+  const isMember = await isGroupMember(groupId, invitedByUserId);
+  if (!isMember) {
+    return {
+      success: false,
+      errorMsg: 'Apenas membros do grupo podem convidar novas pessoas.',
+    };
+  }
+
+  const invitation = await insertInvitation({
+    groupId,
+    invitedEmail: input.email,
+    invitedByUserId,
+    expiresAt: new Date(Date.now() + INVITATION_EXPIRATION_MS),
+  });
+  if (!invitation) {
+    return {
+      success: false,
+      errorMsg: 'Já existe um convite pendente para esta pessoa neste grupo.',
+    };
+  }
+
+  return { success: true, invitation };
 }

@@ -3,6 +3,11 @@ import postgres from 'postgres';
 import { requireEnv } from '~/config/env';
 import * as schema from './schema';
 
+// Re-exported so repositories can build query fragments (e.g. a partial
+// index's WHERE predicate for onConflictDoNothing) without importing
+// drizzle-orm directly (blocked by eslint, see eslint.config.mjs).
+export { sql } from 'drizzle-orm';
+
 let client: ReturnType<typeof drizzle<typeof schema>> | undefined;
 
 /**

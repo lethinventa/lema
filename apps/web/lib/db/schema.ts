@@ -1,6 +1,7 @@
 // Drizzle schema — the source of truth for the entities described in
 // docs/architecture/domain-model.md. Grows incrementally, one journey at a
 // time (see docs/product/journeys/), not modeled all at once upfront.
+import { sql } from 'drizzle-orm';
 import {
   pgEnum,
   pgSchema,
@@ -8,6 +9,7 @@ import {
   primaryKey,
   text,
   timestamp,
+  uniqueIndex,
   uuid,
 } from 'drizzle-orm/pg-core';
 
@@ -84,4 +86,49 @@ export const groupMemberships = pgTable(
       .defaultNow(),
   },
   (table) => [primaryKey({ columns: [table.groupId, table.userId] })],
+);
+
+export const invitationStatusEnum = pgEnum('invitation_status', [
+  'PENDING',
+  'ACCEPTED',
+  'DECLINED',
+  'EXPIRED',
+  'CANCELLED',
+]);
+
+// UC-GROUP-002. The invited person is identified by email, not userId: they
+// may not have a Lema account yet (UC-AUTH-001) — the account only gets
+// linked to the group when the invite is accepted (UC-GROUP-003), via the
+// shareable link's token, not via matching the account's email.
+export const invitations = pgTable(
+  'invitations',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    groupId: uuid('group_id')
+      .notNull()
+      .references(() => groups.id, { onDelete: 'cascade' }),
+    invitedEmail: text('invited_email').notNull(),
+    invitedByUserId: uuid('invited_by_user_id')
+      .notNull()
+      .references(() => users.id, { onDelete: 'cascade' }),
+    status: invitationStatusEnum('status').notNull().default('PENDING'),
+    token: uuid('token').notNull().defaultRandom().unique(),
+    expiresAt: timestamp('expires_at', { withTimezone: true }).notNull(),
+    createdAt: timestamp('created_at', { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+    updatedAt: timestamp('updated_at', { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+  },
+  (table) => [
+    // UC-GROUP-002 business rule: a person can't have two simultaneous
+    // PENDING invites for the same group. Enforced structurally via a
+    // partial unique index (matched by insertInvitation's onConflictDoNothing
+    // in group.repository.ts) rather than a read-then-write check in
+    // application code, same philosophy as group_memberships' composite PK.
+    uniqueIndex('invitations_pending_group_email_idx')
+      .on(table.groupId, table.invitedEmail)
+      .where(sql`${table.status} = 'PENDING'`),
+  ],
 );
