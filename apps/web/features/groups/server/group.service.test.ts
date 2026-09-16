@@ -34,13 +34,16 @@ describe('inviteMember', () => {
     });
 
     expect(result.success).toBe(true);
-    if (!result.success) throw new Error('expected inviteMember to succeed');
-    expect(result.invitation.groupId).toBe(group.id);
-    expect(result.invitation.invitedByUserId).toBe(ownerId);
-    expect(result.invitation.invitedUserId).toBe(invitedId);
-    expect(result.invitation.status).toBe('PENDING');
-    expect(result.invitation.acceptedAt).toBeNull();
-    expect(result.invitation.token).toBeTruthy();
+    const invitationRows = await findInvitationRows(group.id, invitedId);
+    expect(invitationRows).toHaveLength(1);
+    expect(invitationRows[0]).toMatchObject({
+      groupId: group.id,
+      invitedUserId: invitedId,
+      invitedByUserId: ownerId,
+      status: 'PENDING',
+      acceptedAt: null,
+    });
+    expect(invitationRows[0]?.token).toBeTruthy();
   });
 
   it('rejects the invite when the inviter is not a group member', async () => {
@@ -54,17 +57,22 @@ describe('inviteMember', () => {
     });
 
     expect(result.success).toBe(false);
+    expect(await findInvitationRows(group.id, invitedId)).toHaveLength(0);
   });
 
   it('rejects the invite when the invited person has no Lema account', async () => {
     const ownerId = await createFixtureUser();
     const group = await createGroup(ownerId, { name: 'Family' });
+    const nonExistentUserId = randomUUID();
 
     const result = await inviteMember(ownerId, group.id, {
-      userId: randomUUID(),
+      userId: nonExistentUserId,
     });
 
     expect(result.success).toBe(false);
+    expect(await findInvitationRows(group.id, nonExistentUserId)).toHaveLength(
+      0,
+    );
   });
 
   it('rejects a duplicate PENDING invitation for the same person and group', async () => {
@@ -78,8 +86,18 @@ describe('inviteMember', () => {
     });
 
     expect(result.success).toBe(false);
+    // Confirms the duplicate attempt didn't insert a second row alongside
+    // the one from the first, successful call.
+    expect(await findInvitationRows(group.id, invitedId)).toHaveLength(1);
   });
 });
+
+function findInvitationRows(groupId: string, invitedUserId: string) {
+  return useDb().query.invitations.findMany({
+    where: (i, { and, eq }) =>
+      and(eq(i.groupId, groupId), eq(i.invitedUserId, invitedUserId)),
+  });
+}
 
 /**
  * public.users rows are FK-bound to a real auth.users row (Supabase Auth),
