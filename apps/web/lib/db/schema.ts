@@ -1,6 +1,7 @@
 // Drizzle schema — the source of truth for the entities described in
 // docs/architecture/domain-model.md. Grows incrementally, one journey at a
 // time (see docs/product/journeys/), not modeled all at once upfront.
+import { sql } from 'drizzle-orm';
 import {
   pgEnum,
   pgSchema,
@@ -8,6 +9,7 @@ import {
   primaryKey,
   text,
   timestamp,
+  uniqueIndex,
   uuid,
 } from 'drizzle-orm/pg-core';
 
@@ -84,4 +86,54 @@ export const groupMemberships = pgTable(
       .defaultNow(),
   },
   (table) => [primaryKey({ columns: [table.groupId, table.userId] })],
+);
+
+export const invitationStatusEnum = pgEnum('invitation_status', [
+  'PENDING',
+  'ACCEPTED',
+  'DECLINED',
+  'EXPIRED',
+  'CANCELLED',
+]);
+
+// UC-GROUP-002. The invited person is identified by userId, not email —
+// inviting someone with no Lema account is not a valid operation (review
+// decision on PR #6, narrowing the UC's "person not registered yet"
+// variation out of this slice rather than resolving an email to an account).
+export const invitations = pgTable(
+  'invitations',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    groupId: uuid('group_id')
+      .notNull()
+      .references(() => groups.id, { onDelete: 'cascade' }),
+    invitedUserId: uuid('invited_user_id')
+      .notNull()
+      .references(() => users.id, { onDelete: 'cascade' }),
+    invitedByUserId: uuid('invited_by_user_id')
+      .notNull()
+      .references(() => users.id, { onDelete: 'cascade' }),
+    status: invitationStatusEnum('status').notNull().default('PENDING'),
+    token: uuid('token').notNull().defaultRandom().unique(),
+    expiresAt: timestamp('expires_at', { withTimezone: true }).notNull(),
+    // Set only when status transitions to ACCEPTED — distinguishes an
+    // acceptance from any other row update, which updatedAt alone can't.
+    acceptedAt: timestamp('accepted_at', { withTimezone: true }),
+    createdAt: timestamp('created_at', { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+    updatedAt: timestamp('updated_at', { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+  },
+  (table) => [
+    // UC-GROUP-002 business rule: a person can't have two simultaneous
+    // PENDING invites for the same group. Enforced structurally via a
+    // partial unique index (matched by insertInvitation's onConflictDoNothing
+    // in group.repository.ts) rather than a read-then-write check in
+    // application code, same philosophy as group_memberships' composite PK.
+    uniqueIndex('invitations_pending_group_invited_user_idx')
+      .on(table.groupId, table.invitedUserId)
+      .where(sql`${table.status} = 'PENDING'`),
+  ],
 );
