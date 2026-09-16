@@ -103,10 +103,16 @@ export default withNuxt(
   {
     // Outside lib/ and features/: no climbing relative imports, only a
     // feature's public API may be imported, and vendor SDKs (Supabase,
-    // Drizzle) must not be imported directly. Test files are exempt from
-    // the vendor-SDK part below (see the two blocks that follow this one).
+    // Drizzle) must not be imported directly. Test files, and
+    // tests/route-test-helpers.ts, are exempt from the vendor-SDK part below
+    // (see the two blocks that follow this one).
     files: ALL_FILES,
-    ignores: ['lib/**', 'features/**', '**/*.test.ts'],
+    ignores: [
+      'lib/**',
+      'features/**',
+      '**/*.test.ts',
+      'tests/route-test-helpers.ts',
+    ],
     rules: {
       'no-restricted-imports': [
         'error',
@@ -119,10 +125,13 @@ export default withNuxt(
   },
   {
     // Same as above, restated for *.test.ts files outside lib/ and
-    // features/: they legitimately need real vendor clients for fixtures/
-    // assertions/cleanup (same reasoning as their exemption from
-    // dbAccessPattern further below), so vendorSdkPaths is dropped here.
-    files: ['**/*.test.ts'],
+    // features/, plus tests/route-test-helpers.ts: they legitimately need
+    // real vendor clients for fixtures/assertions (same reasoning as their
+    // exemption from dbAccessPattern further below) — the helper isn't
+    // itself a *.test.ts file, but exists purely to support route tests
+    // (see CLAUDE.md's route-test rule) and needs the same access, not
+    // being part of the app's own request-handling code path.
+    files: ['**/*.test.ts', 'tests/route-test-helpers.ts'],
     ignores: ['lib/**', 'features/**'],
     rules: {
       'no-restricted-imports': [
